@@ -26,11 +26,11 @@ main(void)
 		}
 
 		if (c == '\n') {
-      if (digit < 10) {
-        printf("%d\n", digit);
-      } else {
-        printf("%c\n", digit);
-      }
+			if (digit < 10) {
+				printf("%d\n", digit);
+			} else {
+				printf("%c\n", digit);
+			}
 			digit = 5;
 			continue;
 		}
@@ -66,10 +66,10 @@ __next_digit(const int current_digit, const char direction)
 			case 7:   return 3;
 			case 8:   return 4;
 			case 9:   return 9;
-      case 'A': return 6;
-      case 'B': return 7;
-      case 'C': return 8;
-      case 'D': return 'B';
+			case 'A': return 6;
+			case 'B': return 7;
+			case 'C': return 8;
+			case 'D': return 'B';
 			default:  return -1;
 		}
 	}
@@ -85,10 +85,10 @@ __next_digit(const int current_digit, const char direction)
 			case 7:   return 'B';
 			case 8:   return 'C';
 			case 9:   return 9;
-      case 'A': return 'A';
-      case 'B': return 'D';
-      case 'C': return 'C';
-      case 'D': return 'D';
+			case 'A': return 'A';
+			case 'B': return 'D';
+			case 'C': return 'C';
+			case 'D': return 'D';
 			default:  return -1;
 		}
 	}
@@ -104,10 +104,10 @@ __next_digit(const int current_digit, const char direction)
 			case 7:   return 8;
 			case 8:   return 9;
 			case 9:   return 9;
-      case 'A': return 'B';
-      case 'B': return 'C';
-      case 'C': return 'C';
-      case 'D': return 'D';
+			case 'A': return 'B';
+			case 'B': return 'C';
+			case 'C': return 'C';
+			case 'D': return 'D';
 			default:  return -1;
 		}
 	}
@@ -123,10 +123,10 @@ __next_digit(const int current_digit, const char direction)
 			case 7:   return 6;
 			case 8:   return 7;
 			case 9:   return 8;
-      case 'A': return 'A';
-      case 'B': return 'A';
-      case 'C': return 'B';
-      case 'D': return 'D';
+			case 'A': return 'A';
+			case 'B': return 'A';
+			case 'C': return 'B';
+			case 'D': return 'D';
 			default:  return -1;
 		}
 	}

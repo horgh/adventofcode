@@ -47,12 +47,15 @@ CFLAGS = \
 
 INCLUDE=
 
-TARGETS=problem4-1
+TARGETS=problem4-1 problem4-2
 
 all: $(TARGETS)
 
 problem4-1: problem4-1.c
 	$(CC) $(CFLAGS) -o $@ problem4-1.c
+
+problem4-2: problem4-2.c
+	$(CC) $(CFLAGS) -o $@ problem4-2.c
 
 clean:
 	rm -fv $(TARGETS)

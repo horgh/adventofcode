@@ -14,7 +14,8 @@ __visit(const struct htable * const, const int, const int);
 bool
 __have_visited(const struct htable * const, const int, const int);
 
-int main(const int argc, const char * const * const argv)
+int
+main(const int argc, const char * const * const argv)
 {
 	(void) argc;
 	(void) argv;
@@ -119,6 +120,7 @@ DONE:
 	return 0;
 }
 
+__attribute__((const))
 enum Direction
 __decide_new_direction(const enum Direction current_direction, const char dir)
 {

@@ -27,6 +27,7 @@ hash_init(const size_t n)
 	return h;
 }
 
+__attribute__((pure))
 int
 hasher(const char * const key, const size_t n)
 {
@@ -103,6 +104,7 @@ hash_set(const struct htable * const h, const char * const key, const int value)
 	return true;
 }
 
+__attribute__((pure))
 int
 hash_get(const struct htable * const h, const char * const key)
 {

@@ -9,7 +9,8 @@ enum Direction { North, East, South, West, Unknown };
 enum Direction
 __decide_new_direction(const enum Direction, const char);
 
-int main(const int argc, const char * const * const argv)
+int
+main(const int argc, const char * const * const argv)
 {
 	(void) argc;
 	(void) argv;
@@ -71,6 +72,7 @@ int main(const int argc, const char * const * const argv)
 	return 0;
 }
 
+__attribute__((const))
 enum Direction
 __decide_new_direction(const enum Direction current_direction, const char dir)
 {

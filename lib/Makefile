@@ -25,15 +25,12 @@ CFLAGS = \
 
 INCLUDE=
 
-TARGETS=problem1 problem1-2
+TARGETS=map_test
 
 all: $(TARGETS)
 
-problem1: problem1.c
-	$(CC) $(CFLAGS) -o $@ problem1.c
-
-problem1-2: problem1-2.c ../lib/map.c ../lib/map.h
-	$(CC) $(CFLAGS) -I../lib -o $@ problem1-2.c ../lib/map.c
+map_test: map.c map.h
+	$(CC) $(CFLAGS) -DTEST_MAP -o $@ map.c
 
 clean:
-	rm -fv $(TARGETS)
+	@rm -fv $(TARGETS)

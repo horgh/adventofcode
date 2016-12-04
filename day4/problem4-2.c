@@ -223,5 +223,6 @@ __decrypt_room(const char * const buf, const int sector_id)
 	}
 
 	printf("%s (%d)\n", decrypted, sector_id);
+	free(decrypted);
 	return true;
 }

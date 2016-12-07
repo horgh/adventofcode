@@ -126,7 +126,7 @@ __valid_checksum(struct Letter * map, const char * const checksum)
 	printf("Before sorting:\n");
 	__print_letters(map);
 #endif
-	qsort(map, 26, sizeof(struct Letter *), __letter_cmp);
+	qsort(map, 26, sizeof(struct Letter), __letter_cmp);
 #ifdef DEBUG
 	printf("After sorting:\n");
 	__print_letters(map);

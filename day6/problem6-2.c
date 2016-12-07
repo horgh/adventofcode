@@ -125,12 +125,12 @@ main(const int argc, const char * const * const argv)
 		__print_letters(letters, alphabet_len);
 		qsort(letters, alphabet_len, sizeof(struct Letter), __cmp_letters);
 
-    for (size_t j = 0; j < alphabet_len; j++) {
-      if (letters[j].count != 0) {
-        password[i] = letters[j].c;
-        break;
-      }
-    }
+		for (size_t j = 0; j < alphabet_len; j++) {
+			if (letters[j].count != 0) {
+				password[i] = letters[j].c;
+				break;
+			}
+		}
 
 		if (false) {
 			printf("Position %zu\n", i);

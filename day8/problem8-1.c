@@ -6,6 +6,8 @@
 #include <string.h>
 
 static void
+__destroy_screen(bool * *, const size_t);
+static void
 __draw_rect(bool * const * const, const size_t,
 		const size_t, const int, const int);
 static void
@@ -47,7 +49,7 @@ main(const int argc, const char * const * const argv)
 		if (!screen[i]) {
 			printf("%s\n", strerror(ENOMEM));
 			fclose(fh);
-			// TODO: clean up rest of screen;
+			__destroy_screen(screen, width);
 			return 1;
 		}
 
@@ -99,11 +101,13 @@ main(const int argc, const char * const * const argv)
 
 		printf("unrecognized input: %s\n", buf);
 		fclose(fh);
+		__destroy_screen(screen, width);
 		return 1;
 	}
 
 	if (fclose(fh) != 0) {
 		printf("fclose(): %s\n", strerror(errno));
+		__destroy_screen(screen, width);
 		return 1;
 	}
 
@@ -116,9 +120,25 @@ main(const int argc, const char * const * const argv)
 		}
 	}
 
+	__destroy_screen(screen, width);
+
 	printf("%d\n", count);
 
 	return 0;
+}
+
+static void
+__destroy_screen(bool * * screen, const size_t width)
+{
+	if (!screen) {
+		return;
+	}
+
+	for (size_t x = 0; x < width; x++) {
+		free(screen[x]);
+	}
+
+	free(screen);
 }
 
 static void

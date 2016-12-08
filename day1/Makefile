@@ -47,12 +47,12 @@ CFLAGS = \
 
 INCLUDE=
 
-TARGETS=problem1 problem1-2
+TARGETS=problem1-1 problem1-2
 
 all: $(TARGETS)
 
-problem1: problem1.c
-	$(CC) $(CFLAGS) -o $@ problem1.c
+problem1-1: problem1-1.c
+	$(CC) $(CFLAGS) -o $@ problem1-1.c
 
 problem1-2: problem1-2.c ../lib/map.c ../lib/map.h
 	$(CC) $(CFLAGS) -I../lib -o $@ problem1-2.c ../lib/map.c

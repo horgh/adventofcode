@@ -8,7 +8,7 @@
 struct List;
 
 struct List {
-	const char * s;
+	char * s;
 	struct List * next;
 };
 
@@ -241,6 +241,7 @@ __destroy_list(struct List * const l)
 	struct List * ptr = l;
 	while (ptr) {
 		struct List * next = ptr->next;
+		free(ptr->s);
 		free(ptr);
 		ptr = next;
 	}

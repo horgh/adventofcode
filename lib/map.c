@@ -8,6 +8,10 @@
 
 #include <string.h>
 
+static bool
+__hash_set(const struct htable * const, const int,
+		const void * const, const size_t, void * const);
+
 struct htable *
 hash_init(const size_t n)
 {
@@ -62,6 +66,29 @@ hash_set(const struct htable * const h, const char * const key,
 
 	int hash = hasher(key, h->size);
 
+	return __hash_set(h, hash, key, strlen(key)+1, value);
+}
+
+bool
+hash_set_i(const struct htable * const h, const int key, void * const value)
+{
+	if (!h) {
+		return false;
+	}
+
+	int hash = abs(key) % (int) h->size;
+
+	return __hash_set(h, hash, &key, sizeof(key), value);
+}
+
+static bool
+__hash_set(const struct htable * const h, const int hash,
+		const void * const key, const size_t key_size, void * const value)
+{
+	if (!h || !key) {
+		return false;
+	}
+
 	struct hnode * nptr = h->nodes[hash];
 
 	if (!nptr) {
@@ -70,11 +97,14 @@ hash_set(const struct htable * const h, const char * const key,
 			return false;
 		}
 
-		nptr->key = strdup(key);
+		nptr->key = calloc(1, key_size);
 		if (!nptr->key) {
 			free(nptr);
 			return false;
 		}
+		memcpy(nptr->key, key, key_size);
+
+		nptr->key_size = key_size;
 
 		nptr->value = value;
 
@@ -99,11 +129,14 @@ hash_set(const struct htable * const h, const char * const key,
 		return false;
 	}
 
-	nptr->key = strdup(key);
+	nptr->key = calloc(1, key_size);
 	if (!nptr->key) {
 		free(nptr);
 		return false;
 	}
+	memcpy(nptr->key, key, key_size);
+
+	nptr->key_size = key_size;
 
 	nptr->value = value;
 
@@ -174,6 +207,52 @@ hash_delete(const struct htable * const h, const char * const key,
 	}
 
 	return false;
+}
+
+void * *
+hash_get_keys(const struct htable * const h)
+{
+	if (!h) {
+		return NULL;
+	}
+
+	size_t array_size = h->size;
+
+	void * * keys = calloc(array_size, sizeof(void *));
+	if (!keys) {
+		return NULL;
+	}
+
+	size_t keys_i = 0;
+
+	for (size_t i = 0; i < h->size; i++) {
+		const struct hnode * nptr = *(h->nodes+i);
+
+		while (nptr) {
+			// Terminate with null at end always.
+			if (keys_i == array_size-1) {
+				size_t new_array_size = array_size*2;
+
+				void * * const new_keys = realloc(keys, new_array_size);
+				if (!new_keys) {
+					free(keys);
+					return NULL;
+				}
+
+				memset(new_keys+array_size, 0, array_size);
+
+				array_size = new_array_size;
+				keys = new_keys;
+			}
+
+			keys[keys_i] = nptr->key;
+			keys_i++;
+
+			nptr = nptr->next;
+		}
+	}
+
+	return keys;
 }
 
 // p gets passed to each node. You can use it to carry around state.
@@ -283,6 +362,17 @@ main(int argc, char ** argv)
 	hash_iterate(h, __get_value, &i);
 	// 10 happens to have highest hash.
 	assert(i == 10);
+
+
+	// Test hash_get_keys
+	void * * keys = hash_get_keys(h);
+
+	for (size_t j = 0; keys[j]; j++) {
+		const char * const key = keys[j];
+		printf("key: %s\n", key);
+	}
+
+	free(keys);
 
 	assert(hash_free(h, free));
 }

@@ -40,8 +40,16 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
+	int * visited = calloc(1, sizeof(int));
+	if (!visited) {
+		printf("%s\n", strerror(errno));
+		fclose(fh);
+		hash_free(locations, free);
+		return 1;
+	}
+
 	// Record we visited 0,0
-	if (!hash_set(locations, "0,0", 1)) {
+	if (!hash_set(locations, "0,0", visited)) {
 		printf("Unable to visit 0,0\n");
 		fclose(fh);
 		return 1;
@@ -100,14 +108,14 @@ main(const int argc, const char * const * const argv)
 			default:
 				printf("Unknown direction\n");
 				fclose(fh);
-				hash_free(locations);
+				hash_free(locations, free);
 				return 1;
 		}
 	}
 
 DONE:
 
-	hash_free(locations);
+	hash_free(locations, free);
 
 	if (fclose(fh) != 0) {
 		printf("fclose(): %s\n", strerror(errno));
@@ -165,8 +173,8 @@ __have_visited(const struct htable * const locations, const int x, const int y)
 	char key[1024];
 	memset(key, 0, sizeof(key));
 	snprintf(key, sizeof(key), "%d,%d", x, y);
-	int hash_value = hash_get(locations, key);
-	return hash_value != -1;
+
+	return hash_get(locations, key) != NULL;
 }
 
 bool
@@ -175,5 +183,12 @@ __visit(const struct htable * const locations, const int x, const int y)
 	char key[1024];
 	memset(key, 0, sizeof(key));
 	snprintf(key, sizeof(key), "%d,%d", x, y);
-	return hash_set(locations, key, 1);
+
+	int * visited = calloc(1, sizeof(int));
+	if (!visited) {
+		printf("%s\n", strerror(errno));
+		return false;
+	}
+
+	return hash_set(locations, key, visited);
 }

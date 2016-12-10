@@ -43,11 +43,18 @@ hasher(const char * const key, const size_t n)
 	}
 	hash = abs(hash);
 
-	return hash%(int)n;
+	int actual_hash = hash%(int)n;
+
+#ifdef TEST_MAP
+	printf("%s hashes to %d\n", key, actual_hash);
+#endif
+
+	return actual_hash;
 }
 
 bool
-hash_set(const struct htable * const h, const char * const key, const int value)
+hash_set(const struct htable * const h, const char * const key,
+		void * const value)
 {
 	if (!h || !key || strlen(key) == 0) {
 		return false;
@@ -105,11 +112,11 @@ hash_set(const struct htable * const h, const char * const key, const int value)
 }
 
 __attribute__((pure))
-int
+void *
 hash_get(const struct htable * const h, const char * const key)
 {
 	if (!h || !key || strlen(key) == 0) {
-		return -1;
+		return NULL;
 	}
 
 	int hash = hasher(key, h->size);
@@ -124,11 +131,12 @@ hash_get(const struct htable * const h, const char * const key)
 		nptr = nptr->next;
 	}
 
-	return -1;
+	return NULL;
 }
 
 bool
-hash_delete(const struct htable * const h, const char * const key)
+hash_delete(const struct htable * const h, const char * const key,
+		void fn(void * const))
 {
 	if (!h || !key || strlen(key) == 0) {
 		return false;
@@ -149,12 +157,14 @@ hash_delete(const struct htable * const h, const char * const key)
 			if (prev) {
 				prev->next = nptr->next;
 				free(nptr->key);
+				fn(nptr->value);
 				free(nptr);
 				return true;
 			}
 
 			h->nodes[hash] = nptr->next;
 			free(nptr->key);
+			fn(nptr->value);
 			free(nptr);
 			return true;
 		}
@@ -166,9 +176,10 @@ hash_delete(const struct htable * const h, const char * const key)
 	return false;
 }
 
+// p gets passed to each node. You can use it to carry around state.
 bool
 hash_iterate(const struct htable * const h,
-		void * fn(const struct hnode * const))
+		void fn(const struct hnode * const, void * const), void * const p)
 {
 	if (!h || !fn) {
 		return false;
@@ -178,7 +189,7 @@ hash_iterate(const struct htable * const h,
 		const struct hnode * nptr = *(h->nodes+i);
 
 		while (nptr) {
-			fn(nptr);
+			fn(nptr, p);
 			nptr = nptr->next;
 		}
 	}
@@ -187,7 +198,7 @@ hash_iterate(const struct htable * const h,
 }
 
 bool
-hash_free(struct htable * h)
+hash_free(struct htable * h, void fn(void * const))
 {
 	if (!h) {
 		return false;
@@ -199,6 +210,7 @@ hash_free(struct htable * h)
 		while (nptr) {
 			struct hnode * next = nptr->next;
 			free(nptr->key);
+			fn(nptr->value);
 			free(nptr);
 			nptr = next;
 		}
@@ -213,6 +225,9 @@ hash_free(struct htable * h)
 
 #include <assert.h>
 
+static void
+__get_value(const struct hnode * const, void * const);
+
 int
 main(int argc, char ** argv)
 {
@@ -223,32 +238,63 @@ main(int argc, char ** argv)
 
 	size_t size = 100;
 
-	int found_value = 0;
+	void * found_value = NULL;
+	int found_int = 0;
 
 	h = hash_init(size);
 	assert(h != NULL);
 
+
+	// blah => 5
+
 	const char * key1 = "blah";
-	int value1 = 5;
+	int * value1 = calloc(1, sizeof(int));
+	assert(value1 != NULL);
+	*value1 = 5;
 	assert(hash_set(h, key1, value1));
 
 	found_value = hash_get(h, key1);
-	printf("found %d\n", found_value);
-	assert(found_value == value1);
+	found_int = * (int *) found_value;
+	printf("found %d\n", found_int);
+	assert(found_int == *value1);
+
+
+	// blah2 => 10
 
 	const char * key2 = "blah2";
-	int value2 = 10;
+	int * value2 = calloc(1, sizeof(int));
+	assert(value2 != NULL);
+	*value2 = 10;
 	assert(hash_set(h, key2, value2));
 
 	found_value = hash_get(h, key2);
-	printf("found %d\n", found_value);
-	assert(found_value == value2);
+	found_int = * (int *) found_value;
+	printf("found %d\n", found_int);
+	assert(found_int == *value2);
 
 	found_value = hash_get(h, key1);
-	printf("found %d\n", found_value);
-	assert(found_value == value1);
+	found_int = * (int *) found_value;
+	printf("found %d\n", found_int);
+	assert(found_int == *value1);
 
-	assert(hash_free(h));
+
+	// Test hash_iterate
+	int i = -1;
+	hash_iterate(h, __get_value, &i);
+	// 10 happens to have highest hash.
+	assert(i == 10);
+
+	assert(hash_free(h, free));
+}
+
+static void
+__get_value(const struct hnode * const node, void * const p)
+{
+	int * value = node->value;
+
+	int * ret = p;
+
+	*ret = *value;
 }
 
 #endif

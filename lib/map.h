@@ -8,7 +8,7 @@ struct hnode;
 
 struct hnode {
 	char * key;
-	int value;
+	void * value;
 	struct hnode * next;
 };
 
@@ -24,19 +24,21 @@ int
 hasher(const char * const, const size_t);
 
 bool
-hash_set(const struct htable * const, const char * const, const int);
+hash_set(const struct htable * const, const char * const,
+		void * const);
 
-int
+void *
 hash_get(const struct htable * const, const char * const);
 
 bool
-hash_delete(const struct htable * const, const char * const);
+hash_delete(const struct htable * const, const char * const,
+		void (void * const));
 
 bool
 hash_iterate(const struct htable * const,
-		void * (const struct hnode * const));
+		void (const struct hnode * const, void * const), void * const);
 
 bool
-hash_free(struct htable *);
+hash_free(struct htable *, void (void * const));
 
 #endif

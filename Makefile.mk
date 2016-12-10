@@ -2,7 +2,7 @@ CC=gcc
 
 # Reviewed warnings for gcc 6.2.1
 CFLAGS = \
-	-std=c11 -O1 -g -ggdb -pedantic -pedantic-errors \
+	-std=c11 -g -ggdb -pedantic -pedantic-errors \
 	-Werror -Wall -Wextra \
 	-Wformat=2 \
 	-Wformat-signedness \

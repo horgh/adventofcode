@@ -1,16 +1,32 @@
 // for strdup
 #define _XOPEN_SOURCE 500
 
+#ifdef MAP_DEBUG
+#include <errno.h>
+#endif
 #include "map.h"
+#include "siphash24.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <string.h>
 
+#define USE_SIP_HASH
+
+#define SIP_KEY_LEN 16
+
+const uint8_t sip_key[SIP_KEY_LEN] = {
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+	0x08, 0x09, 0x0A, 0x0B, 0x0C, 0X0D, 0x0E, 0x0F
+};
+
+static int
+__hasher(const char * const, const size_t);
 static bool
-__hash_set(const struct htable * const, const int,
+__hash_set(struct htable * const, const int,
 		const void * const, const size_t, void * const);
+static void
+__hash_counter(const struct hnode * const, void * const);
 
 struct htable *
 hash_init(const size_t n)
@@ -31,14 +47,87 @@ hash_init(const size_t n)
 	return h;
 }
 
+// Copy the hash table.
+//
+// We make copies of everything except values.
+struct htable *
+hash_copy(const struct htable * const h)
+{
+	if (!h) {
+		return NULL;
+	}
+
+	struct htable * const h2 = calloc(1, sizeof(struct htable));
+	if (!h2) {
+		return NULL;
+	}
+
+	h2->size = h->size;
+
+	h2->nodes = calloc(h2->size, sizeof(struct htable *));
+	if (!h2->nodes) {
+		hash_free(h2, NULL);
+		return NULL;
+	}
+
+	for (size_t i = 0; i < h->size; i++) {
+		const struct hnode * nptr = *(h->nodes+i);
+		struct hnode * nptr2 = NULL;
+
+		while (nptr) {
+			// Copy the node.
+
+			struct hnode * node = calloc(1, sizeof(struct hnode));
+			if (!node) {
+				hash_free(h2, NULL);
+				return NULL;
+			}
+
+			node->key = calloc(1, nptr->key_size);
+			if (!node->key) {
+				hash_free(h2, NULL);
+				free(node);
+				return NULL;
+			}
+			memcpy(node->key, nptr->key, nptr->key_size);
+
+			node->key_size = nptr->key_size;
+
+			node->value = nptr->value;
+
+			// Hook it in.
+
+			if (nptr2) {
+				nptr2->next = node;
+			} else {
+				h2->nodes[i] = node;
+			}
+			nptr2 = node;
+
+			nptr = nptr->next;
+		}
+	}
+
+	return h2;
+}
+
 __attribute__((pure))
-int
-hasher(const char * const key, const size_t n)
+static int
+__hasher(const char * const key, const size_t n)
 {
 	if (!key || strlen(key) == 0) {
 		return 0;
 	}
 
+	int actual_hash = 0;
+
+#ifdef USE_SIP_HASH
+	uint64_t hash = 0;
+	siphash((uint8_t *) &hash, (const uint8_t *) key, (uint64_t) strlen(key)+1, sip_key);
+
+	actual_hash = (int) hash % (int) n;
+	actual_hash = abs(actual_hash);
+#else
 	int hash = 0;
 	const int mult = 31;
 
@@ -47,7 +136,8 @@ hasher(const char * const key, const size_t n)
 	}
 	hash = abs(hash);
 
-	int actual_hash = hash%(int)n;
+	actual_hash = hash%(int)n;
+#endif
 
 #ifdef TEST_MAP
 	printf("%s hashes to %d\n", key, actual_hash);
@@ -57,20 +147,32 @@ hasher(const char * const key, const size_t n)
 }
 
 bool
-hash_set(const struct htable * const h, const char * const key,
+hash_set(struct htable * const h, const char * const key,
 		void * const value)
 {
 	if (!h || !key || strlen(key) == 0) {
+#ifdef MAP_DEBUG
+		printf("hash_set: %s\n", strerror(EINVAL));
+		if (!h) {
+			printf("hash_set: hash argument missing\n");
+		}
+		if (!key) {
+			printf("hash_set: key argument missing\n");
+		}
+		if (strlen(key) == 0) {
+			printf("hash_set: key is blank\n");
+		}
+#endif
 		return false;
 	}
 
-	int hash = hasher(key, h->size);
+	int hash = __hasher(key, h->size);
 
 	return __hash_set(h, hash, key, strlen(key)+1, value);
 }
 
 bool
-hash_set_i(const struct htable * const h, const int key, void * const value)
+hash_set_i(struct htable * const h, const int key, void * const value)
 {
 	if (!h) {
 		return false;
@@ -82,10 +184,13 @@ hash_set_i(const struct htable * const h, const int key, void * const value)
 }
 
 static bool
-__hash_set(const struct htable * const h, const int hash,
+__hash_set(struct htable * const h, const int hash,
 		const void * const key, const size_t key_size, void * const value)
 {
 	if (!h || !key) {
+#ifdef MAP_DEBUG
+		printf("__hash_set: %s\n", strerror(EINVAL));
+#endif
 		return false;
 	}
 
@@ -116,6 +221,7 @@ __hash_set(const struct htable * const h, const int hash,
 
 	while (nptr) {
 		if (strcmp(nptr->key, key) == 0) {
+			// TODO: Likely memory leak here. Need to clean up what we clobber.
 			nptr->value = value;
 			return true;
 		}
@@ -123,6 +229,13 @@ __hash_set(const struct htable * const h, const int hash,
 		prev = nptr;
 		nptr = nptr->next;
 	}
+
+	h->collisions++;
+#ifdef MAP_DEBUG
+	if (h->collisions % 100 == 0) {
+		printf("collisions %zu...\n", h->collisions);
+	}
+#endif
 
 	nptr = calloc(1, sizeof(struct hnode));
 	if (!nptr) {
@@ -152,7 +265,7 @@ hash_get(const struct htable * const h, const char * const key)
 		return NULL;
 	}
 
-	int hash = hasher(key, h->size);
+	int hash = __hasher(key, h->size);
 
 	struct hnode * nptr = h->nodes[hash];
 
@@ -167,20 +280,47 @@ hash_get(const struct htable * const h, const char * const key)
 	return NULL;
 }
 
+__attribute__((pure))
 bool
-hash_delete(const struct htable * const h, const char * const key,
+hash_has_key(const struct htable * const h, const char * const key)
+{
+	if (!h || !key || strlen(key) == 0) {
+		return false;
+	}
+
+	int hash = __hasher(key, h->size);
+
+	struct hnode * nptr = h->nodes[hash];
+
+	while (nptr) {
+		if (strcmp(nptr->key, key) == 0) {
+			return true;
+		}
+
+		nptr = nptr->next;
+	}
+
+	return false;
+}
+
+bool
+hash_delete(struct htable * const h, const char * const key,
 		void fn(void * const))
 {
 	if (!h || !key || strlen(key) == 0) {
 		return false;
 	}
 
-	int hash = hasher(key, h->size);
+	int hash = __hasher(key, h->size);
 
 	struct hnode * nptr = *(h->nodes+hash);
 
 	if (!nptr) {
 		return false;
+	}
+
+	if (nptr->next) {
+		h->collisions--;
 	}
 
 	struct hnode * prev = NULL;
@@ -189,15 +329,25 @@ hash_delete(const struct htable * const h, const char * const key,
 		if (strcmp(nptr->key, key) == 0) {
 			if (prev) {
 				prev->next = nptr->next;
+
 				free(nptr->key);
-				fn(nptr->value);
+
+				if (fn) {
+					fn(nptr->value);
+				}
+
 				free(nptr);
 				return true;
 			}
 
 			h->nodes[hash] = nptr->next;
+
 			free(nptr->key);
-			fn(nptr->value);
+
+			if (fn) {
+				fn(nptr->value);
+			}
+
 			free(nptr);
 			return true;
 		}
@@ -209,6 +359,9 @@ hash_delete(const struct htable * const h, const char * const key,
 	return false;
 }
 
+// Retrieve all keys in the hash.
+//
+// Free the returned memory with hash_free_keys().
 void * *
 hash_get_keys(const struct htable * const h)
 {
@@ -245,7 +398,14 @@ hash_get_keys(const struct htable * const h)
 				keys = new_keys;
 			}
 
-			keys[keys_i] = nptr->key;
+			void * key = calloc(1, nptr->key_size);
+			if (!key) {
+				hash_free_keys(keys);
+				return NULL;
+			}
+			memcpy(key, nptr->key, nptr->key_size);
+
+			keys[keys_i] = key;
 			keys_i++;
 
 			nptr = nptr->next;
@@ -253,6 +413,20 @@ hash_get_keys(const struct htable * const h)
 	}
 
 	return keys;
+}
+
+void
+hash_free_keys(void * * const keys)
+{
+	if (!keys) {
+		return;
+	}
+
+	for (size_t i = 0; keys[i]; i++) {
+		free(keys[i]);
+	}
+
+	free(keys);
 }
 
 // p gets passed to each node. You can use it to carry around state.
@@ -276,6 +450,27 @@ hash_iterate(const struct htable * const h,
 	return true;
 }
 
+__attribute__((pure))
+int
+hash_count_elements(const struct htable * const h)
+{
+	int i = 0;
+	if (!hash_iterate(h, __hash_counter, &i)) {
+		return -1;
+	}
+	return i;
+}
+
+static void
+__hash_counter(const struct hnode * const h, void * const p)
+{
+	(void) h;
+
+	int * i = p;
+
+	*i += 1;
+}
+
 bool
 hash_free(struct htable * h, void fn(void * const))
 {
@@ -283,20 +478,32 @@ hash_free(struct htable * h, void fn(void * const))
 		return false;
 	}
 
-	for (size_t i = 0; i < h->size; i++) {
-		struct hnode * nptr = *(h->nodes+i);
+	if (h->nodes) {
+		for (size_t i = 0; i < h->size; i++) {
+			struct hnode * nptr = *(h->nodes+i);
 
-		while (nptr) {
-			struct hnode * next = nptr->next;
-			free(nptr->key);
-			fn(nptr->value);
-			free(nptr);
-			nptr = next;
+			while (nptr) {
+				struct hnode * next = nptr->next;
+
+				if (nptr->key) {
+					free(nptr->key);
+				}
+
+				if (fn) {
+					fn(nptr->value);
+				}
+
+				free(nptr);
+
+				nptr = next;
+			}
 		}
+
+		free(h->nodes);
 	}
 
-	free(h->nodes);
 	free(h);
+
 	return true;
 }
 
@@ -365,14 +572,36 @@ main(int argc, char ** argv)
 
 
 	// Test hash_get_keys
-	void * * keys = hash_get_keys(h);
+	void * * const keys = hash_get_keys(h);
 
 	for (size_t j = 0; keys[j]; j++) {
 		const char * const key = keys[j];
 		printf("key: %s\n", key);
 	}
 
-	free(keys);
+	hash_free_keys(keys);
+
+
+	// Test hash_count_elements
+	assert(hash_count_elements(h) == 2);
+
+	assert(hash_delete(h, "blah2", free));
+	assert(hash_count_elements(h) == 1);
+
+
+	// Test hash_has_key
+	assert(hash_has_key(h, "blah"));
+	assert(!hash_has_key(h, "blah2"));
+
+
+	// Test hash_copy
+	struct htable * h2 = hash_copy(h);
+	assert(h2 != NULL);
+	assert(hash_count_elements(h2) == hash_count_elements(h));
+	assert(hash_has_key(h2, "blah"));
+	assert(!hash_has_key(h2, "blah2"));
+	assert(hash_free(h2, NULL));
+
 
 	assert(hash_free(h, free));
 }

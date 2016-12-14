@@ -46,7 +46,8 @@ CFLAGS = \
 	-Wstack-protector
 
 # Assume all .c files correspond to a program to build.
-TARGETS=$(patsubst %.c,%,$(wildcard *.c))
+TARGETS_ALL=$(patsubst %.c,%,$(wildcard *.c))
+TARGETS=$(filter-out siphash24, $(TARGETS_ALL))
 
 all: $(TARGETS)
 

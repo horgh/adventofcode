@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <map.h>
+#include <queue.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,6 +18,8 @@
 //#define INPUT_SAMPLE
 //#define INPUT_PART1
 #define INPUT_PART2
+
+// Now define what each input is.
 
 #ifdef INPUT_SIMPLE
 #define ELEMENT_COUNT 1
@@ -64,18 +67,9 @@ struct Floor {
 	size_t num_microchips;
 };
 
-struct QueueElement;
-
-struct QueueElement {
+struct FloorsAndCost {
 	struct Floor * * floors;
-	struct QueueElement * next;
-	struct QueueElement * previous;
 	int cost;
-};
-
-struct Queue {
-	struct QueueElement * first;
-	struct QueueElement * last;
 };
 
 static void
@@ -109,12 +103,8 @@ __is_finished(struct Floor * const * const);
 static void
 __enqueue(struct Queue * const, struct Floor * * const,
 		const int);
-static struct QueueElement *
-__dequeue(struct Queue * const);
 static void
-__destroy_queue(struct Queue *);
-static void
-__destroy_queue_element(struct QueueElement *);
+__destroy_floors_and_cost(void *);
 
 int
 main(const int argc, const char * const * const argv)
@@ -432,16 +422,16 @@ __solve_bfs(struct Floor * * const floors)
 	assert(visited);
 
 	while (queue->first) {
-		struct QueueElement * const qe = __dequeue(queue);
-		assert(qe != NULL);
+		struct FloorsAndCost * const fac = dequeue(queue);
+		assert(fac != NULL);
 
-		struct Floor * * const current_floors = qe->floors;
+		struct Floor * * const current_floors = fac->floors;
 
 		char * const floors_str = __floors_to_str(current_floors);
 		assert(floors_str != NULL);
 
 		if (hash_has_key(visited, floors_str)) {
-			__destroy_queue_element(qe);
+			__destroy_floors_and_cost(fac);
 			free(floors_str);
 			continue;
 		}
@@ -451,15 +441,15 @@ __solve_bfs(struct Floor * * const floors)
 
 		// Is this a solution?
 		if (__is_finished(current_floors)) {
-			const int cost = qe->cost;
-			__destroy_queue(queue);
-			__destroy_queue_element(qe);
+			const int cost = fac->cost;
+			destroy_queue(queue, __destroy_floors_and_cost);
+			__destroy_floors_and_cost(fac);
 			assert(hash_free(visited, NULL));
 			return cost;
 		}
 
 		// Find the current floor.
-		// TODO: We could keep this in QueueElement.
+		// TODO: We could keep this in FloorsAndCost.
 		struct Floor * current_floor = NULL;
 		for (size_t i = 0; i < FLOOR_COUNT; i++) {
 			if (current_floors[i]->elevator) {
@@ -475,20 +465,20 @@ __solve_bfs(struct Floor * * const floors)
 		if (current_floor->number != FLOOR_COUNT-1) {
 			struct Floor * const next_floor = current_floors[current_floor->number+1];
 			__get_moves_bfs(queue, current_floors, current_floor, next_floor,
-					qe->cost+1);
+					fac->cost+1);
 		}
 
 		// Down moves
 		if (current_floor->number != 0) {
 			struct Floor * const next_floor = current_floors[current_floor->number-1];
 			__get_moves_bfs(queue, current_floors, current_floor, next_floor,
-					qe->cost+1);
+					fac->cost+1);
 		}
 
-		__destroy_queue_element(qe);
+		__destroy_floors_and_cost(fac);
 	}
 
-	__destroy_queue(queue);
+	destroy_queue(queue, __destroy_floors_and_cost);
 	assert(hash_free(visited, NULL));
 	return -1;
 }
@@ -756,71 +746,29 @@ static void
 __enqueue(struct Queue * const queue, struct Floor * * const floors,
 		const int cost)
 {
-	struct QueueElement * const qe = calloc(1, sizeof(struct QueueElement));
-	assert(qe != NULL);
+	struct FloorsAndCost * fac = calloc(1, sizeof(struct FloorsAndCost));
+	assert(fac != NULL);
 
-	qe->floors = __copy_floors(floors);
+	fac->floors = __copy_floors(floors);
+	assert(fac->floors != NULL);
 
-	qe->cost = cost;
+	fac->cost = cost;
 
-	if (!queue->first) {
-		queue->first = qe;
-		queue->last = qe;
-		return;
-	}
-
-	queue->last->next = qe;
-	qe->previous = queue->last;
-	queue->last = qe;
-}
-
-static struct QueueElement *
-__dequeue(struct Queue * const queue)
-{
-	if (!queue->first) {
-		return NULL;
-	}
-
-	struct QueueElement * const qe = queue->first;
-
-	// This is only element.
-	if (qe->next == NULL) {
-		queue->first = NULL;
-		queue->last = NULL;
-		return qe;
-	}
-
-	// There are more.
-	queue->first = qe->next;
-	queue->first->previous = NULL;
-
-	return qe;
+	assert(enqueue(queue, fac));
 }
 
 static void
-__destroy_queue(struct Queue * queue)
+__destroy_floors_and_cost(void * p)
 {
-	if (!queue) {
+	if (!p) {
 		return;
 	}
 
-	struct QueueElement * qe = queue->first;
-	while (qe) {
-		struct QueueElement * qn = qe->next;
-		__destroy_queue_element(qe);
-		qe = qn;
+	struct FloorsAndCost * fac = p;
+
+	if (fac->floors) {
+		__destroy_floors(fac->floors);
 	}
 
-	free(queue);
-}
-
-static void
-__destroy_queue_element(struct QueueElement * qe)
-{
-	if (!qe) {
-		return;
-	}
-
-	__destroy_floors(qe->floors);
-	free(qe);
+	free(fac);
 }

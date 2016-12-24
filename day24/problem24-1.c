@@ -24,7 +24,6 @@ struct Position {
 struct Target {
 	int x;
 	int y;
-	bool visited;
 };
 
 enum Location {WALL, OPEN, TARGET};

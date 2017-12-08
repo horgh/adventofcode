@@ -369,6 +369,8 @@ hash_get_keys(const struct htable * const h)
 		return NULL;
 	}
 
+	// It's possible this is not sufficiently large if we have any collisions.
+	// Possibly we could calculate exactly the size we need ahead of time.
 	size_t array_size = h->size;
 
 	void * * keys = calloc(array_size, sizeof(void *));
@@ -384,15 +386,17 @@ hash_get_keys(const struct htable * const h)
 		while (nptr) {
 			// Terminate with null at end always.
 			if (keys_i == array_size-1) {
+				// TODO: overflow
 				size_t new_array_size = array_size*2;
 
-				void * * const new_keys = realloc(keys, new_array_size);
+				// TODO: overflow?
+				void * * const new_keys = realloc(keys, new_array_size*sizeof(void *));
 				if (!new_keys) {
 					free(keys);
 					return NULL;
 				}
 
-				memset(new_keys+array_size, 0, array_size);
+				memset(new_keys+array_size, 0, array_size*sizeof(void *));
 
 				array_size = new_array_size;
 				keys = new_keys;
@@ -513,6 +517,8 @@ hash_free(struct htable * h, void fn(void * const))
 
 static void
 __get_value(const struct hnode * const, void * const);
+static void
+test_hash_get_keys(void);
 
 int
 main(int argc, char ** argv)
@@ -604,6 +610,8 @@ main(int argc, char ** argv)
 
 
 	assert(hash_free(h, free));
+
+	test_hash_get_keys();
 }
 
 static void
@@ -614,6 +622,38 @@ __get_value(const struct hnode * const node, void * const p)
 	int * ret = p;
 
 	*ret = *value;
+}
+
+static void
+test_hash_get_keys(void)
+{
+	{
+		// Test reallocation logic. This happens when we have to reallocate the key
+		// array due to not having created a large enough one up front. We can
+		// cause this by ensuring we have a collision as the initial size of the
+		// keys array is based on the hash size.
+
+		size_t const size = 1;
+		struct htable * const h = hash_init(size);
+		assert(h != NULL);
+
+		char const * const key0 = "abc";
+		assert(hash_set(h, key0, NULL));
+
+		char const * const key1 = "def";
+		assert(hash_set(h, key1, NULL));
+
+		void * * const keys = hash_get_keys(h);
+		assert(keys != NULL);
+
+		assert(strcmp(keys[0], "abc") == 0);
+		assert(strcmp(keys[1], "def") == 0);
+		assert(keys[2] == NULL);
+
+		hash_free_keys(keys);
+
+		assert(hash_free(h, NULL));
+	}
 }
 
 #endif

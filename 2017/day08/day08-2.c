@@ -80,12 +80,14 @@ int main(int const argc, char const * const * const argv)
 			if (!v) {
 				fprintf(stderr, "calloc(): %s\n", strerror(errno));
 				hash_free(h, free);
+				instruction_destroy(instr);
 				return 1;
 			}
 
 			if (!hash_set(h, instr->cond_reg, v)) {
 				fprintf(stderr, "hash_set()\n");
 				hash_free(h, free);
+				instruction_destroy(instr);
 				free(v);
 				return 1;
 			}
@@ -95,10 +97,12 @@ int main(int const argc, char const * const * const argv)
 		if (!reg_val) {
 			fprintf(stderr, "hash_get(cond_reg=%s)\n", instr->cond_reg);
 			hash_free(h, free);
+			instruction_destroy(instr);
 			return 1;
 		}
 
 		if (!cond(instr, *reg_val)) {
+			instruction_destroy(instr);
 			continue;
 		}
 
@@ -107,12 +111,14 @@ int main(int const argc, char const * const * const argv)
 			if (!v) {
 				fprintf(stderr, "calloc(): %s\n", strerror(errno));
 				hash_free(h, free);
+				instruction_destroy(instr);
 				return 1;
 			}
 
 			if (!hash_set(h, instr->reg, v)) {
 				fprintf(stderr, "hash_set()\n");
 				hash_free(h, free);
+				instruction_destroy(instr);
 				free(v);
 				return 1;
 			}
@@ -122,6 +128,7 @@ int main(int const argc, char const * const * const argv)
 		if (!val) {
 			fprintf(stderr, "hash_get(reg=%s)\n", instr->reg);
 			hash_free(h, free);
+			instruction_destroy(instr);
 			return 1;
 		}
 
@@ -132,6 +139,7 @@ int main(int const argc, char const * const * const argv)
 		} else {
 			fprintf(stderr, "unhandled instruction\n");
 			hash_free(h, free);
+			instruction_destroy(instr);
 			return 1;
 		}
 
@@ -139,12 +147,15 @@ int main(int const argc, char const * const * const argv)
 		if (current_largest == -1) {
 			fprintf(stderr, "get_largest_value_in_registers()\n");
 			hash_free(h, free);
+			instruction_destroy(instr);
 			return 1;
 		}
 
 		if (current_largest > largest) {
 			largest = current_largest;
 		}
+
+		instruction_destroy(instr);
 	}
 
 	if (!hash_free(h, free)) {

@@ -1,6 +1,4 @@
-#include <ctype.h>
 #include <errno.h>
-#include <map.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,7 +24,7 @@ int main(int const argc, char const * const * const argv)
 	if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
 		fprintf(stderr, "fgets(): %s\n", strerror(errno));
 		return 1;
-    }
+	}
 
 	struct Score * const score = get_score(buf, 0);
 	printf("%d\n", score->score);
@@ -65,13 +63,14 @@ get_score(char const * const s, int const cur)
 		}
 
 		if (*score->s == '<') {
+			score->s++;
 			while (1) {
 				if (*score->s == '!') {
 					score->s++;
 					score->s++;
 					continue;
 				}
-				if (*score->s== '>') {
+				if (*score->s == '>') {
 					score->s++;
 					break;
 				}

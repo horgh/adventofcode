@@ -147,6 +147,9 @@ __hasher(const char * const key, const size_t n)
 	return actual_hash;
 }
 
+// Set the key to the value.
+//
+// We make a copy of the key.
 bool
 hash_set(struct htable * const h, const char * const key,
 		void * const value)

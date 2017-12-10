@@ -1,21 +1,4 @@
-include ../Makefile.mk
-
-.PHONY: test
-
-CFLAGS+=-I../lib
-
-../lib/siphash.o:
-	$(CC) -std=c11 -g -ggdb -c -o ../lib/siphash.o ../lib/siphash.c
-
-day08-1: day08-1.c \
-	../lib/map.c ../lib/map.h \
-	../lib/siphash.o
-	$(CC) $(CFLAGS) -o $@ $< ../lib/map.c ../lib/siphash.o
-
-day08-2: day08-2.c \
-	../lib/map.c ../lib/map.h \
-	../lib/siphash.o
-	$(CC) $(CFLAGS) -o $@ $< ../lib/map.c ../lib/siphash.o
+include ../problems.mk
 
 test: $(TARGETS)
 	./day08-1 < input-sample-1 > got

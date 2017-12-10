@@ -1,7 +1,17 @@
 include ../Makefile.mk
 
+all: hash libadvent.a map queue
+
+clean:
+	rm -f hash libadvent.a map queue *.o
+
 hash: hash.c hash.c
 	$(CC) $(CFLAGS) -DTEST_HASH -o $@ $< -lssl -lcrypto
+
+libadvent.a: hash.o map.o queue.o siphash.o
+	rm -f $@
+	ar r $@ hash.o map.o queue.o siphash.o
+	ranlib $@
 
 map: map.c map.h siphash.o
 	$(CC) $(CFLAGS) -DTEST_MAP -o $@ $< siphash.o

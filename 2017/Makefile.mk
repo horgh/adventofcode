@@ -51,7 +51,7 @@ CFLAGS = \
 
 # Assume all .c files correspond to a program to build.
 TARGETS_ALL=$(patsubst %.c,%,$(wildcard *.c))
-TARGETS=$(filter-out siphash24, $(TARGETS_ALL))
+TARGETS=$(filter-out siphash, $(TARGETS_ALL))
 
 all: $(TARGETS)
 
@@ -62,4 +62,4 @@ all: $(TARGETS)
 $(TARGETS): %: %.c
 
 clean:
-	rm -f $(TARGETS)
+	rm -f $(TARGETS) *.o

@@ -42,7 +42,6 @@ CFLAGS = \
 	-Wmissing-prototypes \
 	-Wmissing-declarations \
 	-Wpacked \
-	-Wpadded \
 	-Wredundant-decls \
 	-Wnested-externs \
 	-Winline \

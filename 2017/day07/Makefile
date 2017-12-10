@@ -4,18 +4,18 @@ include ../Makefile.mk
 
 CFLAGS+=-I../lib
 
-../lib/siphash24.o:
-	$(CC) -std=c11 -g -ggdb -c -o ../lib/siphash24.o ../lib/siphash24.c
+../lib/siphash.o:
+	$(CC) -std=c11 -g -ggdb -c -o ../lib/siphash.o ../lib/siphash24.c
 
 day07-1: day07-1.c \
 	../lib/map.c ../lib/map.h \
-	../lib/siphash24.o
-	$(CC) $(CFLAGS) -o $@ $< ../lib/map.c ../lib/siphash24.o
+	../lib/siphash.o
+	$(CC) $(CFLAGS) -o $@ $< ../lib/map.c ../lib/siphash.o
 
 day07-2: day07-2.c \
 	../lib/map.c ../lib/map.h \
-	../lib/siphash24.o
-	$(CC) $(CFLAGS) -o $@ $< ../lib/map.c ../lib/siphash24.o
+	../lib/siphash.o
+	$(CC) $(CFLAGS) -o $@ $< ../lib/map.c ../lib/siphash.o
 
 test: $(TARGETS)
 	./day07-1 < input-sample-1 > got

@@ -1,6 +1,4 @@
-include ../Makefile.mk
-
-.PHONY: test
+include ../problems.mk
 
 test: $(TARGETS)
 	./1 5 < input-sample-1 > got

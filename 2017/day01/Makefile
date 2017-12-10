@@ -1,8 +1,6 @@
-include ../Makefile.mk
+include ../problems.mk
 
-.PHONY: test
-
-test:
+test: $(TARGETS)
 	echo 1122 | ./day01-1 > got
 	echo 1111 | ./day01-1 >> got
 	echo 1234 | ./day01-1 >> got

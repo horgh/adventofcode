@@ -1,8 +1,4 @@
-include ../Makefile.mk
-
-.PHONY: test
-
-CFLAGS+=-I../lib
+include ../problems.mk
 
 test: $(TARGETS)
 	./day05-1 < input-sample-1 > got

@@ -1,8 +1,6 @@
-include ../Makefile.mk
+include ../problems.mk
 
-.PHONY: test
-
-test:
+test: $(TARGETS)
 	echo 1 | ./day03-1 > got
 	echo 0 > expected
 	diff -u got expected

@@ -1,8 +1,6 @@
-include ../Makefile.mk
+include ../problems.mk
 
-.PHONY: test
-
-test:
+test: $(TARGETS)
 	./day02-1 < input-sample-1 > got
 	diff -u got output-sample-1
 	rm got

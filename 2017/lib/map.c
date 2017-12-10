@@ -5,7 +5,7 @@
 #include <errno.h>
 #endif
 #include "map.h"
-#include "siphash24.h"
+#include "siphash.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -123,7 +123,8 @@ __hasher(const char * const key, const size_t n)
 
 #ifdef USE_SIP_HASH
 	uint64_t hash = 0;
-	siphash((uint8_t *) &hash, (const uint8_t *) key, (uint64_t) strlen(key)+1, sip_key);
+	siphash((uint8_t const * const) key, (uint64_t) strlen(key)+1, sip_key,
+			(uint8_t *) &hash, 8);
 
 	actual_hash = (int) hash % (int) n;
 	actual_hash = abs(actual_hash);

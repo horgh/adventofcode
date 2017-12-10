@@ -169,6 +169,7 @@ int main(void)
 	destroy_queue(q, free);
 
 
-	return 1;
+	return 0;
 }
+
 #endif

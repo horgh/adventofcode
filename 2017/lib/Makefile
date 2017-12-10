@@ -1,5 +1,7 @@
 include ../Makefile.mk
 
+.PHONY: test
+
 all: hash libadvent.a map queue
 
 clean:
@@ -21,3 +23,8 @@ queue: queue.c queue.h
 
 siphash.o: siphash.c siphash.h
 	$(CC) -c -o $@ $<
+
+test: hash map queue
+	./hash
+	./map
+	./queue

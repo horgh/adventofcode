@@ -184,7 +184,7 @@ hash_set_i(struct htable * const h, const int key, void * const value)
 
 	int hash = abs(key) % (int) h->size;
 
-	return __hash_set(h, hash, &key, sizeof(key), value);
+	return __hash_set(h, hash, &key, sizeof(int), value);
 }
 
 static bool
@@ -285,6 +285,28 @@ hash_get(const struct htable * const h, const char * const key)
 }
 
 __attribute__((pure))
+void *
+hash_get_i(struct htable const * const h, int const key)
+{
+	if (!h) {
+		return NULL;
+	}
+
+	int const hash = abs(key) % (int) h->size;
+	struct hnode const * nptr = h->nodes[hash];
+	while (nptr) {
+		int const key2 = *((int *) nptr->key);
+		if (key2 == key) {
+			return nptr->value;
+		}
+
+		nptr = nptr->next;
+	}
+
+	return NULL;
+}
+
+__attribute__((pure))
 bool
 hash_has_key(const struct htable * const h, const char * const key)
 {
@@ -298,6 +320,28 @@ hash_has_key(const struct htable * const h, const char * const key)
 
 	while (nptr) {
 		if (strcmp(nptr->key, key) == 0) {
+			return true;
+		}
+
+		nptr = nptr->next;
+	}
+
+	return false;
+}
+
+__attribute__((pure))
+bool
+hash_has_key_i(struct htable const * const h, int const key)
+{
+	if (!h) {
+		return false;
+	}
+
+	int const hash = abs(key) % (int) h->size;
+	struct hnode const * nptr = h->nodes[hash];
+	while (nptr) {
+		int const key2 = *((int *) nptr->key);
+		if (key2 == key) {
 			return true;
 		}
 
@@ -523,6 +567,8 @@ static void
 __get_value(const struct hnode * const, void * const);
 static void
 test_hash_get_keys(void);
+static void
+test_int_keys(void);
 
 int
 main(int argc, char ** argv)
@@ -616,6 +662,7 @@ main(int argc, char ** argv)
 	assert(hash_free(h, free));
 
 	test_hash_get_keys();
+	test_int_keys();
 }
 
 static void
@@ -658,6 +705,21 @@ test_hash_get_keys(void)
 
 		assert(hash_free(h, NULL));
 	}
+}
+
+static void
+test_int_keys(void)
+{
+	struct htable * const h = hash_init(1024);
+	assert(h != NULL);
+
+	assert(!hash_has_key_i(h, 1));
+	assert(hash_set_i(h, 1, (void *) true));
+	assert(hash_has_key_i(h, 1));
+	void const * const v = hash_get_i(h, 1);
+	bool const v2 = (bool) v;
+	assert(v2  == true);
+	assert(hash_free(h, NULL));
 }
 
 #endif

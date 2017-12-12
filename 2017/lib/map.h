@@ -38,8 +38,14 @@ hash_set_i(struct htable * const, const int, void * const);
 void *
 hash_get(const struct htable * const, const char * const);
 
+void *
+hash_get_i(struct htable const * const, int const);
+
 bool
 hash_has_key(const struct htable * const, const char * const);
+
+bool
+hash_has_key_i(struct htable const * const, int const);
 
 bool
 hash_delete(struct htable * const, const char * const,

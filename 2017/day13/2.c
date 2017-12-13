@@ -26,6 +26,10 @@ scanners_print(struct scanner * * const,
 static struct scanner * *
 scanners_copy(struct scanner * * const,
 		size_t const);
+static void
+scanners_copy_shallow(struct scanner * * const,
+		struct scanner * * const,
+		size_t const);
 static int
 run(struct scanner * * const, size_t const);
 static void
@@ -64,26 +68,27 @@ int main(int const argc, char const * const * const argv)
 		scanners_print(scanners, num_scanners);
 	}
 
+	struct scanner * * const scanners2 = scanners_copy(scanners, num_scanners);
+	if (!scanners2) {
+		scanners_destroy(scanners, num_scanners);
+		return 1;
+	}
+
 	int t = 0;
 	while (1) {
-		struct scanner * * const scanners2 = scanners_copy(scanners, num_scanners);
-		if (!scanners2) {
-			scanners_destroy(scanners, num_scanners);
-			return 1;
-		}
+		scanners_copy_shallow(scanners2, scanners, num_scanners);
 
 		int const severity = run(scanners2, num_scanners);
 		if (severity == 0) {
-			scanners_destroy(scanners2, num_scanners);
 			break;
 		}
-		scanners_destroy(scanners2, num_scanners);
 
 		move_scanners(scanners, num_scanners);
 		t++;
 	}
 
 	scanners_destroy(scanners, num_scanners);
+	scanners_destroy(scanners2, num_scanners);
 
 	printf("%d\n", t);
 	return 0;
@@ -185,6 +190,25 @@ scanners_copy(struct scanner * * const scanners,
 	}
 
 	return scanners_copy;
+}
+
+static void
+scanners_copy_shallow(struct scanner * * const scanners_target,
+		struct scanner * * const scanners_source,
+		size_t const num_scanners)
+{
+	for (size_t i = 0; i < num_scanners; i++) {
+		struct scanner * const sc0 = scanners_source[i];
+		if (!sc0) {
+			continue;
+		}
+
+		struct scanner * const sc1 = scanners_target[i];
+		sc1->range     = sc0->range;
+		sc1->depth     = sc0->depth;
+		sc1->index     = sc0->index;
+		sc1->direction = sc0->direction;
+	}
 }
 
 static int

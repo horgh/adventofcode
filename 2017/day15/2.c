@@ -28,8 +28,8 @@ main(int const argc, char const * const * const argv)
 	uint64_t a_previous = a_start;
 	uint64_t b_previous = b_start;
 
-	uint64_t a_multiple = 4;
-	uint64_t b_multiple = 8;
+	uint64_t const a_multiple = 4;
+	uint64_t const b_multiple = 8;
 
 	int const n = 5000000;
 	int count = 0;

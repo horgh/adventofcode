@@ -1,8 +1,6 @@
 #include "map.h"
 
-#ifdef MAP_DEBUG
 #include <errno.h>
-#endif
 #include "siphash.h"
 #include <stdbool.h>
 #include <stdio.h>
@@ -190,9 +188,7 @@ __hash_set(struct htable * const h, const int hash,
 		const void * const key, const size_t key_size, void * const value)
 {
 	if (!h || !key) {
-#ifdef MAP_DEBUG
-		printf("__hash_set: %s\n", strerror(EINVAL));
-#endif
+		fprintf(stderr, "__hash_set: %s\n", strerror(EINVAL));
 		return false;
 	}
 

@@ -67,7 +67,7 @@ hash_copy(struct htable const * const h)
 	}
 
 	for (size_t i = 0; i < h->size; i++) {
-		const struct hnode * nptr = *(h->nodes+i);
+		struct hnode const * nptr = *(h->nodes+i);
 		struct hnode * nptr2 = NULL;
 
 		while (nptr) {
@@ -147,7 +147,7 @@ __hasher(char const * const key, size_t const n)
 //
 // We make a copy of the key.
 bool
-hash_set(struct htable * const h, const char * const key,
+hash_set(struct htable * const h, char const * const key,
 		void * const value)
 {
 	if (!h || !key || strlen(key) == 0) {
@@ -166,13 +166,13 @@ hash_set(struct htable * const h, const char * const key,
 		return false;
 	}
 
-	int hash = __hasher(key, h->size);
+	int const hash = __hasher(key, h->size);
 
 	return __hash_set(h, hash, key, strlen(key)+1, value);
 }
 
 bool
-hash_set_i(struct htable * const h, const int key, void * const value)
+hash_set_i(struct htable * const h, int const key, void * const value)
 {
 	if (!h) {
 		return false;
@@ -257,15 +257,15 @@ __hash_set(struct htable * const h, int const hash,
 
 __attribute__((pure))
 void *
-hash_get(const struct htable * const h, const char * const key)
+hash_get(struct htable const * const h, char const * const key)
 {
 	if (!h || !key || strlen(key) == 0) {
 		return NULL;
 	}
 
-	int hash = __hasher(key, h->size);
+	int const hash = __hasher(key, h->size);
 
-	struct hnode * nptr = h->nodes[hash];
+	struct hnode const * nptr = h->nodes[hash];
 
 	while (nptr) {
 		if (strcmp(nptr->key, key) == 0) {
@@ -302,15 +302,15 @@ hash_get_i(struct htable const * const h, int const key)
 
 __attribute__((pure))
 bool
-hash_has_key(const struct htable * const h, const char * const key)
+hash_has_key(struct htable const * const h, char const * const key)
 {
 	if (!h || !key || strlen(key) == 0) {
 		return false;
 	}
 
-	int hash = __hasher(key, h->size);
+	int const hash = __hasher(key, h->size);
 
-	struct hnode * nptr = h->nodes[hash];
+	struct hnode const * nptr = h->nodes[hash];
 
 	while (nptr) {
 		if (strcmp(nptr->key, key) == 0) {

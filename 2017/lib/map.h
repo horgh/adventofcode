@@ -31,20 +31,20 @@ struct htable *
 hash_copy(struct htable const * const);
 
 bool
-hash_set(struct htable * const, const char * const,
+hash_set(struct htable * const, char const * const,
 		void * const);
 
 bool
-hash_set_i(struct htable * const, const int, void * const);
+hash_set_i(struct htable * const, int const, void * const);
 
 void *
-hash_get(const struct htable * const, const char * const);
+hash_get(const struct htable * const, char const * const);
 
 void *
 hash_get_i(struct htable const * const, int const);
 
 bool
-hash_has_key(const struct htable * const, const char * const);
+hash_has_key(struct htable const * const, char const * const);
 
 bool
 hash_has_key_i(struct htable const * const, int const);

@@ -2,6 +2,6 @@
 #define _HASH_H
 
 unsigned char *
-md5(const char * const);
+md5(char const * const);
 
 #endif

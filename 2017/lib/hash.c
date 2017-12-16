@@ -6,7 +6,7 @@
 #include <string.h>
 
 unsigned char *
-md5(const char * const s)
+md5(char const * const s)
 {
 	if (!s) {
 		fprintf(stderr, "md5: %s\n", strerror(EINVAL));

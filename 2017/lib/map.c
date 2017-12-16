@@ -17,10 +17,10 @@ const uint8_t sip_key[SIP_KEY_LEN] = {
 };
 
 static int
-__hasher(const char * const, const size_t);
+__hasher(char const * const, size_t const);
 static bool
-__hash_set(struct htable * const, const int,
-		const void * const, const size_t, void * const);
+__hash_set(struct htable * const, int const,
+		void const * const, size_t const, void * const);
 static void
 __hash_counter(const struct hnode * const, void * const);
 
@@ -109,7 +109,7 @@ hash_copy(const struct htable * const h)
 
 __attribute__((pure))
 static int
-__hasher(const char * const key, const size_t n)
+__hasher(char const * const key, size_t const n)
 {
 	if (!key || strlen(key) == 0) {
 		return 0;
@@ -126,7 +126,7 @@ __hasher(const char * const key, const size_t n)
 	actual_hash = abs(actual_hash);
 #else
 	int hash = 0;
-	const int mult = 31;
+	int const mult = 31;
 
 	for (size_t i = 0; i < strlen(key); i++) {
 		hash += mult*hash+key[i];
@@ -184,8 +184,8 @@ hash_set_i(struct htable * const h, const int key, void * const value)
 }
 
 static bool
-__hash_set(struct htable * const h, const int hash,
-		const void * const key, const size_t key_size, void * const value)
+__hash_set(struct htable * const h, int const hash,
+		void const * const key, size_t const key_size, void * const value)
 {
 	if (!h || !key) {
 		fprintf(stderr, "__hash_set: %s\n", strerror(EINVAL));

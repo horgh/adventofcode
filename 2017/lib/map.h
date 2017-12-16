@@ -50,23 +50,23 @@ bool
 hash_has_key_i(struct htable const * const, int const);
 
 bool
-hash_delete(struct htable * const, const char * const,
-		void (void * const));
+hash_delete(struct htable * const, char const * const,
+		void (void *));
 
 void * *
-hash_get_keys(const struct htable * const);
+hash_get_keys(struct htable const * const);
 
 void
 hash_free_keys(void * * const);
 
 bool
-hash_iterate(const struct htable * const,
-		void (const struct hnode * const, void * const), void * const);
+hash_iterate(struct htable const * const,
+		void (struct hnode const * const, void * const), void * const);
 
 int
-hash_count_elements(const struct htable * const);
+hash_count_elements(struct htable const * const);
 
 bool
-hash_free(struct htable *, void (void * const));
+hash_free(struct htable * const, void (void * const));
 
 #endif

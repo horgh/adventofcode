@@ -346,14 +346,14 @@ hash_has_key_i(struct htable const * const h, int const key)
 }
 
 bool
-hash_delete(struct htable * const h, const char * const key,
+hash_delete(struct htable * const h, char const * const key,
 		void fn(void * const))
 {
 	if (!h || !key || strlen(key) == 0) {
 		return false;
 	}
 
-	int hash = __hasher(key, h->size);
+	int const hash = __hasher(key, h->size);
 
 	struct hnode * nptr = *(h->nodes+hash);
 
@@ -405,7 +405,7 @@ hash_delete(struct htable * const h, const char * const key,
 //
 // Free the returned memory with hash_free_keys().
 void * *
-hash_get_keys(const struct htable * const h)
+hash_get_keys(struct htable const * const h)
 {
 	if (!h) {
 		return NULL;
@@ -429,7 +429,7 @@ hash_get_keys(const struct htable * const h)
 			// Terminate with null at end always.
 			if (keys_i == array_size-1) {
 				// TODO: overflow
-				size_t new_array_size = array_size*2;
+				size_t const new_array_size = array_size*2;
 
 				// TODO: overflow?
 				void * * const new_keys = realloc(keys, new_array_size*sizeof(void *));
@@ -444,7 +444,7 @@ hash_get_keys(const struct htable * const h)
 				keys = new_keys;
 			}
 
-			void * key = calloc(1, nptr->key_size);
+			void * const key = calloc(1, nptr->key_size);
 			if (!key) {
 				hash_free_keys(keys);
 				return NULL;
@@ -477,15 +477,15 @@ hash_free_keys(void * * const keys)
 
 // p gets passed to each node. You can use it to carry around state.
 bool
-hash_iterate(const struct htable * const h,
-		void fn(const struct hnode * const, void * const), void * const p)
+hash_iterate(struct htable const * const h,
+		void fn(struct hnode const * const, void * const), void * const p)
 {
 	if (!h || !fn) {
 		return false;
 	}
 
 	for (size_t i = 0; i < h->size; i++) {
-		const struct hnode * nptr = *(h->nodes+i);
+		struct hnode const * nptr = *(h->nodes+i);
 
 		while (nptr) {
 			fn(nptr, p);
@@ -498,7 +498,7 @@ hash_iterate(const struct htable * const h,
 
 __attribute__((pure))
 int
-hash_count_elements(const struct htable * const h)
+hash_count_elements(struct htable const * const h)
 {
 	int i = 0;
 	if (!hash_iterate(h, __hash_counter, &i)) {
@@ -518,7 +518,7 @@ __hash_counter(struct hnode const * const h, void * const p)
 }
 
 bool
-hash_free(struct htable * h, void fn(void * const))
+hash_free(struct htable * const h, void fn(void * const))
 {
 	if (!h) {
 		return false;

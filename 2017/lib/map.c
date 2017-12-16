@@ -178,7 +178,7 @@ hash_set_i(struct htable * const h, const int key, void * const value)
 		return false;
 	}
 
-	int hash = abs(key) % (int) h->size;
+	int const hash = abs(key) % (int) h->size;
 
 	return __hash_set(h, hash, &key, sizeof(int), value);
 }
@@ -565,7 +565,7 @@ static void
 test_int_keys(void);
 
 int
-main(int argc, char ** argv)
+main(int const argc, char const * const * const argv)
 {
 	(void) argc;
 	(void) argv;

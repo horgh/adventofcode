@@ -1,10 +1,8 @@
-// for strdup
-#define _XOPEN_SOURCE 500
+#include "map.h"
 
 #ifdef MAP_DEBUG
 #include <errno.h>
 #endif
-#include "map.h"
 #include "siphash.h"
 #include <stdbool.h>
 #include <stdio.h>

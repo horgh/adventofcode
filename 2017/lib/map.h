@@ -25,10 +25,10 @@ struct htable {
 };
 
 struct htable *
-hash_init(const size_t);
+hash_init(size_t const);
 
 struct htable *
-hash_copy(const struct htable * const);
+hash_copy(struct htable const * const);
 
 bool
 hash_set(struct htable * const, const char * const,

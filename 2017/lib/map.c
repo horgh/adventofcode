@@ -22,12 +22,12 @@ static bool
 __hash_set(struct htable * const, int const,
 		void const * const, size_t const, void * const);
 static void
-__hash_counter(const struct hnode * const, void * const);
+__hash_counter(struct hnode const * const, void * const);
 
 struct htable *
-hash_init(const size_t n)
+hash_init(size_t const n)
 {
-	struct htable * h = calloc(1, sizeof(struct htable));
+	struct htable * const h = calloc(1, sizeof(struct htable));
 	if (!h)  {
 		return NULL;
 	}
@@ -47,7 +47,7 @@ hash_init(const size_t n)
 //
 // We make copies of everything except values.
 struct htable *
-hash_copy(const struct htable * const h)
+hash_copy(struct htable const * const h)
 {
 	if (!h) {
 		return NULL;
@@ -508,11 +508,11 @@ hash_count_elements(const struct htable * const h)
 }
 
 static void
-__hash_counter(const struct hnode * const h, void * const p)
+__hash_counter(struct hnode const * const h, void * const p)
 {
 	(void) h;
 
-	int * i = p;
+	int * const i = p;
 
 	*i += 1;
 }

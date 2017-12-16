@@ -218,7 +218,7 @@ __hash_set(struct htable * const h, const int hash,
 	struct hnode * prev = NULL;
 
 	while (nptr) {
-		if (strcmp(nptr->key, key) == 0) {
+		if (memcmp(nptr->key, key, key_size) == 0) {
 			// TODO: Likely memory leak here. Need to clean up what we clobber.
 			nptr->value = value;
 			return true;

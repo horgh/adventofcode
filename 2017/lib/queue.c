@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 static void
-__destroy_queue_element(struct QueueElement *, void (void * const));
+__destroy_queue_element(struct QueueElement * const, void (void * const));
 
 bool
 enqueue(struct Queue * const queue, void * const data)
@@ -55,7 +55,7 @@ dequeue(struct Queue * const queue)
 }
 
 void
-destroy_queue(struct Queue * queue, void fn(void * const))
+destroy_queue(struct Queue * const queue, void fn(void * const))
 {
 	if (!queue) {
 		return;
@@ -90,7 +90,6 @@ __destroy_queue_element(struct QueueElement * qe, void fn(void * const))
 #ifdef TEST_QUEUE
 
 #include <assert.h>
-#include <stdio.h>
 
 int main(void)
 {

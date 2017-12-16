@@ -707,13 +707,23 @@ test_int_keys(void)
 	struct htable * const h = hash_init(1024);
 	assert(h != NULL);
 
-	assert(!hash_has_key_i(h, 1));
-	assert(hash_set_i(h, 1, (void *) true));
-	assert(hash_has_key_i(h, 1));
-	void const * const v = hash_get_i(h, 1);
-	bool const v2 = (bool) v;
-	assert(v2  == true);
-	assert(hash_free(h, NULL));
+	for (int i = 0; i < 102400; i++) {
+		assert(!hash_has_key_i(h, i));
+
+		int * const j = calloc(1, sizeof(int));
+		assert(j != NULL);
+		*j = i;
+
+		assert(hash_set_i(h, i, j));
+
+		assert(hash_has_key_i(h, i));
+
+		void const * const v = hash_get_i(h, i);
+		int const j2 = *((int const *) v);
+		assert(j2 == i);
+	}
+
+	assert(hash_free(h, free));
 }
 
 #endif

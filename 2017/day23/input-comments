@@ -1,0 +1,92 @@
+set b 57
+set c b
+jnz a 2
+jnz 1 5
+
+# It's these 4 that get us stuck. We skipped them when a was 0.
+mul b 100
+sub b -100000
+set c b
+sub c -17000
+
+# We run the above only once and end up with:
+# a=1
+# b=105700
+# c=122700
+
+# This is where we jump if we hit the jnz 1 -23 at the end.
+set f 1
+set d 2
+
+	# This is where we jump when we hit the jnz g -13.
+	set e 2
+
+		# This is where jnz g -8 goes. So from here to jnz g -8 we loop. What is the
+		# exit condition? How many times do we loop each time?
+		#
+		# In this loop: g, e, and f change.
+
+		# set g=2
+		set g d
+		# set g = 2*e. e starts as 2 but increases by 1 each time through this loop.
+		mul g e
+		# set g = g - b ... what's b?
+		sub g b
+		jnz g 2
+		set f 0
+		sub e -1
+		set g e
+
+		# g would have to be 105700 to become 0 as b is 105700.
+		# Actually, b increases by 17 each time in the outer loop.
+		sub g b
+		jnz g -8
+
+  # at this point:
+	# a=1
+	# b=?? but it goes up
+	# c=122700
+	# d=?? but it's been going up
+	# e=?? but it goes up
+	# f=0 I think
+	# g=0
+	# h=?? but it goes up
+
+  # d starts at 2, but given loop it continually increases.
+	sub d -1
+	set g d
+	sub g b
+
+	# It's here we get stuck.
+	#
+	# In order to get past the next jump, b would have to be 1 so that g became 0.
+	#
+	# Or b could be something big and negative and g could be something big and
+	# negative prior to subtracting b from it.
+	jnz g -13
+
+# How many times do we run the next? This is like an outer loop.
+
+# at this point:
+# a=1
+# b=?? but it's the same as d in order to exit loop
+# c=122700
+# d=?? but it's been increasing, and it's same as b in order to exit loop
+# e=?? but it's been increasing
+# f=0 (I think but not sure) Actually it can't be 0 or h would end as 0
+# g=0 (because to reach here it must be)
+# h=increasing
+
+jnz f 2
+# h++
+sub h -1
+set g b
+
+# g=b-122700=
+sub g c
+
+# We need g to be 0 to end the program.
+jnz g 2
+jnz 1 3
+sub b -17
+jnz 1 -23

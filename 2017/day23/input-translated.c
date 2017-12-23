@@ -6,7 +6,7 @@ int main(void)
 {
 	int64_t b = 105700;
 	int64_t d = 0;
-	int64_t e = 0;
+	//int64_t e = 0;
 	int64_t f = 0;
 	int64_t g = 0;
 	int64_t h = 0;
@@ -16,19 +16,25 @@ int main(void)
 		d = 2;
 
 		while (1) {
-			e = 2;
+			//e = 2;
 
-			while (1) {
-				g = d * e - b;
-				if (g == 0) {
-					f = 0;
-				}
-				e++;
+			//while (1) {
+			//	g = d * e - b;
+			//	if (g == 0) {
+			//		f = 0;
+			//	}
+			//	e++;
 
-				g = e - b;
-				if (g == 0) {
-					break;
-				}
+			//	g = e - b;
+			//	if (g == 0) {
+			//		break;
+			//	}
+			//}
+
+			// If d * e ever equals b, up until e == b - 1, then f = 0.
+
+			if (b % d == 0) {
+				f = 0;
 			}
 
 			d++;
@@ -44,7 +50,7 @@ int main(void)
 		}
 
 		g = b - 122700;
-		printf("%" PRId64 "... (h=%" PRId64 ", f=%" PRId64 ")\n", g, h, f);
+		//printf("%" PRId64 "... (h=%" PRId64 ", f=%" PRId64 ")\n", g, h, f);
 		if (g == 0) {
 			break;
 		}

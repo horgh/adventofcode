@@ -53,6 +53,9 @@ bool
 hash_delete(struct htable * const, char const * const,
 		void (void *));
 
+bool
+hash_delete_i(struct htable * const, int const, void (void * const));
+
 void * *
 hash_get_keys(struct htable const * const);
 

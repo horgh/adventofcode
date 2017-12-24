@@ -21,6 +21,13 @@ __hasher(char const * const, size_t const);
 static bool
 __hash_set(struct htable * const, int const,
 		void const * const, size_t const, void * const);
+static bool
+__hash_delete(
+		struct htable * const,
+		int const,
+		void const * const,
+		size_t const,
+		void (void * const));
 static void
 __hash_counter(struct hnode const * const, void * const);
 
@@ -354,7 +361,24 @@ hash_delete(struct htable * const h, char const * const key,
 	}
 
 	int const hash = __hasher(key, h->size);
+	return __hash_delete(h, hash, key, strlen(key)+1, fn);
+}
 
+bool
+hash_delete_i(struct htable * const h, int const key, void fn(void * const))
+{
+	int const hash = abs(key) % (int) h->size;
+	return __hash_delete(h, hash, &key, sizeof(int), fn);
+}
+
+static bool
+__hash_delete(
+		struct htable * const h,
+		int const hash,
+		void const * const key,
+		size_t const key_size,
+		void fn(void * const))
+{
 	struct hnode * nptr = *(h->nodes+hash);
 
 	if (!nptr) {
@@ -368,7 +392,7 @@ hash_delete(struct htable * const h, char const * const key,
 	struct hnode * prev = NULL;
 
 	while (nptr) {
-		if (strcmp(nptr->key, key) == 0) {
+		if (memcmp(nptr->key, key, key_size) == 0) {
 			if (prev) {
 				prev->next = nptr->next;
 
@@ -625,7 +649,7 @@ main(int const argc, char const * const * const argv)
 	void * * const keys = hash_get_keys(h);
 
 	for (size_t j = 0; keys[j]; j++) {
-		const char * const key = keys[j];
+		char const * const key = keys[j];
 		printf("key: %s\n", key);
 	}
 
@@ -721,6 +745,11 @@ test_int_keys(void)
 		void const * const v = hash_get_i(h, i);
 		int const j2 = *((int const *) v);
 		assert(j2 == i);
+
+		assert(hash_delete_i(h, i, free));
+
+		void const * const v2 = hash_get_i(h, i);
+		assert(v2 == NULL);
 	}
 
 	assert(hash_free(h, free));

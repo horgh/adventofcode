@@ -1,15 +1,8 @@
 #define _POSIX_C_SOURCE 200809L
 
-#include <ctype.h>
-#include <errno.h>
-#include <inttypes.h>
 #include <map.h>
-#include <queue.h>
-#include <stdbool.h>
 #include <stdio.h>
-#include <stdint.h>
 #include <stdlib.h>
-#include <string.h>
 
 int
 main(int const argc, char const * const * const argv)
@@ -25,19 +18,23 @@ main(int const argc, char const * const * const argv)
 			break;
 		}
 
-		char const * ptr = buf;
-		while (*ptr == '+') {
-			ptr++;
-		}
-
 		int const n = atoi(buf);
 		input[i++] = n;
 	}
 
 	struct htable * const h = hash_init(1024);
+	if (!h) {
+		fprintf(stderr, "hash_init()\n");
+		return 1;
+	}
 
 	int freq = 0;
-	hash_set_i(h, freq, NULL);
+	if (!hash_set_i(h, freq, NULL)) {
+		fprintf(stderr, "hash_set_i()\n");
+		hash_free(h, NULL);
+		return 1;
+	}
+
 	int j = 0;
 	while (1) {
 		int const val = input[j];
@@ -53,7 +50,16 @@ main(int const argc, char const * const * const argv)
 			break;
 		}
 
-		hash_set_i(h, freq, NULL);
+		if (!hash_set_i(h, freq, NULL)) {
+			fprintf(stderr, "hash_set_i()\n");
+			hash_free(h, NULL);
+			return 1;
+		}
+	}
+
+	if (!hash_free(h, NULL)) {
+		fprintf(stderr, "hash_free()\n");
+		return 1;
 	}
 
 	return 0;

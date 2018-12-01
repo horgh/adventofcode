@@ -1,5 +1,6 @@
 #define _POSIX_C_SOURCE 200809L
 
+#include <assert.h>
 #include <map.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,49 +19,32 @@ main(int const argc, char const * const * const argv)
 			break;
 		}
 
-		int const n = atoi(buf);
-		input[i++] = n;
+		input[i++] = atoi(buf);
 	}
 
 	struct htable * const h = hash_init(1024);
-	if (!h) {
-		fprintf(stderr, "hash_init()\n");
-		return 1;
-	}
+	assert(h != NULL);
 
 	int freq = 0;
-	if (!hash_set_i(h, freq, NULL)) {
-		fprintf(stderr, "hash_set_i()\n");
-		hash_free(h, NULL);
-		return 1;
-	}
+	assert(hash_set_i(h, freq, NULL));
 
 	int j = 0;
 	while (1) {
-		int const val = input[j];
+		freq += input[j];
 		j++;
 		if (j == i) {
 			j = 0;
 		}
 
-		freq += val;
-
 		if (hash_has_key_i(h, freq)) {
-			printf("%d\n", freq);
 			break;
 		}
 
-		if (!hash_set_i(h, freq, NULL)) {
-			fprintf(stderr, "hash_set_i()\n");
-			hash_free(h, NULL);
-			return 1;
-		}
+		assert(hash_set_i(h, freq, NULL));
 	}
 
-	if (!hash_free(h, NULL)) {
-		fprintf(stderr, "hash_free()\n");
-		return 1;
-	}
+	assert(hash_free(h, NULL));
 
+	printf("%d\n", freq);
 	return 0;
 }

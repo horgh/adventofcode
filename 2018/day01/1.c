@@ -16,8 +16,7 @@ main(int const argc, char const * const * const argv)
 			break;
 		}
 
-		int const n = atoi(buf);
-		freq += n;
+		freq += atoi(buf);
 	}
 
 	printf("%d\n", freq);

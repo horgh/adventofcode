@@ -1,8 +1,6 @@
 #define _POSIX_C_SOURCE 200809L
 
 #include <assert.h>
-#include <map.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,15 +34,19 @@ main(int const argc, char const * const * const argv)
 			if (diff != 1) {
 				continue;
 			}
-			printf("%s and %s\n", ids[i], ids[j]);
+
 			size_t const m = strlen(ids[i]);
 			for (size_t k = 0; k < m; k++) {
-				if (ids[i][k] == ids[j][k]) {
-					printf("%c", ids[i][k]);
+				if (ids[i][k] != ids[j][k]) {
+					continue;
 				}
+				printf("%c", ids[i][k]);
 			}
-			printf("\n");
 		}
+	}
+
+	for (int i = 0; i < n; i++) {
+		free(ids[i]);
 	}
 
 	return 0;

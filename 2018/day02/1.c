@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 static int
 count_occurrences(char const * const, char const);
@@ -26,7 +27,6 @@ main(int const argc, char const * const * const argv)
 		char const * ptr = buf;
 		bool has_two = false;
 		bool has_three = false;
-		//printf("%s\n", buf);
 		struct htable * const h = hash_init(1024);
 		assert(h != NULL);
 		while (*ptr != '\n' && *ptr != '\0') {
@@ -37,7 +37,6 @@ main(int const argc, char const * const * const argv)
 
 			int const count = count_occurrences(ptr, *ptr);
 			assert(hash_set_i(h, (int) *ptr, NULL));
-			//printf("%c occurs %d times\n", *ptr, count);
 			if (count == 2) {
 				has_two = true;
 				ptr++;

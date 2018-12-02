@@ -3,3 +3,6 @@
 *.o
 1
 2
+/lib/hash
+/lib/map
+/lib/queue

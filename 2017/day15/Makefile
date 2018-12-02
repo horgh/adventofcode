@@ -1,4 +1,4 @@
-include ../problems.mk
+include ../../problems.mk
 
 test: $(TARGETS)
 	./1 65 8921 > got

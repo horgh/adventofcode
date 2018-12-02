@@ -1,4 +1,4 @@
-include ../problems.mk
+include ../../problems.mk
 
 test: $(TARGETS)
 	echo 1 | ./day03-1 > got

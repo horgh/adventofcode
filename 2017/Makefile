@@ -1,5 +1,5 @@
 TARGETS_ALL=$(wildcard *)
-TARGETS=$(filter-out Makefile Makefile.mk problems.mk, $(TARGETS_ALL))
+TARGETS=$(filter-out Makefile, $(TARGETS_ALL))
 
 # https://stackoverflow.com/questions/11206500/compile-several-projects-with-makefile-but-stop-on-first-broken-build/11206700#11206700
 
@@ -13,4 +13,4 @@ $(TARGETS):
 
 clean:
 	@# We'll get this rebuilt due to it being a dependency
-	$(MAKE) -C lib clean
+	$(MAKE) -C ../lib clean

@@ -1,4 +1,4 @@
-include ../problems.mk
+include ../../problems.mk
 
 test: $(TARGETS)
 	./1 < input-sample-1 > got

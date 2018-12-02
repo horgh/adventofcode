@@ -1,4 +1,4 @@
-include ../problems.mk
+include ../../problems.mk
 
 #CFLAGS+=-Ofast
 

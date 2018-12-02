@@ -118,7 +118,8 @@ __attribute__((pure))
 static int
 __hasher(char const * const key, size_t const n)
 {
-	if (!key || strlen(key) == 0) {
+	size_t const len = strlen(key);
+	if (!key || len == 0) {
 		return 0;
 	}
 
@@ -126,7 +127,7 @@ __hasher(char const * const key, size_t const n)
 
 #ifdef USE_SIP_HASH
 	uint64_t hash = 0;
-	siphash((uint8_t const * const) key, (uint64_t) strlen(key)+1, sip_key,
+	siphash((uint8_t const * const) key, (uint64_t) len+1, sip_key,
 			(uint8_t *) &hash, 8);
 
 	actual_hash = (int) hash % (int) n;
@@ -135,7 +136,7 @@ __hasher(char const * const key, size_t const n)
 	int hash = 0;
 	int const mult = 31;
 
-	for (size_t i = 0; i < strlen(key); i++) {
+	for (size_t i = 0; i < len; i++) {
 		hash += mult*hash+key[i];
 	}
 	hash = abs(hash);
@@ -157,7 +158,8 @@ bool
 hash_set(struct htable * const h, char const * const key,
 		void * const value)
 {
-	if (!h || !key || strlen(key) == 0) {
+	size_t const len = strlen(key);
+	if (!h || !key || len == 0) {
 #ifdef MAP_DEBUG
 		printf("hash_set: %s\n", strerror(EINVAL));
 		if (!h) {
@@ -166,7 +168,7 @@ hash_set(struct htable * const h, char const * const key,
 		if (!key) {
 			printf("hash_set: key argument missing\n");
 		}
-		if (strlen(key) == 0) {
+		if (len == 0) {
 			printf("hash_set: key is blank\n");
 		}
 #endif
@@ -175,7 +177,7 @@ hash_set(struct htable * const h, char const * const key,
 
 	int const hash = __hasher(key, h->size);
 
-	return __hash_set(h, hash, key, strlen(key)+1, value);
+	return __hash_set(h, hash, key, len+1, value);
 }
 
 bool
@@ -356,12 +358,13 @@ bool
 hash_delete(struct htable * const h, char const * const key,
 		void fn(void * const))
 {
-	if (!h || !key || strlen(key) == 0) {
+	size_t const len = strlen(key);
+	if (!h || !key || len == 0) {
 		return false;
 	}
 
 	int const hash = __hasher(key, h->size);
-	return __hash_delete(h, hash, key, strlen(key)+1, fn);
+	return __hash_delete(h, hash, key, len+1, fn);
 }
 
 bool

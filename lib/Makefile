@@ -10,9 +10,9 @@ clean:
 hash: hash.c hash.c
 	$(CC) $(CFLAGS) -DTEST_HASH -o $@ $< -lssl -lcrypto
 
-libadvent.a: hash.o map.o queue.o siphash.o
+libadvent.a: hash.o map.o queue.o siphash.o util.o
 	rm -f $@
-	ar r $@ hash.o map.o queue.o siphash.o
+	ar r $@ hash.o map.o queue.o siphash.o util.o
 	ranlib $@
 
 map: map.c map.h siphash.o
@@ -21,10 +21,14 @@ map: map.c map.h siphash.o
 queue: queue.c queue.h
 	$(CC) $(CFLAGS) -DTEST_QUEUE -o $@ $<
 
+util: util.c util.h
+	$(CC) $(CFLAGS) -DTEST_UTIL -o $@ $<
+
 siphash.o: siphash.c siphash.h
 	$(CC) -c -o $@ $<
 
-test: hash map queue
+test: hash map queue util
 	./hash
 	./map
 	./queue
+	./util

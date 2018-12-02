@@ -135,7 +135,7 @@ __hasher(char const * const key, size_t const keylen, size_t const n)
 	int hash = 0;
 	int const mult = 31;
 
-	for (size_t i = 0; i < len; i++) {
+	for (size_t i = 0; i < keylen; i++) {
 		hash += mult*hash+key[i];
 	}
 	hash = abs(hash);
@@ -157,8 +157,8 @@ bool
 hash_set(struct htable * const h, char const * const key,
 		void * const value)
 {
-	size_t const len = strlen(key);
-	if (!h || !key || len == 0) {
+	size_t const keylen = strlen(key);
+	if (!h || !key || keylen == 0) {
 #ifdef MAP_DEBUG
 		printf("hash_set: %s\n", strerror(EINVAL));
 		if (!h) {
@@ -167,16 +167,16 @@ hash_set(struct htable * const h, char const * const key,
 		if (!key) {
 			printf("hash_set: key argument missing\n");
 		}
-		if (len == 0) {
+		if (keylen == 0) {
 			printf("hash_set: key is blank\n");
 		}
 #endif
 		return false;
 	}
 
-	int const hash = __hasher(key, len, h->size);
+	int const hash = __hasher(key, keylen, h->size);
 
-	return __hash_set(h, hash, key, len+1, value);
+	return __hash_set(h, hash, key, keylen+1, value);
 }
 
 bool
@@ -359,13 +359,13 @@ bool
 hash_delete(struct htable * const h, char const * const key,
 		void fn(void * const))
 {
-	size_t const len = strlen(key);
-	if (!h || !key || len == 0) {
+	size_t const keylen = strlen(key);
+	if (!h || !key || keylen == 0) {
 		return false;
 	}
 
-	int const hash = __hasher(key, len, h->size);
-	return __hash_delete(h, hash, key, len+1, fn);
+	int const hash = __hasher(key, keylen, h->size);
+	return __hash_delete(h, hash, key, keylen+1, fn);
 }
 
 bool

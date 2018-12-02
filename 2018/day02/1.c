@@ -1,10 +1,7 @@
 #define _POSIX_C_SOURCE 200809L
 
-#include <assert.h>
-#include <map.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 static int
@@ -27,29 +24,16 @@ main(int const argc, char const * const * const argv)
 		char const * ptr = buf;
 		bool has_two = false;
 		bool has_three = false;
-		struct htable * const h = hash_init(1024);
-		assert(h != NULL);
 		while (*ptr != '\n' && *ptr != '\0') {
-			if (hash_has_key_i(h, (int) *ptr)) {
-				ptr++;
-				continue;
-			}
-
-			int const count = count_occurrences(ptr, *ptr);
-			assert(hash_set_i(h, (int) *ptr, NULL));
+			int const count = count_occurrences(buf, *ptr);
 			if (count == 2) {
 				has_two = true;
-				ptr++;
-				continue;
 			}
 			if (count == 3) {
 				has_three = true;
-				ptr++;
-				continue;
 			}
 			ptr++;
 		}
-		assert(hash_free(h, NULL));
 		if (has_two) {
 			twos++;
 		}

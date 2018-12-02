@@ -478,7 +478,8 @@ __unscramble(const char * const * const instructions, const size_t count,
 		}
 
 		if (strcmp(s, password) == 0) {
-			printf("match: %s becomes %s\n", current, s);
+			//printf("match: %s becomes %s\n", current, s);
+			printf("%s\n", current);
 		//} else {
 		//	printf("no match: %s becomes %s\n", current, s);
 		}

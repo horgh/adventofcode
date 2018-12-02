@@ -1,6 +1,8 @@
-include ../Makefile.mk
+include ../../problems.mk
 
-CFLAGS+=-I../lib
-
-problem10-1: problem10-1.c ../lib/map.c ../lib/map.h
-	$(CC) $(CFLAGS) -I../lib -o $@ $< ../lib/map.c
+test: $(TARGETS)
+	./problem10-1 input10-1.txt > got
+	echo 157 > expected
+	echo 1085 >> expected
+	diff -ru got expected
+	rm got expected

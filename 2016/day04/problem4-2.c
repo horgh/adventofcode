@@ -222,7 +222,9 @@ __decrypt_room(const char * const buf, const int sector_id)
 		ptr++;
 	}
 
-	printf("%s (%d)\n", decrypted, sector_id);
+	if (strcmp(decrypted, "northpole object storage ") == 0) {
+		printf("%d\n", sector_id);
+	}
 	free(decrypted);
 	return true;
 }

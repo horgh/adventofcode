@@ -36,9 +36,9 @@ static bool
 __all_instructions_done(struct Instruction * const * const,
 		const size_t);
 static struct Bot *
-__find_bot(const struct htable * const, const int);
+__find_bot(struct htable * const, const int);
 static struct Bot *
-__add_bot(const struct htable * const, const int);
+__add_bot(struct htable * const, const int);
 static bool
 __bot_receive_chip(struct Bot * const, int);
 static void
@@ -46,17 +46,17 @@ __destroy_bin(void *);
 static void
 __print_bot(const struct hnode * const, void * const);
 static bool
-__bot_action(const struct htable * const, const struct htable *,
+__bot_action(struct htable * const, struct htable *,
 		const char * const);
 static bool
-__bot_give_chip_to(const struct htable * const,
-		const struct htable *, const struct Bot * const,
+__bot_give_chip_to(struct htable * const,
+		struct htable *, const struct Bot * const,
 		const enum ChipType, const char * const,
 		const int);
 static struct Bin *
-__find_bin(const struct htable * const, const int);
+__find_bin(struct htable * const, const int);
 static struct Bin *
-__add_bin(const struct htable * const, const int);
+__add_bin(struct htable * const, const int);
 static int
 __bin_get_first_chip(const struct Bin *);
 
@@ -156,7 +156,7 @@ main(const int argc, const char * const * const argv)
 
 			if (__bot_action(bots, output_bins, instruction->s)) {
 				instruction->done = true;
-				printf("=> Instruction complete: %s", instruction->s);
+				//printf("=> Instruction complete: %s", instruction->s);
 			}
 		}
 	}
@@ -244,7 +244,7 @@ __all_instructions_done(struct Instruction * const * const instructions,
 }
 
 static struct Bot *
-__find_bot(const struct htable * const bots, const int number)
+__find_bot(struct htable * const bots, const int number)
 {
 	char key[1024];
 	memset(key, 0, 1024);
@@ -255,7 +255,7 @@ __find_bot(const struct htable * const bots, const int number)
 }
 
 static struct Bot *
-__add_bot(const struct htable * const bots, const int number)
+__add_bot(struct htable * const bots, const int number)
 {
 	struct Bot * bot = calloc(1, sizeof(struct Bot));
 	if (!bot) {
@@ -287,14 +287,18 @@ __bot_receive_chip(struct Bot * const bot, int chip)
 		return false;
 	}
 
-	printf("bot %d receives chip %d\n", bot->number, chip);
+	//printf("bot %d receives chip %d\n", bot->number, chip);
 
 	if (bot->chip_low == -1) {
 		bot->chip_low = chip;
 		return true;
 	}
 
-	printf("bot %d comparing chip %d vs %d\n", bot->number, chip, bot->chip_low);
+	if ((chip == 17 && bot->chip_low == 61) ||
+			(bot->chip_low == 17 && chip == 61)) {
+		printf("%d\n", bot->number);
+	}
+	//printf("bot %d comparing chip %d vs %d\n", bot->number, chip, bot->chip_low);
 
 	if (chip < bot->chip_low) {
 		bot->chip_high = bot->chip_low;
@@ -327,12 +331,16 @@ __print_bot(const struct hnode * const node, void * const unused)
 
 	const struct Bot * const bot = node->value;
 
+	if (true) {
+		return;
+	}
+
 	printf("bot %d low: %d high: %d\n", bot->number, bot->chip_low,
 			bot->chip_high);
 }
 
 static bool
-__bot_action(const struct htable * const bots, const struct htable * output_bins,
+__bot_action(struct htable * const bots, struct htable * output_bins,
 		const char * const buf)
 {
 	// Bot starting out with a chip.
@@ -378,7 +386,7 @@ __bot_action(const struct htable * const bots, const struct htable * output_bins
 
 	struct Bot * const giver_bot = __find_bot(bots, bot_number);
 	if (!giver_bot) {
-		printf("giver bot not found (%d)\n", bot_number);
+		//printf("giver bot not found (%d)\n", bot_number);
 		return false;
 	}
 
@@ -386,8 +394,8 @@ __bot_action(const struct htable * const bots, const struct htable * output_bins
 	// we have both before trying to give any away.
 
 	if (giver_bot->chip_low == -1 || giver_bot->chip_high == -1) {
-		printf("bot %d wants to give away chips, but does not have 2\n",
-				giver_bot->number);
+		//printf("bot %d wants to give away chips, but does not have 2\n",
+		//		giver_bot->number);
 		return false;
 	}
 
@@ -407,8 +415,8 @@ __bot_action(const struct htable * const bots, const struct htable * output_bins
 		return false;
 	}
 
-	printf("bot %d gave away chips %d and %d\n", giver_bot->number,
-			giver_bot->chip_low, giver_bot->chip_high);
+	//printf("bot %d gave away chips %d and %d\n", giver_bot->number,
+	//		giver_bot->chip_low, giver_bot->chip_high);
 
 	giver_bot->chip_low = -1;
 	giver_bot->chip_high = -1;
@@ -417,8 +425,8 @@ __bot_action(const struct htable * const bots, const struct htable * output_bins
 }
 
 static bool
-__bot_give_chip_to(const struct htable * const bots,
-		const struct htable * output_bins, const struct Bot * const giver_bot,
+__bot_give_chip_to(struct htable * const bots,
+		struct htable * output_bins, const struct Bot * const giver_bot,
 		const enum ChipType chip_type, const char * const target_type,
 		const int target_number)
 {
@@ -481,7 +489,7 @@ __bot_give_chip_to(const struct htable * const bots,
 }
 
 static struct Bin *
-__find_bin(const struct htable * const bins, const int number)
+__find_bin(struct htable * const bins, const int number)
 {
 	char key[1024];
 	memset(key, 0, 1024);
@@ -492,7 +500,7 @@ __find_bin(const struct htable * const bins, const int number)
 }
 
 static struct Bin *
-__add_bin(const struct htable * const bins, const int number)
+__add_bin(struct htable * const bins, const int number)
 {
 	struct Bin * bin = calloc(1, sizeof(struct Bin));
 	if (!bin) {

@@ -98,7 +98,7 @@ main(const int argc, const char * const * const argv)
 		range->start = start;
 		range->end = end;
 
-		printf("read range %" PRIu64 " to %" PRIu64 "\n", range->start, range->end);
+		//printf("read range %" PRIu64 " to %" PRIu64 "\n", range->start, range->end);
 	}
 
 	if (fclose(fh) != 0) {

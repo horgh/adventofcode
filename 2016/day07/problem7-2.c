@@ -45,6 +45,7 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
+	int count = 0;
 	while (feof(fh) == 0) {
 		char buf[1024];
 		memset(buf, 0, sizeof(buf));
@@ -57,9 +58,7 @@ main(const int argc, const char * const * const argv)
 		}
 
 		if (__ipv7_supports_ssl(buf)) {
-			printf("SSL: %s\n", buf);
-		} else {
-			printf("No SSL: %s\n", buf);
+			count++;
 		}
 	}
 
@@ -68,6 +67,7 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
+	printf("%d\n", count);
 	return 0;
 }
 

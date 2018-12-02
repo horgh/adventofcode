@@ -16,8 +16,8 @@
 // Part 2 takes several minutes and up to ~7.3GiB memory.
 //#define INPUT_SIMPLE
 //#define INPUT_SAMPLE
-#define INPUT_PART1
-//#define INPUT_PART2
+//#define INPUT_PART1
+#define INPUT_PART2
 
 // Now define what each input is.
 

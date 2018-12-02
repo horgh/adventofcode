@@ -108,7 +108,7 @@ main(const int argc, const char * const * const argv)
 		range->start = start;
 		range->end = end;
 
-		printf("read range %" PRIu64 " to %" PRIu64 "\n", range->start, range->end);
+		//printf("read range %" PRIu64 " to %" PRIu64 "\n", range->start, range->end);
 	}
 
 	if (fclose(fh) != 0) {
@@ -146,14 +146,14 @@ static uint64_t
 __find_allowed(struct Range * * ranges, size_t ranges_sz)
 {
 	qsort(ranges, ranges_sz, sizeof(struct Range *), __sort_ranges);
-	printf("%zu ranges\n", ranges_sz);
+	//printf("%zu ranges\n", ranges_sz);
 	ranges = __combine_ranges(ranges, &ranges_sz);
-	printf("%zu ranges\n", ranges_sz);
+	//printf("%zu ranges\n", ranges_sz);
 
-	for (size_t i = 0; i < ranges_sz; i++) {
-		struct Range * const range = ranges[i];
-		printf("have range %" PRIu64 " to %" PRIu64 "\n", range->start, range->end);
-	}
+	//for (size_t i = 0; i < ranges_sz; i++) {
+	//	struct Range * const range = ranges[i];
+	//	printf("have range %" PRIu64 " to %" PRIu64 "\n", range->start, range->end);
+	//}
 
 	uint64_t allowed = 0;
 	for (size_t i = 0; i < ranges_sz-1; i++) {
@@ -163,11 +163,11 @@ __find_allowed(struct Range * * ranges, size_t ranges_sz)
 		if (range1->start > range0->end) {
 			allowed += range1->start - range0->end - 1;
 		}
-		printf("range0 %" PRIu64 " to %" PRIu64
-				" range1 %" PRIu64 " to %" PRIu64 " (%" PRIu64 ")\n",
-				range0->start, range0->end,
-				range1->start, range1->end,
-				allowed);
+		//printf("range0 %" PRIu64 " to %" PRIu64
+		//		" range1 %" PRIu64 " to %" PRIu64 " (%" PRIu64 ")\n",
+		//		range0->start, range0->end,
+		//		range1->start, range1->end,
+		//		allowed);
 	}
 
 	if (ranges[ranges_sz-1]->end < LAST_IP) {
@@ -214,9 +214,9 @@ __combine_ranges(struct Range * * ranges, size_t * ranges_sz)
 			struct Range * const range1 = ranges[i+1];
 
 			if (range0->start == range1->start) {
-				printf("combining: %" PRIu64 " to %" PRIu64
-						" and %" PRIu64 " to %" PRIu64 "\n", range0->start, range0->end,
-						range1->start, range1->end);
+				//printf("combining: %" PRIu64 " to %" PRIu64
+				//		" and %" PRIu64 " to %" PRIu64 "\n", range0->start, range0->end,
+				//		range1->start, range1->end);
 
 				if (range1->end > range0->end) {
 					range0->end = range1->end;
@@ -228,9 +228,9 @@ __combine_ranges(struct Range * * ranges, size_t * ranges_sz)
 			}
 
 			if (range0->end > range1->start) {
-				printf("combining: %" PRIu64 " to %" PRIu64
-						" and %" PRIu64 " to %" PRIu64 "\n", range0->start, range0->end,
-						range1->start, range1->end);
+				//printf("combining: %" PRIu64 " to %" PRIu64
+				//		" and %" PRIu64 " to %" PRIu64 "\n", range0->start, range0->end,
+				//		range1->start, range1->end);
 
 				if (range1->end > range0->end) {
 					range0->end = range1->end;

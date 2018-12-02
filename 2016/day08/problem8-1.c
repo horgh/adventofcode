@@ -23,11 +23,12 @@ __print_rect(bool * const * const, const size_t,
 int
 main(const int argc, const char * const * const argv)
 {
-	if (argc != 2) {
-		printf("Usage: %s <input file>\n", argv[0]);
+	if (argc != 3) {
+		printf("Usage: %s <input file> <print or not>\n", argv[0]);
 		return 1;
 	}
 	const char * const input_file = argv[1];
+	bool const should_print = strcmp(argv[2], "1") == 0;
 
 	FILE * const fh = fopen(input_file, "r");
 	if (!fh) {
@@ -74,8 +75,10 @@ main(const int argc, const char * const * const argv)
 		int matches = sscanf(buf, "rect %dx%d", &rect_width, &rect_height);
 		if (matches == 2) {
 			__draw_rect(screen, width, height, rect_width, rect_height);
-			printf("After applying %s:\n", buf);
-			__print_rect(screen, width, height);
+			if (false) {
+				printf("After applying %s:\n", buf);
+				__print_rect(screen, width, height);
+			}
 			continue;
 		}
 
@@ -84,8 +87,10 @@ main(const int argc, const char * const * const argv)
 		matches = sscanf(buf, "rotate row y=%d by %d", &row_y, &amount_y);
 		if (matches == 2) {
 			__rotate_row(screen, width, height, row_y, amount_y);
-			printf("After applying %s:\n", buf);
-			__print_rect(screen, width, height);
+			if (false) {
+				printf("After applying %s:\n", buf);
+				__print_rect(screen, width, height);
+			}
 			continue;
 		}
 
@@ -94,8 +99,10 @@ main(const int argc, const char * const * const argv)
 		matches = sscanf(buf, "rotate column x=%d by %d", &col_x, &amount_x);
 		if (matches == 2) {
 			__rotate_column(screen, width, height, col_x, amount_x);
-			printf("After applying %s:\n", buf);
-			__print_rect(screen, width, height);
+			if (false) {
+				printf("After applying %s:\n", buf);
+				__print_rect(screen, width, height);
+			}
 			continue;
 		}
 
@@ -120,9 +127,13 @@ main(const int argc, const char * const * const argv)
 		}
 	}
 
-	__destroy_screen(screen, width);
+	if (should_print) {
+		__print_rect(screen, width, height);
+	} else {
+		printf("%d\n", count);
+	}
 
-	printf("%d\n", count);
+	__destroy_screen(screen, width);
 
 	return 0;
 }

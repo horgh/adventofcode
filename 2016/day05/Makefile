@@ -1,7 +1,10 @@
-include ../Makefile.mk
+include ../../problems.mk
 
-problem5-1: problem5-1.c
-	$(CC) $(CFLAGS) -o $@ problem5-1.c -lssl -lcrypto
-
-problem5-2: problem5-2.c
-	$(CC) $(CFLAGS) -o $@ problem5-2.c -lssl -lcrypto
+test: $(TARGETS)
+	./problem5-1 ojvtpuvg > got
+	echo 4543c154 > expected
+	diff -ru got expected
+	./problem5-2 ojvtpuvg > got
+	echo 1050cbbd > expected
+	diff -ru got expected
+	rm got expected

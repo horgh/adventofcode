@@ -43,7 +43,7 @@ main(const int argc, const char * const * const argv)
 			return 1;
 		}
 
-		printf("%s %zu\n", uncompressed, strlen(uncompressed));
+		//printf("%s %zu\n", uncompressed, strlen(uncompressed));
 
 		for (size_t i = 0; i < strlen(uncompressed); i++) {
 			if (isspace(uncompressed[i])) {

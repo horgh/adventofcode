@@ -10,7 +10,7 @@ enum Direction { North, East, South, West, Unknown };
 enum Direction
 __decide_new_direction(const enum Direction, const char);
 bool
-__visit(const struct htable * const, const int, const int);
+__visit(struct htable * const, const int, const int);
 bool
 __have_visited(const struct htable * const, const int, const int);
 
@@ -60,7 +60,7 @@ main(const int argc, const char * const * const argv)
 		int steps = 0;
 
 		int matched = fscanf(fh, "%c%d, ", &dir, &steps);
-		printf("matched %d (%c %d)\n", matched, dir, steps);
+		//printf("matched %d (%c %d)\n", matched, dir, steps);
 		if (matched != 2) {
 			break;
 		}
@@ -123,7 +123,7 @@ DONE:
 	}
 
 	const int steps = abs(x) + abs(y);
-	printf("Steps: %d\n", steps);
+	printf("%d\n", steps);
 
 	return 0;
 }
@@ -178,7 +178,7 @@ __have_visited(const struct htable * const locations, const int x, const int y)
 }
 
 bool
-__visit(const struct htable * const locations, const int x, const int y)
+__visit(struct htable * const locations, const int x, const int y)
 {
 	char key[1024];
 	memset(key, 0, sizeof(key));

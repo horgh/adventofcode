@@ -16,14 +16,14 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 	const char * const input = argv[1];
-	printf("Input: %s\n", input);
+	//printf("Input: %s\n", input);
 
-	unsigned char * const hashtest = __md5(input);
-	printf("md5 of input: ");
-	for (int i = 0; i < 16; i++) {
-		printf("%02x", hashtest[i]);
-	}
-	printf("\n");
+	//unsigned char * const hashtest = __md5(input);
+	//printf("md5 of input: ");
+	//for (int i = 0; i < 16; i++) {
+	//	printf("%02x", hashtest[i]);
+	//}
+	//printf("\n");
 
 	size_t pwd_len = 8;
 
@@ -71,16 +71,16 @@ main(const int argc, const char * const * const argv)
 				password[pos] = raw[0];
 				chars_found[pos] = true;
 
-				printf("Character found. String index: %u Interesting byte: %s Hash index: %d Password so far: ",
-						i, raw, hash_index);
-				for (size_t j = 0; j < pwd_len; j++) {
-					if (chars_found[j]) {
-						printf("%c", password[j]);
-					} else {
-						printf("_");
-					}
-				}
-				printf("\n");
+				//printf("Character found. String index: %zu Interesting byte: %s Hash index: %d Password so far: ",
+				//		i, raw, hash_index);
+				//for (size_t j = 0; j < pwd_len; j++) {
+				//	if (chars_found[j]) {
+				//		printf("%c", password[j]);
+				//	} else {
+				//		printf("_");
+				//	}
+				//}
+				//printf("\n");
 				free(hash);
 				hash_index++;
 				break;
@@ -89,13 +89,13 @@ main(const int argc, const char * const * const argv)
 			free(hash);
 			hash_index++;
 
-			if (hash_index % 100000 == 0) {
-				printf("%d... (%u)\n", hash_index, i);
-			}
+			//if (hash_index % 100000 == 0) {
+			//	printf("%d... (%zu)\n", hash_index, i);
+			//}
 		}
 	}
 
-	printf("Password: %s\n", password);
+	printf("%s\n", password);
 	free(password);
 	free(chars_found);
 	return 0;

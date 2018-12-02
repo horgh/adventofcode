@@ -33,15 +33,15 @@ __destroy_locations(enum Location * * const);
 static int
 __shortest_tour(enum Location * * const,
 		struct Target * const, const size_t, const int,
-		const int);
+		const int, int const);
 static int
 __permute_targets(enum Location * * const,
 		struct Target * const, const size_t, const int,
 		const int, struct Target * const,
-		const size_t);
+		const size_t, int const);
 static int
 __tour(enum Location * * const, struct Target * const,
-		const size_t, const int, const int);
+		const size_t, const int, const int, int const);
 static int
 __shortest_path(enum Location * * const, const int,
 		const int, const int, const int);
@@ -53,11 +53,12 @@ __add_neighbours(enum Location * * const, struct Queue * const,
 
 int main(const int argc, const char * const * const argv)
 {
-	if (argc != 2) {
-		printf("Usage: %s <input file>\n", argv[0]);
+	if (argc != 3) {
+		printf("Usage: %s <input file> <part>\n", argv[0]);
 		return 1;
 	}
 	const char * const input_file = argv[1];
+	char const * const part = argv[2];
 
 	FILE * const fh = fopen(input_file, "r");
 	if (!fh) {
@@ -92,7 +93,7 @@ int main(const int argc, const char * const * const argv)
 	}
 
 	size_t height = 0;
-	size_t width = 0;
+	//size_t width = 0;
 
 	size_t targets_i = 0;
 
@@ -125,15 +126,15 @@ int main(const int argc, const char * const * const argv)
 				} else {
 					targets[targets_i].x = (int) i;
 					targets[targets_i].y = (int) height;
-					printf("found target %zu at %d,%d\n", targets_i, (int) i,
-							(int) height);
+					//printf("found target %zu at %d,%d\n", targets_i, (int) i,
+					//		(int) height);
 					targets_i++;
 				}
 				continue;
 			}
 
 			if (buf[i] == '\n') {
-				width = i;
+				//width = i;
 				continue;
 			}
 
@@ -154,22 +155,22 @@ int main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
-	for (size_t y = 0; y < height; y++) {
-		for (size_t x = 0; x < width; x++) {
-			if (locations[x][y] == WALL) {
-				printf("W");
-			} else if (locations[x][y] == TARGET) {
-				printf("T");
-			} else {
-				printf("O");
-			}
-		}
-		printf("\n");
-	}
+	//for (size_t y = 0; y < height; y++) {
+	//	for (size_t x = 0; x < width; x++) {
+	//		if (locations[x][y] == WALL) {
+	//			printf("W");
+	//		} else if (locations[x][y] == TARGET) {
+	//			printf("T");
+	//		} else {
+	//			printf("O");
+	//		}
+	//	}
+	//	printf("\n");
+	//}
 
-	printf("starting position is %d,%d\n", startx, starty);
+	//printf("starting position is %d,%d\n", startx, starty);
 	const int steps = __shortest_tour(locations, targets, targets_i, startx,
-			starty);
+			starty, atoi(part));
 	printf("%d\n", steps);
 
 	__destroy_locations(locations);
@@ -195,7 +196,7 @@ __destroy_locations(enum Location * * const locations)
 static int
 __shortest_tour(enum Location * * const locations,
 		struct Target * const targets, const size_t targets_sz, const int startx,
-		const int starty)
+		const int starty, int const part)
 {
 	struct Target * current_targets = calloc(targets_sz, sizeof(struct Target));
 	if (!current_targets) {
@@ -207,7 +208,7 @@ __shortest_tour(enum Location * * const locations,
 	// we've calculated it previously.
 
 	const int steps = __permute_targets(locations, targets, targets_sz,
-			startx, starty, current_targets, 0);
+			startx, starty, current_targets, 0, part);
 	free(current_targets);
 	return steps;
 }
@@ -217,7 +218,7 @@ static int
 __permute_targets(enum Location * * const locations,
 		struct Target * const targets, const size_t targets_sz, const int startx,
 		const int starty, struct Target * const current_targets,
-		const size_t current_targets_sz)
+		const size_t current_targets_sz, int const part)
 {
 	if (targets_sz == 0) {
 #ifdef DEBUG
@@ -225,7 +226,7 @@ __permute_targets(enum Location * * const locations,
 				current_targets_sz);
 #endif
 		return __tour(locations, current_targets, current_targets_sz, startx,
-				starty);
+				starty, part);
 	}
 
 	int steps = INT_MAX;
@@ -251,7 +252,8 @@ __permute_targets(enum Location * * const locations,
 		current_targets[current_targets_sz] = targets[i];
 
 		const int permutation_steps = __permute_targets(locations, new_targets,
-				targets_sz-1, startx, starty, current_targets, current_targets_sz+1);
+				targets_sz-1, startx, starty, current_targets, current_targets_sz+1,
+				part);
 		if (permutation_steps == -1) {
 			printf("__permute_targets\n");
 			free(new_targets);
@@ -270,7 +272,7 @@ __permute_targets(enum Location * * const locations,
 // Visit all targets in the given order and find the shortest path to do this.
 static int
 __tour(enum Location * * const locations, struct Target * const targets,
-		const size_t targets_sz, const int startx, const int starty)
+		const size_t targets_sz, const int startx, const int starty, int const part)
 {
 	int steps = 0;
 
@@ -291,13 +293,15 @@ __tour(enum Location * * const locations, struct Target * const targets,
 	}
 
 	// For part 2, we want to always return to our starting point.
-	const int path_steps = __shortest_path(locations, x, y, startx, starty);
-	if (path_steps == -1) {
-		printf("__shortest_path\n");
-		return -1;
-	}
+	if (part == 2) {
+		const int path_steps = __shortest_path(locations, x, y, startx, starty);
+		if (path_steps == -1) {
+			printf("__shortest_path\n");
+			return -1;
+		}
 
-	steps += path_steps;
+		steps += path_steps;
+	}
 
 	return steps;
 }

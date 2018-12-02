@@ -168,10 +168,12 @@ int main(const int argc, const char * const * const argv)
 
 	const size_t num_instructions = (size_t) instructions_index;
 
-	for (size_t i = 0; i < num_instructions; i++) {
-		const struct Instruction * const instruction = instructions+i;
-		printf("Parsed instruction: ");
-		__print_instruction(instruction);
+	if (0) {
+		for (size_t i = 0; i < num_instructions; i++) {
+			const struct Instruction * const instruction = instructions+i;
+			printf("Parsed instruction: ");
+			__print_instruction(instruction);
+		}
 	}
 
 

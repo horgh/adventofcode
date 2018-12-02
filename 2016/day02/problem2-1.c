@@ -26,7 +26,7 @@ main(void)
 		}
 
 		if (c == '\n') {
-			printf("%d\n", digit);
+			printf("%d", digit);
 			digit = 5;
 			continue;
 		}
@@ -44,6 +44,7 @@ main(void)
 		return 1;
 	}
 
+	printf("\n");
 	return 0;
 }
 

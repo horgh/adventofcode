@@ -37,13 +37,13 @@ main(const int argc, const char * const * const argv)
 static char *
 __fill_disk(const char * const input, const int wanted_length)
 {
-	printf("making output...\n");
+	//printf("making output...\n");
 	char * const output = __make_output(input, wanted_length);
 	assert(output != NULL);
 	output[wanted_length] = 0;
-	printf("output: %s length %zu\n", output, strlen(output));
+	//printf("output: %s length %zu\n", output, strlen(output));
 
-	printf("making checksum...\n");
+	//printf("making checksum...\n");
 	char * const checksum = __make_checksum(output, wanted_length);
 	free(output);
 
@@ -61,7 +61,7 @@ __make_output(const char * const input, const int wanted_length)
 	size_t len = strlen(output);
 
 	while (len < (size_t) wanted_length) {
-		printf("output %zu...\n", len);
+		//printf("output %zu...\n", len);
 
 		char * const b = __reverse(output);
 		assert(b != NULL);
@@ -136,7 +136,7 @@ __make_checksum(const char * const s, const int wanted_length)
 		j++;
 	}
 
-	printf("checksum %s (length %zu)\n", checksum, strlen(checksum));
+	//printf("checksum %s (length %zu)\n", checksum, strlen(checksum));
 	if (strlen(checksum) % 2 == 0) {
 		char * const new_checksum = __make_checksum(checksum, wanted_length);
 		free(checksum);

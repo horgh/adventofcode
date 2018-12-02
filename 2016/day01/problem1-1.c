@@ -33,7 +33,7 @@ main(const int argc, const char * const * const argv)
 		int steps = 0;
 
 		int matched = fscanf(fh, "%c%d, ", &dir, &steps);
-		printf("matched %d (%c %d)\n", matched, dir, steps);
+		//printf("matched %d (%c %d)\n", matched, dir, steps);
 		if (matched != 2) {
 			break;
 		}
@@ -67,7 +67,7 @@ main(const int argc, const char * const * const argv)
 	}
 
 	const int steps = abs(x) + abs(y);
-	printf("Steps: %d\n", steps);
+	printf("%d\n", steps);
 
 	return 0;
 }

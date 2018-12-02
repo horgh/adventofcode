@@ -45,19 +45,22 @@ main(const int argc, const char * const * const argv)
 	a[2] = 0xf0;
 	assert(__repeats_5_times(a, 3, 0x0f));
 
-	const size_t hash_sz = 16;
+	//const size_t hash_sz = 16;
 	size_t current_index = 0;
 
 	for (size_t i = 0; i < 64; i++) {
-		printf("generating key %zu...\n", i+1);
+		//printf("generating key %zu...\n", i+1);
 		unsigned char * const key = __generate_key(input, current_index,
 				&current_index);
-		printf("key %zu (index %zu): ", i, current_index);
-		current_index++;
-		for (size_t j = 0; j < hash_sz; j++) {
-			printf("%02x", key[j]);
+		//printf("key %zu (index %zu): ", i, current_index);
+		if (i == 63) {
+			printf("%zu\n", current_index);
 		}
-		printf("\n");
+		current_index++;
+		//for (size_t j = 0; j < hash_sz; j++) {
+		//	printf("%02x", key[j]);
+		//}
+		//printf("\n");
 		free(key);
 	}
 

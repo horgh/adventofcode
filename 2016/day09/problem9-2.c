@@ -46,7 +46,7 @@ main(const int argc, const char * const * const argv)
 			return 1;
 		}
 
-		printf("=> %s: %" PRIu64 "\n", buf, line_len);
+		//printf("=> %s: %" PRIu64 "\n", buf, line_len);
 
 		if (decompressed_len > UINT64_MAX - line_len) {
 			printf("overflow\n");
@@ -139,7 +139,7 @@ __calc_decompressed_length(const char * const buf)
 
 	free(s);
 
-	printf("...%s: %" PRIu64 "\n", buf, decompressed_len);
+	//printf("...%s: %" PRIu64 "\n", buf, decompressed_len);
 
 	return decompressed_len;
 }

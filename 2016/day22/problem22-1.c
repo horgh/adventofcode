@@ -184,10 +184,12 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
-	__print_nodes(nodes, i);
+	if (0) {
+		__print_nodes(nodes, i);
+	}
 
 	const int pairs = __count_pairs(nodes, i);
-	printf("pairs %d\n", pairs);
+	printf("%d\n", pairs);
 
 	struct Node * const top_right = __find_top_right_node(nodes, i);
 	if (!top_right) {
@@ -196,12 +198,14 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
-	printf("top right node: ");
-	__print_node(top_right);
+	if (0) {
+		printf("top right node: ");
+		__print_node(top_right);
+	}
 	top_right->goal = true;
 
 	const int steps = __solve(nodes, i);
-	printf("minimum steps: %d\n", steps);
+	printf("%d\n", steps);
 
 	free(nodes);
 	return 0;
@@ -309,7 +313,7 @@ __solve(struct Node * const nodes, const size_t sz)
 		}
 
 		if (__goal_is_here(step->nodes, sz)) {
-			printf("goal at 0,0\n");
+			//printf("goal at 0,0\n");
 			const int steps = step->steps;
 			destroy_queue(q, __destroy_step);
 			hash_free(visited, NULL);

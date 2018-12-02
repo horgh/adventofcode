@@ -50,24 +50,24 @@ main(const int argc, const char * const * const argv)
 	assert(test0 != NULL);
 	assert(strlen(test0) == 370);
 	free(test0);
-	printf("test0 done\n");
+	//printf("test0 done\n");
 
 	char * const test1 = __solve("kglvqrro");
 	assert(test1 != NULL);
 	assert(strlen(test1) == 492);
 	free(test1);
-	printf("test1 done\n");
+	//printf("test1 done\n");
 
 	char * const test2 = __solve("ulqzkmiv");
 	assert(test2 != NULL);
 	assert(strlen(test2) == 830);
 	free(test2);
-	printf("test2 done\n");
+	//printf("test2 done\n");
 
 	char * const path = __solve(input);
 	if (path) {
-		printf("%s\n", path);
-		printf("length: %zu\n", strlen(path));
+		//printf("%s\n", path);
+		printf("%zu\n", strlen(path));
 		free(path);
 	}
 

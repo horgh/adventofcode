@@ -29,11 +29,12 @@ __register_to_index(const char * const);
 
 int main(const int argc, const char * const * const argv)
 {
-	if (argc != 2) {
-		printf("Usage: %s <input file>\n", argv[0]);
+	if (argc != 3) {
+		printf("Usage: %s <input file> <part>\n", argv[0]);
 		return 1;
 	}
 	const char * const input_file = argv[1];
+	char const * const part = argv[2];
 
 	FILE * const fh = fopen(input_file, "r");
 	if (!fh) {
@@ -156,10 +157,12 @@ int main(const int argc, const char * const * const argv)
 
 	const size_t num_instructions = (size_t) instructions_index;
 
-	for (size_t i = 0; i < num_instructions; i++) {
-		const struct Instruction * const instruction = instructions+i;
-		printf("Parsed instruction: ");
-		__print_instruction(instruction);
+	if (0) {
+		for (size_t i = 0; i < num_instructions; i++) {
+			const struct Instruction * const instruction = instructions+i;
+			printf("Parsed instruction: ");
+			__print_instruction(instruction);
+		}
 	}
 
 
@@ -169,8 +172,11 @@ int main(const int argc, const char * const * const argv)
 	memset(registers, 0, sizeof(int64_t)*REGISTER_COUNT);
 
 	// register a is initially 7 in part 1, 12 in part 2.
-	//registers[0] = 7;
-	registers[0] = 12;
+	if (strcmp(part, "1") == 0) {
+		registers[0] = 7;
+	} else {
+		registers[0] = 12;
+	}
 
 	instructions_index = 0;
 
@@ -315,7 +321,7 @@ int main(const int argc, const char * const * const argv)
 		break;
 	}
 
-	printf("register a: %" PRId64 "\n", registers[0]);
+	printf("%" PRId64 "\n", registers[0]);
 
 	__destroy_instructions(instructions);
 

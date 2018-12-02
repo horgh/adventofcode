@@ -99,20 +99,20 @@ main(const int argc, const char * const * const argv)
 			return 1;
 		}
 
-		printf("%s", buf);
-		printf("%s to %s\n", s, t);
+		//printf("%s", buf);
+		//printf("%s to %s\n", s, t);
 
 		free(s);
 		s = t;
 	}
-
-	free(s);
 
 	if (fclose(fh) != 0) {
 		printf("fclose(): %s\n", strerror(errno));
 		return 1;
 	}
 
+	printf("%s\n", s);
+	free(s);
 	return 0;
 }
 

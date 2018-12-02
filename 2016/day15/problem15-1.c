@@ -135,6 +135,10 @@ __destroy_discs(struct Disc * * const discs)
 static void
 __print_discs(struct Disc * * const discs)
 {
+	if (1) {
+		return;
+	}
+
 	for (size_t i = 0; i < MAX_DISCS; i++) {
 		if (!discs[i]) {
 			break;

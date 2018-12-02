@@ -82,7 +82,7 @@ __count_safe_tiles(const char const * row, const int num_rows)
 		}
 	}
 
-	printf("%s\n", current_row);
+	//printf("%s\n", current_row);
 
 	// num_rows-1 because we count our first row.
 	for (int i = 0; i < num_rows-1; i++) {

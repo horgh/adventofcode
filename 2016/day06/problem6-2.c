@@ -122,7 +122,7 @@ main(const int argc, const char * const * const argv)
 
 	for (size_t i = 0; i < actual_password_len; i++) {
 		struct Letter * letters = index_to_letters[i];
-		__print_letters(letters, alphabet_len);
+		//__print_letters(letters, alphabet_len);
 		qsort(letters, alphabet_len, sizeof(struct Letter), __cmp_letters);
 
 		for (size_t j = 0; j < alphabet_len; j++) {
@@ -140,7 +140,6 @@ main(const int argc, const char * const * const argv)
 
 	__destroy_index_to_letters(index_to_letters, max_password_len);
 
-	printf("Password (length %zu): ", actual_password_len);
 	for (size_t i = 0; i < actual_password_len; i++) {
 		printf("%c", password[i]);
 	}

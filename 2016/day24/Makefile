@@ -1,7 +1,12 @@
-include ../Makefile.mk
+include ../../problems.mk
 
-CFLAGS+=-I../lib -DMAP_DEBUG
+CFLAGS+=-O2
 
-problem24-1: problem24-1.c ../lib/queue.c ../lib/queue.h \
-	../lib/map.c ../lib/map.h ../lib/siphash24.c ../lib/siphash24.h
-	$(CC) $(CFLAGS) -o $@ $< ../lib/queue.c ../lib/map.c ../lib/siphash24.c
+test: $(TARGETS)
+	./problem24-1 input.txt 1 > got
+	echo 412 > expected
+	diff -ru got expected
+	./problem24-1 input.txt 2 > got
+	echo 664 > expected
+	diff -ru got expected
+	rm got expected

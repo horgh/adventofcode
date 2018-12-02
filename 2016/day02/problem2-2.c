@@ -27,9 +27,9 @@ main(void)
 
 		if (c == '\n') {
 			if (digit < 10) {
-				printf("%d\n", digit);
+				printf("%d", digit);
 			} else {
-				printf("%c\n", digit);
+				printf("%c", digit);
 			}
 			digit = 5;
 			continue;
@@ -48,6 +48,7 @@ main(void)
 		return 1;
 	}
 
+	printf("\n");
 	return 0;
 }
 

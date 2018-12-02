@@ -29,11 +29,12 @@ __register_to_index(const char * const);
 
 int main(const int argc, const char * const * const argv)
 {
-	if (argc != 2) {
-		printf("Usage: %s <input file>\n", argv[0]);
+	if (argc != 3) {
+		printf("Usage: %s <input file> <part #>\n", argv[0]);
 		return 1;
 	}
 	const char * const input_file = argv[1];
+	char const * const part = argv[2];
 
 	FILE * const fh = fopen(input_file, "r");
 	if (!fh) {
@@ -164,8 +165,10 @@ int main(const int argc, const char * const * const argv)
 		if (!instruction) {
 			continue;
 		}
-		printf("Parsed instruction: ");
-		__print_instruction(instruction);
+		if (0) {
+			printf("Parsed instruction: ");
+			__print_instruction(instruction);
+		}
 	}
 
 	// Run the program.
@@ -175,7 +178,9 @@ int main(const int argc, const char * const * const argv)
 
 	// For part 2, initialize register c to 1.
 	// For part 1, leave this 0.
-	registers[2] = 1;
+	if (strcmp(part, "2") == 0) {
+		registers[2] = 1;
+	}
 
 	instructions_index = 0;
 
@@ -183,7 +188,7 @@ int main(const int argc, const char * const * const argv)
 		const struct Instruction * const instruction =
 			instructions[instructions_index];
 		if (!instruction) {
-			printf("reached invalid instruction\n");
+			//printf("reached invalid instruction\n");
 			break;
 		}
 
@@ -240,7 +245,7 @@ int main(const int argc, const char * const * const argv)
 		break;
 	}
 
-	printf("register a: %" PRId64 "\n", registers[0]);
+	printf("%" PRId64 "\n", registers[0]);
 
 	__destroy_instructions(instructions);
 

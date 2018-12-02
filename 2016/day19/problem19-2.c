@@ -38,9 +38,9 @@ main(const int argc, const char * const * const argv)
 
 	while (num_elves > 1) {
 		for (int i = 0; i < num_elves; i++) {
-			if (num_elves % 1000 == 0) {
-				printf("%d...\n", num_elves);
-			}
+			//if (num_elves % 1000 == 0) {
+			//	printf("%d...\n", num_elves);
+			//}
 
 			// Find index of elf across from us in the circle.
 			int index = num_elves/2+i;

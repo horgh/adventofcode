@@ -28,6 +28,7 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
+	int count = 0;
 	while (feof(fh) == 0) {
 		char buf[1024];
 		memset(buf, 0, sizeof(buf));
@@ -40,9 +41,7 @@ main(const int argc, const char * const * const argv)
 		}
 
 		if (__ipv7_supports_tls(buf)) {
-			printf("TLS: %s\n", buf);
-		} else {
-			printf("No TLS: %s\n", buf);
+			count++;
 		}
 	}
 
@@ -51,6 +50,7 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
+	printf("%d\n", count);
 	return 0;
 }
 

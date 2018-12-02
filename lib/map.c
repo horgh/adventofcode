@@ -17,7 +17,7 @@ const uint8_t sip_key[SIP_KEY_LEN] = {
 };
 
 static int
-__hasher(char const * const, size_t const);
+__hasher(char const * const, size_t const, size_t const);
 static bool
 __hash_set(struct htable * const, int const,
 		void const * const, size_t const, void * const);
@@ -116,10 +116,9 @@ hash_copy(struct htable const * const h)
 
 __attribute__((pure))
 static int
-__hasher(char const * const key, size_t const n)
+__hasher(char const * const key, size_t const keylen, size_t const n)
 {
-	size_t const len = strlen(key);
-	if (!key || len == 0) {
+	if (!key || keylen == 0) {
 		return 0;
 	}
 
@@ -127,7 +126,7 @@ __hasher(char const * const key, size_t const n)
 
 #ifdef USE_SIP_HASH
 	uint64_t hash = 0;
-	siphash((uint8_t const * const) key, (uint64_t) len+1, sip_key,
+	siphash((uint8_t const * const) key, (uint64_t) keylen+1, sip_key,
 			(uint8_t *) &hash, 8);
 
 	actual_hash = (int) hash % (int) n;
@@ -175,7 +174,7 @@ hash_set(struct htable * const h, char const * const key,
 		return false;
 	}
 
-	int const hash = __hasher(key, h->size);
+	int const hash = __hasher(key, len, h->size);
 
 	return __hash_set(h, hash, key, len+1, value);
 }
@@ -268,11 +267,12 @@ __attribute__((pure))
 void *
 hash_get(struct htable const * const h, char const * const key)
 {
-	if (!h || !key || strlen(key) == 0) {
+	size_t const keylen = strlen(key);
+	if (!h || !key || keylen == 0) {
 		return NULL;
 	}
 
-	int const hash = __hasher(key, h->size);
+	int const hash = __hasher(key, keylen, h->size);
 
 	struct hnode const * nptr = h->nodes[hash];
 
@@ -313,11 +313,12 @@ __attribute__((pure))
 bool
 hash_has_key(struct htable const * const h, char const * const key)
 {
-	if (!h || !key || strlen(key) == 0) {
+	size_t const keylen = strlen(key);
+	if (!h || !key || keylen == 0) {
 		return false;
 	}
 
-	int const hash = __hasher(key, h->size);
+	int const hash = __hasher(key, keylen, h->size);
 
 	struct hnode const * nptr = h->nodes[hash];
 
@@ -363,7 +364,7 @@ hash_delete(struct htable * const h, char const * const key,
 		return false;
 	}
 
-	int const hash = __hasher(key, h->size);
+	int const hash = __hasher(key, len, h->size);
 	return __hash_delete(h, hash, key, len+1, fn);
 }
 

@@ -2,8 +2,6 @@
 
 #include <assert.h>
 #include <ctype.h>
-#include <map.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -96,48 +94,15 @@ main(int const argc, char const * const * const argv)
 
 	qsort(records, n, sizeof(struct Record), cmp_record);
 
-#ifdef DEBUG
-	for (size_t i = 0; i < n; i++) {
-		struct Record r = records[i];
-		printf("%02d-%02d %02d:%02d #%d ",
-				r.month,
-				r.day,
-				r.hour,
-				r.minute,
-				r.id
-				);
-		switch (r.action) {
-		case Begin:
-			printf("begin");
-			break;
-		case Sleep:
-			printf("sleep");
-			break;
-		case Wake:
-			printf("wake");
-			break;
-		default:
-			assert(1 == 0);
-		}
-		printf("\n");
-	}
-#endif
 	int current_id = -1;
 	int start_minute = -1;
-	struct htable * const h = hash_init(1024);
-	assert(h != NULL);
+	int guard_to_sleep_time[10240] = {0};
 	int guard_to_minutes[10240][60] = {0};
 	for (size_t i = 0; i < n; i++) {
 		struct Record r = records[i];
 
 		if (r.action == Begin) {
 			current_id = r.id;
-			if (hash_has_key_i(h, current_id)) {
-				continue;
-			}
-			int * const minutes = calloc(1, sizeof(int));
-			assert(minutes != NULL);
-			assert(hash_set_i(h, current_id, minutes));
 			continue;
 		}
 
@@ -147,42 +112,14 @@ main(int const argc, char const * const * const argv)
 		}
 
 		if (r.action == Wake) {
-			int * const minutes = hash_get_i(h, current_id);
-			assert(minutes != NULL);
-			*minutes += r.minute - start_minute;
-			assert(hash_set_i(h, current_id, minutes));
+			guard_to_sleep_time[current_id] += r.minute - start_minute;
 			for (int j = start_minute; j < r.minute; j++) {
 				guard_to_minutes[current_id][j]++;
-				//printf("%d slept minute %d\n", current_id, j);
 			}
 			continue;
 		}
 
 		assert(1 == 0);
-	}
-
-	void * * const ids = hash_get_keys(h);
-	int most_asleep_id = -1;
-	int most_asleep_minutes = -1;
-	for (size_t i = 0; ids[i]; i++) {
-		int const * const id = ids[i];
-		int const * const minutes = hash_get_i(h, *id);
-		assert(minutes != NULL);
-		//printf("%d slept for %d\n", *id, *minutes);
-		if (*minutes > most_asleep_minutes) {
-			most_asleep_id = *id;
-			most_asleep_minutes = *minutes;
-		}
-	}
-
-	int sleep_times = -1;
-	//int most_asleep_minute = -1;
-	for (int i = 0; i < 60; i++) {
-		if (guard_to_minutes[most_asleep_id][i] <= sleep_times) {
-			continue;
-		}
-		sleep_times = guard_to_minutes[most_asleep_id][i];
-		//most_asleep_minute = i;
 	}
 
 	int times_slept = -1;
@@ -194,17 +131,12 @@ main(int const argc, char const * const * const argv)
 				continue;
 			}
 			times_slept = guard_to_minutes[i][j];
-			minute_he_slept_most = j;
 			interesting_id = (int) i;
+			minute_he_slept_most = j;
 		}
 	}
 
-	printf("%d %d %d\n", interesting_id, times_slept, minute_he_slept_most);
 	printf("%d\n", interesting_id*minute_he_slept_most);
-
-	//printf("%d\n", most_asleep_id);
-	//printf("%d\n", most_asleep_minute);
-	//printf("%d\n", most_asleep_id*most_asleep_minute);
 	return 0;
 }
 

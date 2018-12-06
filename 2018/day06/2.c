@@ -50,83 +50,30 @@ main(int const argc, char const * const * const argv)
 		n++;
 	}
 
-	int m[SZ][SZ] = {0};
 	int total_distances[SZ][SZ] = {0};
 	for (size_t x = 0; x < SZ; x++) {
 		for (size_t y = 0; y < SZ; y++) {
-			int distances[1024] = {0};
 			for (size_t i = 0; i < n; i++) {
-				distances[i] = distance(
+				total_distances[x][y] += distance(
 						(int) x,
 						(int) y,
 						coordinates[i].x,
 						coordinates[i].y
 						);
-				total_distances[x][y] += distances[i];
-			}
-
-			int shortest = distances[0];
-			size_t shortest_id = 0;
-			for (size_t i = 0; i < n; i++) {
-				if (distances[i] >= shortest) {
-					continue;
-				}
-				shortest = distances[i];
-				shortest_id = i;
-			}
-
-			for (size_t i = 0; i < n; i++) {
-				if (distances[i] == shortest && i != shortest_id) {
-					shortest = -1;
-				}
-			}
-
-			if (shortest == -1) {
-				m[x][y] = -1;
-				continue;
-			}
-			m[x][y] = (int) shortest_id;
-		}
-	}
-
-	int areas[1024] = {0};
-	bool infinites[1024] = {0};
-	for (size_t y = 0; y < SZ; y++) {
-		for (size_t x = 0; x < SZ; x++) {
-			if (m[x][y] == -1) {
-				//printf(".");
-			} else {
-				//printf("%d", m[x][y]);
-				if (x == 0 || x == SZ-1 || y == 0 || y == SZ-1) {
-					infinites[m[x][y]] = true;
-					continue;
-				}
-				areas[m[x][y]]++;
 			}
 		}
 	}
 
-	int max = 0;
-	for (size_t i = 0; i < 1024; i++) {
-		if (infinites[i]) {
-			continue;
-		}
-		if (areas[i] <= max) {
-			continue;
-		}
-		max = areas[i];
-	}
-
-	int mycount = 0;
+	int count = 0;
 	for (size_t y = 0; y < SZ; y++) {
 		for (size_t x = 0; x < SZ; x++) {
 			if (total_distances[x][y] < max_size) {
-				mycount++;
+				count++;
 			}
 		}
 	}
 
-	printf("%d\n", mycount);
+	printf("%d\n", count);
 	return 0;
 }
 

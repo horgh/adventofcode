@@ -31,8 +31,8 @@ main(int const argc, char const * const * const argv)
 	struct Coordinate coordinates[1024] = {0};
 	size_t n = 0;
 	while (1) {
-		char buf[409600] = {0};
-		if (fgets(buf, 409600, stdin) == NULL) {
+		char buf[4096] = {0};
+		if (fgets(buf, 4096, stdin) == NULL) {
 			break;
 		}
 		trim_right(buf);
@@ -88,17 +88,15 @@ main(int const argc, char const * const * const argv)
 	bool infinites[1024] = {0};
 	for (size_t y = 0; y < SZ; y++) {
 		for (size_t x = 0; x < SZ; x++) {
-
 			if (m[x][y] == -1) {
-				//printf(".");
-			} else {
-				//printf("%d", m[x][y]);
-				if (x == 0 || x == SZ-1 || y == 0 || y == SZ-1) {
-					infinites[m[x][y]] = true;
-					continue;
-				}
-				areas[m[x][y]]++;
+				continue;
 			}
+
+			if (x == 0 || x == SZ-1 || y == 0 || y == SZ-1) {
+				infinites[m[x][y]] = true;
+				continue;
+			}
+			areas[m[x][y]]++;
 		}
 	}
 

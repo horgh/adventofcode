@@ -1,7 +1,5 @@
 #define _POSIX_C_SOURCE 200809L
 
-#include <assert.h>
-#include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,13 +51,6 @@ main(int const argc, char const * const * const argv)
 		}
 	}
 
-	for (size_t i = 0; i < n; i++) {
-		printf("%c has prereqs:\n", instructions[i].step);
-		for (size_t j = 0; j < instructions[i].n_prereqs; j++) {
-			printf("  %c\n", instructions[i].prereqs[j]);
-		}
-	}
-
 	int seen[1024] = {0};
 	for (size_t i = 0; i < n; i++) {
 		seen[(int) instructions[i].step] = 1;
@@ -72,14 +63,19 @@ main(int const argc, char const * const * const argv)
 			if (seen[(int) instructions[i].prereqs[j]]) {
 				continue;
 			}
-			starters[n_starters++] = instructions[i].prereqs[j];
+			bool found = false;
+			for (size_t k = 0; k < n_starters; k++) {
+				if (starters[k] == instructions[i].prereqs[j]) {
+					found = true;
+				}
+			}
+			if (!found) {
+				starters[n_starters++] = instructions[i].prereqs[j];
+			}
 		}
 	}
-	qsort(starters, n_starters, sizeof(char), cmp_char);
-	int done[1024] = {0};
-	done[(int) starters[0]] = 1;
-	printf("%c", starters[0]);
 
+	int done[1024] = {0};
 	while (1) {
 		char candidates[1024] = {0};
 		size_t m = 0;
@@ -96,7 +92,6 @@ main(int const argc, char const * const * const argv)
 			}
 			if (all_prereqs_done) {
 				candidates[m++] = instructions[i].step;
-				//printf("%c is avail\n", instr.step);
 			}
 		}
 
@@ -111,14 +106,8 @@ main(int const argc, char const * const * const argv)
 			break;
 		}
 		qsort(candidates, m, sizeof(char), cmp_char);
-		//printf("%zu candidates\n", m);
-		//for (size_t i = 0; i < m; i++) {
-		//	printf(" ... %c\n", candidates[i]);
-		//}
-		//printf("choosing %c\n", candidates[0]);
 	  printf("%c", candidates[0]);
 		done[(int) candidates[0]] = 1;
-		//count_done++;
 	}
 
 	printf("\n");

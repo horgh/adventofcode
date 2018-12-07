@@ -1,7 +1,6 @@
 #define _POSIX_C_SOURCE 200809L
 
 #include <assert.h>
-#include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,7 +19,7 @@ get_candidate(
 		size_t const,
 		char const * const,
 		size_t const,
-		int * const,
+		int const * const,
 		int const * const
 );
 static int
@@ -29,8 +28,12 @@ cmp_char(void const * const, void const * const);
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	if (argc != 3) {
+		printf("Usage: %s <num workers> <base time>\n", argv[0]);
+		return 1;
+	}
+	int const n_workers = atoi(argv[1]);
+	int const step_base = atoi(argv[2]);
 
 	struct Instruction instructions[1024] = {0};
 	size_t n = 0;
@@ -85,23 +88,16 @@ main(int const argc, char const * const * const argv)
 			}
 		}
 	}
-	//qsort(starters, n_starters, sizeof(char), cmp_char);
-	int done[1024] = {0};
-	//done[(int) starters[0]] = 1;
-	//printf("%c", starters[0]);
 
-//#define N_WORKERS 2
-//#define STEP_BASE 0
-#define N_WORKERS 5
-#define STEP_BASE 60
+	int done[1024] = {0};
 	int seconds = 0;
-	char worker_to_step[N_WORKERS] = {0};
+	char * const worker_to_step = calloc((size_t) n_workers, sizeof(char));
+	assert(worker_to_step != NULL);
 	int step_to_seconds[64] = {0};
 	size_t const total_needed = n_starters+n;
-	printf("need %zu (%zu+%zu)\n", total_needed, n_starters, n);
 	size_t total_done = 0;
 	while (1) {
-		for (int w = 0; w < N_WORKERS; w++) {
+		for (int w = 0; w < n_workers; w++) {
 			if (worker_to_step[w] == 0) {
 				continue;
 			}
@@ -112,7 +108,6 @@ main(int const argc, char const * const * const argv)
 				done[(int) c] = 1;
 				worker_to_step[w] = 0;
 				total_done++;
-				printf("%d: worker %d finished with %c\n", seconds, w, c);
 			}
 		}
 
@@ -120,7 +115,7 @@ main(int const argc, char const * const * const argv)
 			break;
 		}
 
-		for (int w = 0; w < N_WORKERS; w++) {
+		for (int w = 0; w < n_workers; w++) {
 			if (worker_to_step[w] != 0) {
 				continue;
 			}
@@ -136,14 +131,14 @@ main(int const argc, char const * const * const argv)
 			if (c == -1) {
 				continue;
 			}
-			printf("%d: worker %d starting on %c\n", seconds, w, c);
 			worker_to_step[w] = c;
-			step_to_seconds[(int) c] = c-64 + STEP_BASE;
+			step_to_seconds[(int) c] = c-64 + step_base;
 		}
 
 		seconds++;
 	}
 
+	free(worker_to_step);
 	printf("%d\n", seconds);
 	return 0;
 }
@@ -154,7 +149,7 @@ get_candidate(
 		size_t const n,
 		char const * const starters,
 		size_t const n_starters,
-		int * const done,
+		int const * const done,
 		int const * const in_progress
 ) {
 	char candidates[1024] = {0};

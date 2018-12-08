@@ -64,7 +64,7 @@ consume_node(char const * const s, char const * * const after)
 		int const metadata = atoi(ptr);
 		metadata_sum += metadata;
 		if (metadata > 0) {
-			if (metadata-1 < n_node) {
+			if (metadata <= n_node) {
 				value += node_values[metadata-1];
 			}
 		}

@@ -36,7 +36,14 @@ main(int const argc, char const * const * const argv)
 	int max_x = 0;
 	int max_y = 0;
 	int max_sz = 0;
-	for (int sz = 1; sz <= SZ; sz++) {
+	int grid_acc[SZ][SZ] = {0};
+	for (int y = 0; y < SZ; y++) {
+		for (int x = 0; x < SZ; x++) {
+			grid_acc[x][y] = grid[x][y];
+		}
+	}
+
+	for (int sz = 2; sz <= SZ; sz++) {
 		for (int y = 0; y < SZ; y++) {
 			if (y+sz >= SZ) {
 				continue;
@@ -45,12 +52,14 @@ main(int const argc, char const * const * const argv)
 				if (x+sz >= SZ) {
 					continue;
 				}
-				int power = 0;
-				for (int yy = y; yy < y+sz; yy++) {
-					for (int xx = x; xx < x+sz; xx++) {
-						power += grid[xx][yy];
-					}
+				int power = grid_acc[x][y];
+				for (int yy = y; yy < y+sz-1; yy++) {
+					power += grid[x+sz-1][yy];
 				}
+				for (int xx = x; xx < x+sz; xx++) {
+					power += grid[xx][y+sz-1];
+				}
+				grid_acc[x][y] = power;
 				if (power <= max_power) {
 					continue;
 				}

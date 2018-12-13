@@ -159,18 +159,16 @@ hash_set(struct htable * const h, char const * const key,
 {
 	size_t const keylen = strlen(key);
 	if (!h || !key || keylen == 0) {
-#ifdef MAP_DEBUG
-		printf("hash_set: %s\n", strerror(EINVAL));
+		fprintf(stderr, "hash_set: %s: ", strerror(EINVAL));
 		if (!h) {
-			printf("hash_set: hash argument missing\n");
+			fprintf(stderr, "hash argument missing\n");
 		}
 		if (!key) {
-			printf("hash_set: key argument missing\n");
+			fprintf(stderr, "key argument missing\n");
 		}
 		if (keylen == 0) {
-			printf("hash_set: key is blank\n");
+			fprintf(stderr, "key is blank\n");
 		}
-#endif
 		return false;
 	}
 

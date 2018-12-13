@@ -20,7 +20,6 @@ CFLAGS = \
 	-Wunused-const-variable=2 \
 	-Wuninitialized \
 	-Wunknown-pragmas \
-	-Wstrict-overflow=4 \
 	-Wsuggest-attribute=pure \
 	-Wsuggest-attribute=const \
 	-Wsuggest-attribute=noreturn \

@@ -2,10 +2,10 @@ include ../Makefile.mk
 
 .PHONY: test
 
-all: hash libadvent.a map queue
+all: hash libadvent.a map queue util
 
 clean:
-	rm -f hash libadvent.a map queue *.o
+	rm -f hash libadvent.a map queue *.o util
 
 hash: hash.c hash.c
 	$(CC) $(CFLAGS) -DTEST_HASH -o $@ $< -lssl -lcrypto

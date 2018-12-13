@@ -12,10 +12,7 @@ trim_right(char * const s)
 		return;
 	}
 	ptr--;
-	while (ptr != s) {
-		if (!isspace(*ptr)) {
-			break;
-		}
+	while (ptr >= s && isspace(*ptr)) {
 		*ptr = '\0';
 		ptr--;
 	}
@@ -46,6 +43,11 @@ int main(void)
 	strcat(s, "hi  \n");
 	trim_right(s);
 	assert(strcmp(s, "hi") == 0);
+
+	memset(s, 0, sizeof(s));
+	strcat(s, "\n");
+	trim_right(s);
+	assert(strcmp(s, "") == 0);
 
 	return 0;
 }

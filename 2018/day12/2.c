@@ -19,10 +19,10 @@ static void
 print_note(struct Note const * const);
 
 static bool
-grows(char const * const state,
-		int const pos,
-		struct Note const * const notes,
-		size_t const n_notes);
+grows(char const * const,
+		int const,
+		struct Note const * const,
+		size_t const);
 
 #define SZ 2048
 #define SZ2 SZ+1
@@ -31,10 +31,9 @@ grows(char const * const state,
 int
 main(int const argc, char const * const * const argv)
 {
-	uint64_t rounds = 50000000000;
-	if (argc > 1) {
-		rounds = (uint64_t) atoi(argv[1]);
-	}
+	(void) argc;
+	(void) argv;
+	uint64_t const rounds = 50000000000;
 
 	char state[SZ2] = {0};
 	for (size_t i = 0; i < SZ; i++) {
@@ -63,8 +62,6 @@ main(int const argc, char const * const * const argv)
 			while (*ptr != '\0') {
 				if (*ptr == '#') {
 					state[n_states] = '#';
-				} else {
-					state[n_states] = '.';
 				}
 				n_states++;
 				ptr++;
@@ -86,10 +83,8 @@ main(int const argc, char const * const * const argv)
 		ptr += strlen(" => ");
 		if (*ptr == '#') {
 			notes[n_notes].plant = true;
-			n_notes++;
-		} else {
-			memset(&notes[n_notes], 0, sizeof(struct Note));
 		}
+		n_notes++;
 		line++;
 	}
 
@@ -103,10 +98,7 @@ main(int const argc, char const * const * const argv)
 		}
 	}
 
-	char initial_state[SZ2] = {0};
-	memcpy(initial_state, state, SZ);
 	uint64_t interesting_round = 0;
-	(void) interesting_round;
 	char last_pattern[SZ2] = {0};
 	for (uint64_t i = 0; i < rounds; i++) {
 		if (false) {
@@ -138,6 +130,7 @@ main(int const argc, char const * const * const argv)
 			pattern[j++] = *ptr;
 			ptr++;
 		}
+		pattern[j++] = *ptr;
 		if (memcmp(pattern, last_pattern, SZ) == 0) {
 			interesting_round = i;
 			break;
@@ -187,6 +180,9 @@ grows(char const * const state,
 		size_t const n_notes)
 {
 	for (size_t i = 0; i < n_notes; i++) {
+		if (!notes[i].plant) {
+			continue;
+		}
 		if (state[pos-2] == notes[i].pattern[0] &&
 				state[pos-1] == notes[i].pattern[1] &&
 				state[pos]   == notes[i].pattern[2] &&

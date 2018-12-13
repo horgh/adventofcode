@@ -1,13 +1,10 @@
 #define _POSIX_C_SOURCE 200809L
 
 #include <assert.h>
-#include <ctype.h>
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <util.h>
 
 enum Facing { Up, Down, Left, Right };
 
@@ -16,7 +13,6 @@ enum NextMove { TurnLeft, Straight, TurnRight };
 struct Cart {
 	enum Facing facing;
 	enum NextMove next_move;
-	int id;
 	uint64_t ticks;
 };
 
@@ -42,10 +38,6 @@ face_cart(struct Cart * const,
 		struct Rail const * const);
 
 #define SZ 150
-
-//#undef SZ
-//#define SZ 15
-
 #define SZ_RAILS 40960
 
 int
@@ -122,7 +114,6 @@ main(int const argc, char const * const * const argv)
 					break;
 				}
 				carts[n_carts].next_move = TurnLeft;
-				carts[n_carts].id = (int) n_carts;
 				cart = &carts[n_carts];
 				n_carts++;
 
@@ -183,10 +174,6 @@ main(int const argc, char const * const * const argv)
 				if (new_x < 0 || new_x == SZ || new_y < 0 || new_y == SZ) {
 					fprintf(stderr, "cart leaves the world\n");
 					return 1;
-				}
-				if (false) {
-					printf("moving cart %d from %d,%d to %d,%d\n", cart->id, x, y,
-							new_x, new_y);
 				}
 
 				if (map[new_x][new_y].cart) {

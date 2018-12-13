@@ -15,6 +15,10 @@ test: $(TARGETS)
 	echo 5,102 > expected
 	diff -u got expected
 	@#
+	./2 < input-sample-2 > got
+	echo 6,4 > expected
+	diff -u got expected
+	@#
 	./2 < input > got
 	echo 46,45 > expected
 	diff -u got expected

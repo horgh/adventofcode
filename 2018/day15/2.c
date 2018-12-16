@@ -109,9 +109,7 @@ maybe_attack(struct Square * * const,
 static int
 cmp_creatures(void const * const, void const * const);
 
-// XXX
 #define MAP_SZ 32
-//#define MAP_SZ 7
 #define SQUARES_SZ 1024
 #define CREATURES_SZ 64
 
@@ -478,13 +476,6 @@ shortest_path(struct Square * * const map,
 			free(square);
 			continue;
 		}
-
-		//if (square->steps > 20) {
-		//if (square->steps > 10) {
-		////if (square->steps > MAP_SZ) {
-		//	free(square);
-		//	continue;
-		//}
 
 		char buf[32] = {0};
 		assert(sprintf(buf, "%d,%d", square->x, square->y) >= 0);

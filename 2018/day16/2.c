@@ -1,6 +1,5 @@
 #define _POSIX_C_SOURCE 200809L
 
-#include <assert.h>
 #include <ctype.h>
 #include <inttypes.h>
 #include <stdbool.h>
@@ -89,9 +88,6 @@ op_eqri(REG_TYPE * const regs, struct Instruction const * const instr);
 
 static void
 op_eqrr(REG_TYPE * const regs, struct Instruction const * const instr);
-
-//static void
-//print_op(enum Op const);
 
 int
 main(int const argc, char const * const * const argv)
@@ -313,7 +309,6 @@ main(int const argc, char const * const * const argv)
 			}
 
 			if (count == 1) {
-				printf("%d is %s\n", opcode, function.name);
 				known_opcodes[opcode] = function.op;
 				opcode_to_function[opcode] = function.fn;
 				n_known_opcodes++;
@@ -474,64 +469,3 @@ op_eqrr(REG_TYPE * const regs, struct Instruction const * const instr)
 		regs[instr->c] = 0;
 	}
 }
-
-//static void
-//print_op(enum Op const op)
-//{
-//	switch (op) {
-//	case UNKNOWN:
-//		printf("unknown\n");
-//		break;
-//	case ADDR:
-//		printf("addr\n");
-//		break;
-//	case ADDI:
-//		printf("addi\n");
-//		break;
-//	case MULR:
-//		printf("mulr\n");
-//		break;
-//	case MULI:
-//		printf("muli\n");
-//		break;
-//	case BANR:
-//		printf("banr\n");
-//		break;
-//	case BANI:
-//		printf("bani\n");
-//		break;
-//	case BORR:
-//		printf("borr\n");
-//		break;
-//	case BORI:
-//		printf("bori\n");
-//		break;
-//	case SETR:
-//		printf("setr\n");
-//		break;
-//	case SETI:
-//		printf("seti\n");
-//		break;
-//	case GTIR:
-//		printf("gtir\n");
-//		break;
-//	case GTRI:
-//		printf("gtri\n");
-//		break;
-//	case GTRR:
-//		printf("gtrr\n");
-//		break;
-//	case EQIR:
-//		printf("eqir\n");
-//		break;
-//	case EQRI:
-//		printf("eqri\n");
-//		break;
-//	case EQRR:
-//		printf("eqrr\n");
-//		break;
-//		break;
-//	default:
-//		assert(1 == 0);
-//	}
-//}

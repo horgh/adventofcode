@@ -35,13 +35,6 @@ struct Square {
 };
 
 static void
-print_map(struct Square * * const);
-
-static void
-print_remaining(struct Creature const * const,
-		size_t const);
-
-static void
 find_targets(struct Creature const * const,
 		size_t const,
 		struct Creature const * const,
@@ -162,13 +155,7 @@ main(int const argc, char const * const * const argv)
 		y++;
 	}
 
-	if (false) {
-		print_map(map);
-	}
-
 	uint64_t rounds = 0;
-	// XXX
-	//while (rounds < 100) {
 	while (1) {
 		int moved[CREATURES_SZ] = {0};
 		for (y = 0; y < MAP_SZ; y++) {
@@ -176,10 +163,6 @@ main(int const argc, char const * const * const argv)
 				struct Creature * const me = map[x][y].creature;
 				if (!me || moved[me->id]) {
 					continue;
-				}
-
-				if (false) {
-					printf("working on %d (%zu total)\n", me->id, n_creatures);
 				}
 
 				struct Creature targets[CREATURES_SZ] = {0};
@@ -193,13 +176,6 @@ main(int const argc, char const * const * const argv)
 				moved[me->id] = 1;
 			}
 		}
-		//if (false && rounds % 5000 == 0) {
-		if (false) {
-			printf("round %" PRIu64 "\n", rounds);
-			print_remaining(creatures, n_creatures);
-			print_map(map);
-		}
-
 		rounds++;
 	}
 
@@ -211,59 +187,6 @@ done:
 	free(map);
 
 	return 0;
-}
-
-static void
-print_map(struct Square * * const map)
-{
-	for (int y = 0; y < MAP_SZ; y++) {
-		for (int x = 0; x < MAP_SZ; x++) {
-			if (map[x][y].creature) {
-				if (map[x][y].creature->type == Goblin) {
-					printf("G");
-				} else if (map[x][y].creature->type == Elf) {
-					printf("E");
-				} else {
-					assert(1 == 0);
-				}
-				continue;
-			}
-			if (map[x][y].type == Wall) {
-				printf("#");
-				continue;
-			}
-			if (map[x][y].type == Cavern) {
-				printf(".");
-				continue;
-			}
-			assert(1 == 0);
-		}
-		printf("\n");
-	}
-}
-
-static void
-print_remaining(struct Creature const * const creatures,
-		size_t const n_creatures)
-{
-	int elves = 0;
-	int goblins = 0;
-	for (size_t i = 0; i < n_creatures; i++) {
-		struct Creature const * const creature = &creatures[i];
-		if (creature->hp <= 0) {
-			continue;
-		}
-		if (creature->type == Elf) {
-			elves++;
-			continue;
-		}
-		if (creature->type == Goblin) {
-			goblins++;
-			continue;
-		}
-		assert(1 == 0);
-	}
-	printf("remaining: %d goblins, %d elves\n", goblins, elves);
 }
 
 static void
@@ -298,9 +221,6 @@ print_answer(struct Creature const * const creatures,
 		hp += creature->hp;
 	}
 
-	if (false) {
-		printf("rounds %" PRIu64 ", hp %d\n", rounds, hp);
-	}
 	printf("%" PRIu64 "\n", rounds*(uint64_t) hp);
 }
 
@@ -356,24 +276,9 @@ choose_direction(struct Square * * const map,
 		return Unknown;
 	}
 
-	if (false && me->id == 0) {
-		printf("%s %d in range squares:\n",
-				me->type == Goblin ? "goblin" : "elf",
-				me->id);
-		for (size_t i = 0; i < n_in_range_squares; i++) {
-			printf("  %d,%d\n", in_range_squares[i].x,
-					in_range_squares[i].y);
-		}
-	}
-
 	struct Square reachable_squares[SQUARES_SZ] = {0};
 	size_t n_reachable_squares = 0;
 	for (size_t i = 0; i < n_in_range_squares; i++) {
-		if (false) {
-			printf("looking for path from %d,%d to %d,%d\n",
-					me->square->x, me->square->y,
-					in_range_squares[i].x, in_range_squares[i].y);
-		}
 		struct Square * const square = shortest_path(map, me->square->x,
 				me->square->y, in_range_squares[i].x, in_range_squares[i].y);
 		if (!square) {
@@ -387,37 +292,9 @@ choose_direction(struct Square * * const map,
 		return Unknown;
 	}
 
-	if (false && me->id == 0) {
-		printf("%s %d reachable squares:\n",
-				me->type == Goblin ? "goblin" : "elf",
-				me->id);
-		for (size_t i = 0; i < n_reachable_squares; i++) {
-			printf("  %d,%d\n", reachable_squares[i].x,
-					reachable_squares[i].y);
-		}
-	}
-
 	qsort(reachable_squares, n_reachable_squares, sizeof(struct Square),
 			cmp_squares);
 
-	if (false && me->id == 0) {
-		printf("%s %d choosing to move towards %d,%d",
-				me->type == Goblin ? "goblin" : "elf",
-				me->id,
-				reachable_squares[0].x,
-				reachable_squares[0].y);
-		if (reachable_squares[0].direction == Up) {
-			printf(" (up)\n");
-		} else if (reachable_squares[0].direction == Right) {
-			printf(" (right)\n");
-		} else if (reachable_squares[0].direction == Down) {
-			printf(" (down)\n");
-		} else if (reachable_squares[0].direction == Left) {
-			printf(" (left)\n");
-		} else {
-			assert(1 == 0);
-		}
-	}
 	return reachable_squares[0].direction;
 }
 
@@ -565,28 +442,6 @@ shortest_path(struct Square * * const map,
 	}
 
 	qsort(move_squares, n_choices, sizeof(struct Square), cmp_squares);
-
-	if (false) {
-		if (n_choices > 1) {
-			printf("%zu choices from %d,%d to %d,%d:\n",
-					n_choices,
-					x_0, y_0, x_1, y_1);
-			for (size_t i = 0; i < n_choices; i++) {
-				printf("  %d steps, ", move_squares[i].steps);
-				if (move_squares[i].direction == Up) {
-					printf("up\n");
-				} else if (move_squares[i].direction == Right) {
-					printf("right\n");
-				} else if (move_squares[i].direction == Down) {
-					printf("down\n");
-				} else if (move_squares[i].direction == Left) {
-					printf("left\n");
-				} else {
-					assert(1 == 0);
-				}
-			}
-		}
-	}
 
 	struct Square * const square = calloc(1, sizeof(struct Square));
 	assert(square != NULL);
@@ -751,9 +606,6 @@ maybe_attack(struct Square * * const map,
 
 	struct Creature * const target = targets[0];
 
-	if (false) {
-		printf("id %d: %zu targets in range to attack\n", me->id, n_targets);
-	}
 	target->hp -= 3;
 	if (target->hp <= 0) {
 		target->square->creature = NULL;

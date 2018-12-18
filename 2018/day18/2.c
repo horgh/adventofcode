@@ -1,9 +1,7 @@
 #define _POSIX_C_SOURCE 200810L
 
 #include <assert.h>
-#include <ctype.h>
 #include <map.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,9 +17,7 @@ static void
 print_map(struct Position * * const, int const);
 
 static void
-tick(struct Position * * const,
-		struct Position * * const,
-		int const);
+tick(struct Position * * const, int const);
 
 static int
 count(struct Position * * const,
@@ -73,18 +69,10 @@ main(int const argc, char const * const * const argv)
 		y++;
 	}
 
-	if (true) {
+	if (0) {
 		print_map(map, y);
 	}
 
-	struct Position * * const map2 = calloc(SZ, sizeof(struct Position *));
-	assert(map2 != NULL);
-	for (size_t i = 0; i < SZ; i++) {
-		map2[i] = calloc(SZ, sizeof(struct Position));
-		assert(map2[i] != NULL);
-	}
-
-	//struct htable * const h = hash_init(1024);
 	struct htable * h = hash_init(1024);
 	assert(h != NULL);
 	char * s = to_string(map, y);
@@ -94,18 +82,12 @@ main(int const argc, char const * const * const argv)
 	int interesting_minute = -1;
 	int repeats = -1;
 	for (int i = 0; i < minutes; i++) {
-		if (i % 100000 == 0) {
-			printf("%d\n", i);
-			print_map(map, y);
-		}
-		tick(map, map2, y);
+		tick(map, y);
 
 		s = to_string(map, y);
 		if (hash_has_key(h, s)) {
-			printf("found at %d\n", i);
 			if (interesting_minute != -1) {
 				repeats = i-interesting_minute;
-				printf(" diff: %d\n", i-interesting_minute);
 				free(s);
 				break;
 			}
@@ -122,10 +104,9 @@ main(int const argc, char const * const * const argv)
 	}
 	assert(hash_free(h, NULL));
 
-	printf("%d\n", repeats);
 	int remaining = (minutes-(interesting_minute+1))%repeats;
 	for (int i = 0; i < remaining; i++) {
-		tick(map, map2, y);
+		tick(map, y);
 	}
 
 	int trees = 0;
@@ -145,10 +126,8 @@ main(int const argc, char const * const * const argv)
 
 	for (size_t i = 0; i < SZ; i++) {
 		free(map[i]);
-		free(map2[i]);
 	}
 	free(map);
-	free(map2);
 	printf("%d\n", trees*lumber);
 	return 0;
 }
@@ -177,11 +156,13 @@ print_map(struct Position * * const map, int const sz)
 }
 
 static void
-tick(struct Position * * const map,
-		struct Position * * const map2,
-		int const sz)
+tick(struct Position * * const map, int const sz)
 {
+	struct Position * * const map2 = calloc(SZ, sizeof(struct Position *));
+	assert(map2 != NULL);
 	for (size_t i = 0; i < SZ; i++) {
+		map2[i] = calloc(SZ, sizeof(struct Position));
+		assert(map2[i] != NULL);
 		memcpy(map2[i], map[i], SZ*sizeof(struct Position));
 	}
 
@@ -213,6 +194,11 @@ tick(struct Position * * const map,
 			assert(1 == 0);
 		}
 	}
+
+	for (size_t i = 0; i < SZ; i++) {
+		free(map2[i]);
+	}
+	free(map2);
 }
 
 static int

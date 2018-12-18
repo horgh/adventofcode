@@ -1,8 +1,6 @@
 #define _POSIX_C_SOURCE 200810L
 
 #include <assert.h>
-#include <ctype.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -67,17 +65,13 @@ main(int const argc, char const * const * const argv)
 		y++;
 	}
 
-	if (true) {
+	if (0) {
 		print_map(map, y);
 	}
 
 	int const minutes = 10;
 	for (int i = 0; i < minutes; i++) {
-		printf("%d\n", i+1);
 		tick(map, y);
-		if (true) {
-			print_map(map, y);
-		}
 	}
 
 	int trees = 0;

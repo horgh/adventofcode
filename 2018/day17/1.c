@@ -2,7 +2,6 @@
 
 #include <assert.h>
 #include <ctype.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,7 +16,7 @@ struct Position {
 };
 
 static void
-print_map(struct Position * * const, int const);
+print_map(struct Position * * const);
 
 static void
 print_position(struct Position const * const);
@@ -31,10 +30,7 @@ move(struct Position * * const,
 int
 main(int const argc, char const * const * const argv)
 {
-	int debug = 0;
-	if (argc > 1) {
-		debug = 1;
-	}
+	(void) argc;
 	(void) argv;
 
 	struct Position * * const map = calloc(SZ, sizeof(struct Position *));
@@ -49,7 +45,6 @@ main(int const argc, char const * const * const argv)
 		}
 	}
 	map[500][0].type = Spring;
-	int max_x = -1;
 	int min_y = -1;
 	int max_y = -1;
 	while (1) {
@@ -76,12 +71,6 @@ main(int const argc, char const * const * const argv)
 		int const m_end = atoi(ptr);
 
 		if (x_or_y == 'x') {
-			if (max_x == -1) {
-				max_x = n;
-			}
-			if (n > max_x) {
-				max_x = n;
-			}
 			for (int i = m_start; i <= m_end; i++) {
 				map[n][i].type = Clay;
 				assert(i < SZ && n < SZ);
@@ -116,45 +105,28 @@ main(int const argc, char const * const * const argv)
 			for (int i = m_start; i <= m_end; i++) {
 				map[i][n].type = Clay;
 				assert(i < SZ && n < SZ);
-				if (max_x == -1) {
-					max_x = i;
-				}
-				if (i > max_x) {
-					max_x = i;
-				}
 			}
 			continue;
 		}
 		assert(1 == 0);
 	}
 
-	if (false) {
-		printf("max x %d max y %d\n", max_x, max_y);
-		printf("before:\n");
-		print_map(map, debug);
+	if (0) {
+		print_map(map);
 	}
 
 	int x = 500;
 	int y = 0;
 	move(map, x, y+1, max_y);
-	if (true) {
-		printf("after:\n");
-		print_map(map, debug);
-		printf("min y %d max y %d\n", min_y, max_y);
-	}
 
-	int count = 0;
+	int count_p1 = 0;
+	int count_p2 = 0;
 	for (y = min_y; y <= max_y; y++) {
 		for (x = 0; x < SZ; x++) {
 			if (map[x][y].type == HadWater ||
 					map[x][y].type == StillWater) {
-				count++;
+				count_p1++;
 			}
-		}
-	}
-	int count_p2 = 0;
-	for (y = min_y; y <= max_y; y++) {
-		for (x = 0; x < SZ; x++) {
 			if (map[x][y].type == StillWater) {
 				count_p2++;
 			}
@@ -165,25 +137,18 @@ main(int const argc, char const * const * const argv)
 		free(map[i]);
 	}
 	free(map);
-	printf("%d\n", count);
+	printf("%d\n", count_p1);
 	printf("%d\n", count_p2);
 	return 0;
 }
 
 static void
-print_map(struct Position * * const map, int const debug)
+print_map(struct Position * * const map)
 {
-	int x0 = 494;
-	int x1 = 507;
+	int x0 = 0;
+	int x1 = 586;
 	int y0 = 0;
-	int y1 = 13;
-
-	if (!debug) {
-		x0 = 0;
-		x1 = 586;
-		y0 = 0;
-		y1 = 1758;
-	}
+	int y1 = 1758;
 	for (int y = y0; y <= y1; y++) {
 		for (int x = x0; x <= x1; x++) {
 			print_position(&map[x][y]);
@@ -229,10 +194,8 @@ move(struct Position * * const map,
 	}
 
 	if (map[x][y].type == HadWater ||
-			map[x][y].type == StillWater) {
-		return 0;
-	}
-	if (map[x][y].type == Clay) {
+			map[x][y].type == StillWater ||
+			map[x][y].type == Clay) {
 		return 0;
 	}
 

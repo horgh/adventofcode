@@ -1,0 +1,216 @@
+# First analysis
+
+ 3: mulr 5 2 4  multiply the counter one by the one that fluctuates, put it in one that is 0
+ 4: eqrr 4 3 4  if the one that is 0 equals the big one, set the one that is 0 to 1
+ 5: addr 4 1 1  add one that is 0 with one that is 7/2 (IP), put in the one that is 7/2 (IP)
+ 6: addi 1 1 1  add 1 to the one that is 7/2 (IP), put it in the 7/2 one (IP)
+ 7: addr 5 0 0  add the counter to the one that is 7/2, put it in answer ** not executed
+ 8: addi 2 1 2  add the fluctuating one to the 7/2 one (IP), put in the fluctuating one
+ 9: gtrr 2 3 4  if fluctuating one is > counter, set 0 one to 1, else 0
+10: addr 1 4 1  add 7/2 one and the 0 one, put in 7/2 one (IP)
+11: seti 2 6 1  set the 7/2 one (IP) to 2 ... so loop back to 3
+
+// ip = 3
+zero = counter*fluctuate;
+
+// ip = 4
+if (zero == big) {
+	zero = 1;
+}
+
+// ip = 5
+ip = ip+zero; // == 5
+
+// ip = 6
+ip++; // = 7
+
+// ip = 8
+fluctuating += ip;
+
+// ip = 9
+if (fluctuating > counter) {
+	zero = 1;
+}
+
+// ip = 10
+ip += zero; // == 10
+
+// ip = 11
+ip = 2; // => becomes 3, go to start
+
+
+# Second analysis
+r0 = 1
+
+0  r1 = r1+16 // means we go to instruction 17 next
+1  r5 = 1
+
+2  r2 = 1
+3  r4 = r5*r2
+4  r4 = r4 == r3 ? 1 : 0
+5  r1 = r4+r1
+6  r1 = r1+1
+7  r0 = r5+r0 // adding counter to answer
+8  r2 = r2+1
+9  r4 = r2 > r3 ? 1 : 0
+10 r1 = r1+r4
+11 r1 = 2
+
+12 r5 = r5+1
+13 r4 = r5 > r3 ? 1 : 0
+14 r1 = r4+r1
+15 r1 = 1
+16 r1 = r1*r1 // this would make us exit (r1 would be 16 so 16*16)
+
+
+[1, 17, 0, 0, 0, 0]
+
+17 r3 = r3+2  // r3=0+2
+18 r3 = r3*r3 // r3=2*2=4
+19 r3 = r1*r3 // r3=19*4 = 76
+20 r3 = r3*11 // r3=76*11 = 836
+
+
+[1, 21, 0, 836, 0, 0]
+
+21 r4 = r4+3  // r4=0+3
+22 r4 = r4*r1 // r4=3*22 = 66
+23 r4 = r4+18 // r4=66+18 = 84
+24 r3 = r3+r4 // r3=836+84 = 920
+
+
+[1, 25, 0, 920, 84, 0]
+
+25 r1 = r1+r0 // r1=25+1 = 26. this could make us exit. but first time we
+              // hit it we get r1=25+1 = 26, so we go to instr 27
+
+26 r1 = 0     // note: skipped
+
+
+[1, 27, 0, 920, 84, 0]
+
+27 r4 = r1    // r4=27
+28 r4 = r4*r1 // r4=27*28 = 756
+29 r4 = r1+r4 // r4=29+756=785
+30 r4 = r1*r4 // r4=30*785 = 23550
+31 r4 = r4*14 // r4=23550*14 = 329700
+32 r4 = r4*r1 // r4=329700*32 = 10550400
+
+
+[1, 33, 0, 920, 10550400, 0]
+
+33 r3 = r3+r4 // r3=920+10550400=10551320
+34 r0 = 0
+35 r1 = 0     // go to instruction 1
+
+
+[0, 1, 0, 10551320, 10550400, 0]
+
+1  r5 = 1
+
+
+[0, 2, 0, 10551320, 10550400, 1]
+
+2  r2 = 1
+
+
+loop begins here:
+3  r4 = r5*r2 // r4=1*1=1
+
+
+[0, 4, 1, 10551320, 1, 1]
+
+4  r4 = r4 == r3 ? 1 : 0 // 1==10551320?, so r4=0
+5  r1 = r4+r1            // r1=0+5=5, so go to instr 6
+6  r1 = r1+1             // r1=6+1=7, so go to instr 8
+
+7  r0 = r5+r0 // adding counter to answer, but skipped
+
+
+[0, 8, 1, 10551320, 0, 1]
+
+8  r2 = r2+1             // r2=1+1=2
+9  r4 = r2 > r3 ? 1 : 0  // 2 > 10551320 ?, so r4=0
+10 r1 = r1+r4            // r1=10+0=10, go to instr 11
+                         //   so if this was 1, we'd exit?
+
+11 r1 = 2                // r1=2, go to instr 3, the loop
+
+
+12 r5 = r5+1             // r5=1+1=2 (maybe)
+13 r4 = r5 > r3 ? 1 : 0  // 2 > 10551320 ?, so r4=0 (maybe)
+14 r1 = r4+r1            // r1=0+14 (maybe), so go to instr 15
+                         //   so if the r4 test passed, we'd go to
+												 //   instr 16, and exit.
+
+15 r1 = 1                // r1=1 (go to instr 2)
+16 r1 = r1*r1 // this would make us exit (r1 would be 16 so 16*16)
+
+
+
+r0 = 0
+r1 = 2
+r2 = 0
+r3 = 10551320
+r4 = 10550400
+r5 = 1
+
+while (1) {
+	2  r2 = 1
+
+	while (1) {
+		3  r4 = r5*r2 // r4=1*1=1
+
+	  if (r4 == r3) {
+		  r0 = r5+r0
+		}
+
+		8  r2 = r2+1             // r2=1+1=2
+
+		if (r2 > r3) {
+			break
+		}
+	}
+
+	12 r5 = r5+1             // r5=1+1=2 (maybe)
+
+	if (r5 > r3) {
+	  exit
+	}
+}
+
+
+rewriting the above:
+
+r0 = 0
+r1 = 2
+r2 = 0
+r3 = 10551320
+r4 = 10550400
+r5 = 1
+
+while (1) {
+	r2 = 1
+
+	while (1) {
+		r4 = r5*r2
+
+	  if (r4 == r3) {
+		  r0 = r5+r0
+		}
+
+		r2 = r2+1
+
+		if (r2 > r3) {
+			break
+		}
+	}
+
+	r5 = r5+1
+
+	if (r5 > r3) {
+	  exit
+	}
+}
+
+Now moving to 3.c

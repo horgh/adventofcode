@@ -28,9 +28,7 @@ struct Group {
 	int ap;
 	char attack[ATTACK_SZ];
 	int initiative;
-
 	struct Group * attacking;
-	//uint64_t partial_hp;
 };
 
 static char const *
@@ -198,7 +196,6 @@ main(int const argc, char const * const * const argv)
 			break;
 		}
 
-		//if (true && round % 100000 == 0) {
 		if (false) {
 			printf("round %d\n", round);
 			printf("Immune System:\n");
@@ -256,9 +253,6 @@ main(int const argc, char const * const * const argv)
 			attack(all_groups[i]);
 		}
 		round++;
-
-		// XXX
-		//return 1;
 	}
 
 	int const units = count_units(immunes, n_immunes)+
@@ -484,15 +478,6 @@ attack(struct Group * const attacker)
 		return;
 	}
 	uint64_t const damage = calc_damage(attacker, defender);
-	//if (defender->partial_hp > 0) {
-	//	uint64_t const orig_partial_hp = defender->partial_hp;
-	//	defender->partial_hp -= damage;
-	//	if (defender->partial_hp <= 0) {
-	//		defender->partial_hp = 0;
-	//		defender->units--;
-	//	}
-	//	damage -= orig_partial_hp;
-	//}
 
 	uint64_t const units_lost = damage/(uint64_t) defender->hp;
 	defender->units -= (int) units_lost;
@@ -511,7 +496,5 @@ attack(struct Group * const attacker)
 		if (false) {
 			printf("no units lost\n");
 		}
-		//defender->partial_hp = defender->hp-(int) damage;
-		//exit(1);
 	}
 }

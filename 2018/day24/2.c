@@ -28,7 +28,6 @@ struct Group {
 	int ap;
 	char attack[ATTACK_SZ];
 	int initiative;
-
 	struct Group * attacking;
 };
 
@@ -496,15 +495,6 @@ attack(struct Group * const attacker)
 		return;
 	}
 	uint64_t const damage = calc_damage(attacker, defender);
-	//if (defender->partial_hp > 0) {
-	//	uint64_t const orig_partial_hp = defender->partial_hp;
-	//	defender->partial_hp -= damage;
-	//	if (defender->partial_hp <= 0) {
-	//		defender->partial_hp = 0;
-	//		defender->units--;
-	//	}
-	//	damage -= orig_partial_hp;
-	//}
 
 	uint64_t const units_lost = damage/(uint64_t) defender->hp;
 	defender->units -= (int) units_lost;
@@ -523,7 +513,5 @@ attack(struct Group * const attacker)
 		if (false) {
 			printf("no units lost\n");
 		}
-		//defender->partial_hp = defender->hp-(int) damage;
-		//exit(1);
 	}
 }

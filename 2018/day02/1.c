@@ -4,14 +4,13 @@
 #include <stdio.h>
 #include <string.h>
 
-static int
-count_occurrences(char const * const, char const);
+static int count_occurrences(char const * const, char const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	int twos = 0;
 	int threes = 0;
@@ -42,12 +41,11 @@ main(int const argc, char const * const * const argv)
 		}
 	}
 
-	printf("%d\n", twos*threes);
+	printf("%d\n", twos * threes);
 	return 0;
 }
 
-__attribute__((pure))
-static int
+__attribute__((pure)) static int
 count_occurrences(char const * const s, char const c)
 {
 	char const * ptr = s;

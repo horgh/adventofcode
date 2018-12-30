@@ -11,23 +11,18 @@ struct program {
 	struct htable * connected_ids;
 };
 
-static bool
-parse_line(char const * const, struct htable * const);
-static void
-program_destroy(void * const);
-static void
-print_programs(struct htable const * const);
-static void
-maybe_set(struct htable * const, char const * const);
-static void
-set_connected(struct htable * const,
-		struct htable * const,
-		char const * const);
+static bool parse_line(char const * const, struct htable * const);
+static void program_destroy(void * const);
+static void print_programs(struct htable const * const);
+static void maybe_set(struct htable * const, char const * const);
+static void set_connected(
+		struct htable * const, struct htable * const, char const * const);
 
-int main(int const argc, char const * const * const argv)
+int
+main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 
@@ -40,7 +35,7 @@ int main(int const argc, char const * const * const argv)
 	}
 
 	while (1) {
-		if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+		if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				hash_free(programs, program_destroy);
@@ -179,7 +174,7 @@ program_destroy(void * const v)
 static void
 print_programs(struct htable const * const h)
 {
-	void * * const keys = hash_get_keys(h);
+	void ** const keys = hash_get_keys(h);
 	if (!keys) {
 		fprintf(stderr, "hash_get_keys()\n");
 		return;
@@ -200,7 +195,7 @@ print_programs(struct htable const * const h)
 			continue;
 		}
 
-		void * * const keys2 = hash_get_keys(p->connected_ids);
+		void ** const keys2 = hash_get_keys(p->connected_ids);
 		for (size_t j = 0; keys2[j]; j++) {
 			char const * const key2 = keys2[j];
 			if (j == 0) {
@@ -249,7 +244,7 @@ set_connected(struct htable * const programs,
 		return;
 	}
 
-	void * * const ids = hash_get_keys(p->connected_ids);
+	void ** const ids = hash_get_keys(p->connected_ids);
 	for (size_t i = 0; ids[i]; i++) {
 		char const * const id2 = ids[i];
 		set_connected(programs, connected, id2);

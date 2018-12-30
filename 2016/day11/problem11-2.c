@@ -31,32 +31,32 @@
 #define ELEMENT_COUNT 2
 
 #define HYDROGEN 0
-#define LITHIUM  1
+#define LITHIUM 1
 #endif
 
 #ifdef INPUT_PART1
 #define ELEMENT_COUNT 5
 
 #define PROMETHIUM 0
-#define COBALT     1
-#define CURIUM     2
-#define RUTHENIUM  3
-#define PLUTONIUM  4
+#define COBALT 1
+#define CURIUM 2
+#define RUTHENIUM 3
+#define PLUTONIUM 4
 #endif
 
 #ifdef INPUT_PART2
 #define ELEMENT_COUNT 7
 
 #define PROMETHIUM 0
-#define COBALT     1
-#define CURIUM     2
-#define RUTHENIUM  3
-#define PLUTONIUM  4
-#define ELERIUM    5
-#define DILITHIUM  6
+#define COBALT 1
+#define CURIUM 2
+#define RUTHENIUM 3
+#define PLUTONIUM 4
+#define ELERIUM 5
+#define DILITHIUM 6
 #endif
 
-enum Direction {UP, DOWN};
+enum Direction { UP, DOWN };
 
 struct Floor {
 	int number;
@@ -68,51 +68,38 @@ struct Floor {
 };
 
 struct FloorsAndCost {
-	struct Floor * * floors;
+	struct Floor ** floors;
 	int cost;
 };
 
-static void
-__destroy_floors(struct Floor * * const);
-static void
-__destroy_floor(struct Floor * const);
-static void
-__print_floors(struct Floor * const * const);
-static void
-__print_floor(const struct Floor * const);
-static int
-__solve_bfs(struct Floor * * const);
-static void
-__get_moves_bfs(struct Queue * const, struct Floor * * const,
-		struct Floor * const, struct Floor * const,
+static void __destroy_floors(struct Floor ** const);
+static void __destroy_floor(struct Floor * const);
+static void __print_floors(struct Floor * const * const);
+static void __print_floor(const struct Floor * const);
+static int __solve_bfs(struct Floor ** const);
+static void __get_moves_bfs(struct Queue * const,
+		struct Floor ** const,
+		struct Floor * const,
+		struct Floor * const,
 		const int);
-static void
-__move_generator(struct Floor * const, struct Floor * const,
-		const int);
-static void
-__move_microchip(struct Floor * const, struct Floor * const,
-		const int);
-static struct Floor * *
-__copy_floors(struct Floor * const * const);
-static char *
-__floors_to_str(struct Floor * const * const);
-static bool
-__is_floor_safe(const struct Floor * const);
-static bool
-__is_finished(struct Floor * const * const);
-static void
-__enqueue(struct Queue * const, struct Floor * * const,
-		const int);
-static void
-__destroy_floors_and_cost(void *);
+static void __move_generator(
+		struct Floor * const, struct Floor * const, const int);
+static void __move_microchip(
+		struct Floor * const, struct Floor * const, const int);
+static struct Floor ** __copy_floors(struct Floor * const * const);
+static char * __floors_to_str(struct Floor * const * const);
+static bool __is_floor_safe(const struct Floor * const);
+static bool __is_finished(struct Floor * const * const);
+static void __enqueue(struct Queue * const, struct Floor ** const, const int);
+static void __destroy_floors_and_cost(void *);
 
 int
 main(const int argc, const char * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
-	struct Floor * * floors = calloc(FLOOR_COUNT, sizeof(struct Floor *));
+	struct Floor ** floors = calloc(FLOOR_COUNT, sizeof(struct Floor *));
 	if (!floors) {
 		printf("%s\n", strerror(errno));
 		return 1;
@@ -237,13 +224,13 @@ main(const int argc, const char * const * const argv)
 }
 
 static void
-__destroy_floors(struct Floor * * const floors)
+__destroy_floors(struct Floor ** const floors)
 {
 	if (!floors) {
 		return;
 	}
 
-	for (int i = FLOOR_COUNT-1; i >= 0; i--) {
+	for (int i = FLOOR_COUNT - 1; i >= 0; i--) {
 		__destroy_floor(floors[i]);
 	}
 
@@ -273,7 +260,7 @@ __destroy_floor(struct Floor * const floor)
 static void
 __print_floors(struct Floor * const * const floors)
 {
-	for (int i = FLOOR_COUNT-1; i >= 0; i--) {
+	for (int i = FLOOR_COUNT - 1; i >= 0; i--) {
 		__print_floor(floors[i]);
 	}
 }
@@ -281,7 +268,7 @@ __print_floors(struct Floor * const * const floors)
 static void
 __print_floor(const struct Floor * const floor)
 {
-	printf("%d ", floor->number+1);
+	printf("%d ", floor->number + 1);
 
 	if (floor->elevator) {
 		printf("E ");
@@ -413,7 +400,7 @@ __print_floor(const struct Floor * const floor)
 }
 
 static int
-__solve_bfs(struct Floor * * const floors)
+__solve_bfs(struct Floor ** const floors)
 {
 	struct Queue * const queue = calloc(1, sizeof(struct Queue));
 	assert(queue != NULL);
@@ -427,7 +414,7 @@ __solve_bfs(struct Floor * * const floors)
 		struct FloorsAndCost * const fac = dequeue(queue);
 		assert(fac != NULL);
 
-		struct Floor * * const current_floors = fac->floors;
+		struct Floor ** const current_floors = fac->floors;
 
 		char * const floors_str = __floors_to_str(current_floors);
 		assert(floors_str != NULL);
@@ -464,17 +451,19 @@ __solve_bfs(struct Floor * * const floors)
 		// Find all valid moves at this level.
 
 		// Up moves
-		if (current_floor->number != FLOOR_COUNT-1) {
-			struct Floor * const next_floor = current_floors[current_floor->number+1];
-			__get_moves_bfs(queue, current_floors, current_floor, next_floor,
-					fac->cost+1);
+		if (current_floor->number != FLOOR_COUNT - 1) {
+			struct Floor * const next_floor =
+					current_floors[current_floor->number + 1];
+			__get_moves_bfs(
+					queue, current_floors, current_floor, next_floor, fac->cost + 1);
 		}
 
 		// Down moves
 		if (current_floor->number != 0) {
-			struct Floor * const next_floor = current_floors[current_floor->number-1];
-			__get_moves_bfs(queue, current_floors, current_floor, next_floor,
-					fac->cost+1);
+			struct Floor * const next_floor =
+					current_floors[current_floor->number - 1];
+			__get_moves_bfs(
+					queue, current_floors, current_floor, next_floor, fac->cost + 1);
 		}
 
 		__destroy_floors_and_cost(fac);
@@ -487,8 +476,10 @@ __solve_bfs(struct Floor * * const floors)
 
 // True if making a move solves it.
 static void
-__get_moves_bfs(struct Queue * const queue, struct Floor * * const floors,
-		struct Floor * const current_floor, struct Floor * const next_floor,
+__get_moves_bfs(struct Queue * const queue,
+		struct Floor ** const floors,
+		struct Floor * const current_floor,
+		struct Floor * const next_floor,
 		const int cost)
 {
 	current_floor->elevator = false;
@@ -515,7 +506,7 @@ __get_moves_bfs(struct Queue * const queue, struct Floor * * const floors,
 			continue;
 		}
 
-		for (int j = i+1; j < ELEMENT_COUNT; j++) {
+		for (int j = i + 1; j < ELEMENT_COUNT; j++) {
 			if (!current_floor->generators[j]) {
 				continue;
 			}
@@ -553,7 +544,7 @@ __get_moves_bfs(struct Queue * const queue, struct Floor * * const floors,
 			continue;
 		}
 
-		for (int j = i+1; j < ELEMENT_COUNT; j++) {
+		for (int j = i + 1; j < ELEMENT_COUNT; j++) {
 			if (!current_floor->microchips[j]) {
 				continue;
 			}
@@ -598,8 +589,8 @@ __get_moves_bfs(struct Queue * const queue, struct Floor * * const floors,
 }
 
 static void
-__move_generator(struct Floor * const dest, struct Floor * const src,
-		const int i)
+__move_generator(
+		struct Floor * const dest, struct Floor * const src, const int i)
 {
 	src->generators[i] = false;
 	src->num_generators -= 1;
@@ -608,8 +599,8 @@ __move_generator(struct Floor * const dest, struct Floor * const src,
 }
 
 static void
-__move_microchip(struct Floor * const dest, struct Floor * const src,
-		const int i)
+__move_microchip(
+		struct Floor * const dest, struct Floor * const src, const int i)
 {
 	src->microchips[i] = false;
 	src->num_microchips -= 1;
@@ -617,10 +608,10 @@ __move_microchip(struct Floor * const dest, struct Floor * const src,
 	dest->num_microchips += 1;
 }
 
-static struct Floor * *
+static struct Floor **
 __copy_floors(struct Floor * const * const floors)
 {
-	struct Floor * * const floors2 = calloc(FLOOR_COUNT, sizeof(struct Floor *));
+	struct Floor ** const floors2 = calloc(FLOOR_COUNT, sizeof(struct Floor *));
 	assert(floors2 != NULL);
 
 	for (size_t i = 0; i < FLOOR_COUNT; i++) {
@@ -693,8 +684,7 @@ __floors_to_str(struct Floor * const * const floors)
 	return s;
 }
 
-__attribute__((pure))
-static bool
+__attribute__((pure)) static bool
 __is_floor_safe(const struct Floor * const floor)
 {
 	if (floor->num_generators == 0) {
@@ -725,7 +715,7 @@ static bool
 __is_finished(struct Floor * const * const floors)
 {
 	for (size_t i = 0; i < FLOOR_COUNT; i++) {
-		bool is_top_floor = i == FLOOR_COUNT-1;
+		bool is_top_floor = i == FLOOR_COUNT - 1;
 		if (is_top_floor) {
 			continue;
 		}
@@ -745,8 +735,8 @@ __is_finished(struct Floor * const * const floors)
 }
 
 static void
-__enqueue(struct Queue * const queue, struct Floor * * const floors,
-		const int cost)
+__enqueue(
+		struct Queue * const queue, struct Floor ** const floors, const int cost)
 {
 	struct FloorsAndCost * fac = calloc(1, sizeof(struct FloorsAndCost));
 	assert(fac != NULL);

@@ -4,25 +4,25 @@
 #include <map.h>
 #include <queue.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define MAX_INSTRUCTIONS 1024
 
 #define I_UNKNOWN 0
-#define I_SND     1
-#define I_SET     2
-#define I_ADD     3
-#define I_MUL     4
-#define I_MOD     5
-#define I_RCV     6
-#define I_JGZ     7
-#define I_JNZ     8
-#define I_SUB     9
+#define I_SND 1
+#define I_SET 2
+#define I_ADD 3
+#define I_MUL 4
+#define I_MOD 5
+#define I_RCV 6
+#define I_JGZ 7
+#define I_JNZ 8
+#define I_SUB 9
 
-#define VALUE    0
+#define VALUE 0
 #define REGISTER 1
 
 #define DEBUG 0
@@ -46,38 +46,28 @@ struct program {
 	uint64_t sends;
 };
 
-static struct instruction *
-parse_instruction(char const * const);
-static void
-destroy_instructions(struct instruction * * const);
-static void
-print_instructions(struct instruction * * const);
-static void
-print_instruction(struct instruction const * const);
-static int
-run_instruction(int const,
-		struct instruction * * const,
+static struct instruction * parse_instruction(char const * const);
+static void destroy_instructions(struct instruction ** const);
+static void print_instructions(struct instruction ** const);
+static void print_instruction(struct instruction const * const);
+static int run_instruction(int const,
+		struct instruction ** const,
 		size_t const,
 		struct htable * const,
 		struct program * const);
-static int64_t
-register_get(struct htable const * const,
-		char const);
-static void
-register_set(struct htable * const,
+static int64_t register_get(struct htable const * const, char const);
+static void register_set(struct htable * const,
 		char const,
 		int64_t const,
 		struct program const * const);
-static struct program *
-program_create(int64_t const);
-static void
-program_destroy(struct program * const);
+static struct program * program_create(int64_t const);
+static void program_destroy(struct program * const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 	char buf[4096] = {0};
@@ -86,7 +76,7 @@ main(int const argc, char const * const * const argv)
 	size_t num_instructions = 0;
 
 	while (1) {
-		if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+		if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				return 1;
@@ -121,10 +111,10 @@ main(int const argc, char const * const * const argv)
 			count++;
 		}
 
-		p0->instr_idx = run_instruction(p0->instr_idx, instructions,
-				num_instructions, p0->registers, p0);
+		p0->instr_idx = run_instruction(
+				p0->instr_idx, instructions, num_instructions, p0->registers, p0);
 
-		if (p0->instr_idx < 0 || p0->instr_idx >= (int) num_instructions) {
+		if (p0->instr_idx < 0 || p0->instr_idx >= (int)num_instructions) {
 			break;
 		}
 	}
@@ -187,7 +177,7 @@ parse_instruction(char const * const s)
 			instr->register0 = *ptr;
 		} else {
 			instr->param_type0 = VALUE;
-			instr->value0 = (int64_t) atoll(ptr);
+			instr->value0 = (int64_t)atoll(ptr);
 		}
 		return instr;
 	}
@@ -202,7 +192,7 @@ parse_instruction(char const * const s)
 			instr->register1 = *ptr;
 		} else {
 			instr->param_type1 = VALUE;
-			instr->value1 = (int64_t) atoll(ptr);
+			instr->value1 = (int64_t)atoll(ptr);
 		}
 		return instr;
 	}
@@ -213,7 +203,7 @@ parse_instruction(char const * const s)
 			instr->register0 = *ptr;
 		} else {
 			instr->param_type0 = VALUE;
-			instr->value0 = (int64_t) atoll(ptr);
+			instr->value0 = (int64_t)atoll(ptr);
 		}
 		return instr;
 	}
@@ -225,7 +215,7 @@ parse_instruction(char const * const s)
 			ptr += 2;
 		} else {
 			instr->param_type0 = VALUE;
-			instr->value0 = (int64_t) atoll(ptr);
+			instr->value0 = (int64_t)atoll(ptr);
 			while (isdigit(*ptr)) {
 				ptr++;
 			}
@@ -238,7 +228,7 @@ parse_instruction(char const * const s)
 			instr->register1 = *ptr;
 		} else {
 			instr->param_type1 = VALUE;
-			instr->value1 = (int64_t) atoll(ptr);
+			instr->value1 = (int64_t)atoll(ptr);
 		}
 		return instr;
 	}
@@ -249,7 +239,7 @@ parse_instruction(char const * const s)
 }
 
 static void
-destroy_instructions(struct instruction * * const instructions)
+destroy_instructions(struct instruction ** const instructions)
 {
 	if (!instructions) {
 		return;
@@ -265,7 +255,7 @@ destroy_instructions(struct instruction * * const instructions)
 }
 
 static void
-print_instructions(struct instruction * * const instructions)
+print_instructions(struct instruction ** const instructions)
 {
 	if (!instructions) {
 		return;
@@ -353,7 +343,7 @@ print_instruction(struct instruction const * const instr)
 
 static int
 run_instruction(int const instr_idx,
-		struct instruction * * const instructions,
+		struct instruction ** const instructions,
 		size_t const num_instructions,
 		struct htable * const registers,
 		struct program * const p)
@@ -367,7 +357,7 @@ run_instruction(int const instr_idx,
 
 	if (instr->type == I_SND) {
 		fprintf(stderr, "unexpectedly saw SND\n");
-		return instr_idx+1;
+		return instr_idx + 1;
 	}
 
 	if (instr->type == I_SET) {
@@ -375,125 +365,142 @@ run_instruction(int const instr_idx,
 
 		if (instr->param_type1 == VALUE) {
 			register_set(registers, instr->register0, instr->value1, p);
-			return instr_idx+1;
+			return instr_idx + 1;
 		}
-		register_set(registers, instr->register0,
-				register_get(registers, instr->register1), p);
-		return instr_idx+1;
+		register_set(registers,
+				instr->register0,
+				register_get(registers, instr->register1),
+				p);
+		return instr_idx + 1;
 	}
 
 	if (instr->type == I_ADD) {
 		// Param 0 should always be a register.
 
 		if (instr->param_type1 == VALUE) {
-			register_set(registers, instr->register0,
-					register_get(registers, instr->register0)+instr->value1, p);
-			return instr_idx+1;
+			register_set(registers,
+					instr->register0,
+					register_get(registers, instr->register0) + instr->value1,
+					p);
+			return instr_idx + 1;
 		}
-		register_set(registers, instr->register0,
-				register_get(registers, instr->register0)+
-				register_get(registers, instr->register1), p);
-		return instr_idx+1;
+		register_set(registers,
+				instr->register0,
+				register_get(registers, instr->register0) +
+						register_get(registers, instr->register1),
+				p);
+		return instr_idx + 1;
 	}
 
 	if (instr->type == I_MUL) {
 		// Param 0 should always be a register.
 
 		if (instr->param_type1 == VALUE) {
-			register_set(registers, instr->register0,
-					register_get(registers, instr->register0)*instr->value1, p);
-			return instr_idx+1;
+			register_set(registers,
+					instr->register0,
+					register_get(registers, instr->register0) * instr->value1,
+					p);
+			return instr_idx + 1;
 		}
-		register_set(registers, instr->register0,
-				register_get(registers, instr->register0)*
-				register_get(registers, instr->register1), p);
-		return instr_idx+1;
+		register_set(registers,
+				instr->register0,
+				register_get(registers, instr->register0) *
+						register_get(registers, instr->register1),
+				p);
+		return instr_idx + 1;
 	}
 
 	if (instr->type == I_MOD) {
 		// Param 0 should always be a register.
 
 		if (instr->param_type1 == VALUE) {
-			register_set(registers, instr->register0,
-					register_get(registers, instr->register0)%instr->value1, p);
-			return instr_idx+1;
+			register_set(registers,
+					instr->register0,
+					register_get(registers, instr->register0) % instr->value1,
+					p);
+			return instr_idx + 1;
 		}
-		register_set(registers, instr->register0,
-				register_get(registers, instr->register0)%
-				register_get(registers, instr->register1), p);
-		return instr_idx+1;
+		register_set(registers,
+				instr->register0,
+				register_get(registers, instr->register0) %
+						register_get(registers, instr->register1),
+				p);
+		return instr_idx + 1;
 	}
 
 	if (instr->type == I_RCV) {
 		// The parameter is always a register.
 
 		fprintf(stderr, "unexpectedly saw RCV\n");
-		return instr_idx+1;
+		return instr_idx + 1;
 	}
 
 	if (instr->type == I_JGZ) {
 		if (instr->param_type0 == VALUE) {
 			if (instr->value0 <= 0) {
-				return instr_idx+1;
+				return instr_idx + 1;
 			}
 		} else {
 			if (register_get(registers, instr->register0) <= 0) {
-				return instr_idx+1;
+				return instr_idx + 1;
 			}
 		}
 
 		if (instr->param_type1 == VALUE) {
-			return instr_idx+(int) instr->value1;
+			return instr_idx + (int)instr->value1;
 		}
 
 		int64_t const v = register_get(registers, instr->register1);
 		if (v < 0) {
 			return -1;
 		}
-		if (v >= (int64_t) num_instructions) {
+		if (v >= (int64_t)num_instructions) {
 			return -1;
 		}
-		return instr_idx+(int) v;
+		return instr_idx + (int)v;
 	}
 
 	if (instr->type == I_JNZ) {
 		if (instr->param_type0 == VALUE) {
 			if (instr->value0 == 0) {
-				return instr_idx+1;
+				return instr_idx + 1;
 			}
 		} else {
 			if (register_get(registers, instr->register0) == 0) {
-				return instr_idx+1;
+				return instr_idx + 1;
 			}
 		}
 
 		if (instr->param_type1 == VALUE) {
-			return instr_idx+(int) instr->value1;
+			return instr_idx + (int)instr->value1;
 		}
 
 		int64_t const v = register_get(registers, instr->register1);
 		if (v < 0) {
 			return -1;
 		}
-		if (v >= (int64_t) num_instructions) {
+		if (v >= (int64_t)num_instructions) {
 			return -1;
 		}
-		return instr_idx+(int) v;
+		return instr_idx + (int)v;
 	}
 
 	if (instr->type == I_SUB) {
 		// Param 0 should always be a register.
 
 		if (instr->param_type1 == VALUE) {
-			register_set(registers, instr->register0,
-					register_get(registers, instr->register0)-
-					instr->value1, p);
-			return instr_idx+1;
+			register_set(registers,
+					instr->register0,
+					register_get(registers, instr->register0) - instr->value1,
+					p);
+			return instr_idx + 1;
 		}
-		register_set(registers, instr->register0,
-				register_get(registers, instr->register0)-
-				register_get(registers, instr->register1), p);
-		return instr_idx+1;
+		register_set(registers,
+				instr->register0,
+				register_get(registers, instr->register0) -
+						register_get(registers, instr->register1),
+				p);
+		return instr_idx + 1;
 	}
 
 	fprintf(stderr, "unrecognized instruction\n");
@@ -501,8 +508,7 @@ run_instruction(int const instr_idx,
 }
 
 static int64_t
-register_get(struct htable const * const registers,
-		char const reg)
+register_get(struct htable const * const registers, char const reg)
 {
 	char k[2] = {0};
 	k[0] = reg;
@@ -557,7 +563,7 @@ program_create(int64_t const id)
 		return NULL;
 	}
 
-	p->id = (int) id;
+	p->id = (int)id;
 
 	p->registers = hash_init(1024);
 	if (!p->registers) {

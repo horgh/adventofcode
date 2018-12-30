@@ -6,8 +6,8 @@
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	int freq = 0;
 	while (1) {

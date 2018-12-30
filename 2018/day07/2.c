@@ -13,17 +13,13 @@ struct Instruction {
 	char step;
 };
 
-static char
-get_candidate(
-		struct Instruction const * const,
+static char get_candidate(struct Instruction const * const,
 		size_t const,
 		char const * const,
 		size_t const,
 		int const * const,
-		int const * const
-);
-static int
-cmp_char(void const * const, void const * const);
+		int const * const);
+static int cmp_char(void const * const, void const * const);
 
 int
 main(int const argc, char const * const * const argv)
@@ -48,7 +44,7 @@ main(int const argc, char const * const * const argv)
 
 		ptr += strlen("Step ");
 		char const prereq = *ptr;
-		ptr += 1+strlen(" must be finished before step ");
+		ptr += 1 + strlen(" must be finished before step ");
 		char const step = *ptr;
 
 		bool found = false;
@@ -67,14 +63,14 @@ main(int const argc, char const * const * const argv)
 
 	int seen[1024] = {0};
 	for (size_t i = 0; i < n; i++) {
-		seen[(int) instructions[i].step] = 1;
+		seen[(int)instructions[i].step] = 1;
 	}
 
 	char starters[1024] = {0};
 	size_t n_starters = 0;
 	for (size_t i = 0; i < n; i++) {
 		for (size_t j = 0; j < instructions[i].n_prereqs; j++) {
-			if (seen[(int) instructions[i].prereqs[j]]) {
+			if (seen[(int)instructions[i].prereqs[j]]) {
 				continue;
 			}
 			bool found = false;
@@ -91,10 +87,10 @@ main(int const argc, char const * const * const argv)
 
 	int done[1024] = {0};
 	int seconds = 0;
-	char * const worker_to_step = calloc((size_t) n_workers, sizeof(char));
+	char * const worker_to_step = calloc((size_t)n_workers, sizeof(char));
 	assert(worker_to_step != NULL);
 	int step_to_seconds[64] = {0};
-	size_t const total_needed = n_starters+n;
+	size_t const total_needed = n_starters + n;
 	size_t total_done = 0;
 	while (1) {
 		for (int w = 0; w < n_workers; w++) {
@@ -103,9 +99,9 @@ main(int const argc, char const * const * const argv)
 			}
 
 			char const c = worker_to_step[w];
-			step_to_seconds[(int) c]--;
-			if (step_to_seconds[(int) c] == 0) {
-				done[(int) c] = 1;
+			step_to_seconds[(int)c]--;
+			if (step_to_seconds[(int)c] == 0) {
+				done[(int)c] = 1;
 				worker_to_step[w] = 0;
 				total_done++;
 			}
@@ -121,18 +117,12 @@ main(int const argc, char const * const * const argv)
 			}
 
 			char const c = get_candidate(
-					instructions,
-					n,
-					starters,
-					n_starters,
-					done,
-					step_to_seconds
-					);
+					instructions, n, starters, n_starters, done, step_to_seconds);
 			if (c == -1) {
 				continue;
 			}
 			worker_to_step[w] = c;
-			step_to_seconds[(int) c] = c-64 + step_base;
+			step_to_seconds[(int)c] = c - 64 + step_base;
 		}
 
 		seconds++;
@@ -144,26 +134,25 @@ main(int const argc, char const * const * const argv)
 }
 
 static char
-get_candidate(
-		struct Instruction const * const instructions,
+get_candidate(struct Instruction const * const instructions,
 		size_t const n,
 		char const * const starters,
 		size_t const n_starters,
 		int const * const done,
-		int const * const in_progress
-) {
+		int const * const in_progress)
+{
 	char candidates[1024] = {0};
 	size_t m = 0;
 	for (size_t i = 0; i < n; i++) {
-		if (done[(int) instructions[i].step]) {
+		if (done[(int)instructions[i].step]) {
 			continue;
 		}
-		if (in_progress[(int) instructions[i].step]) {
+		if (in_progress[(int)instructions[i].step]) {
 			continue;
 		}
 		bool all_prereqs_done = true;
 		for (size_t j = 0; j < instructions[i].n_prereqs; j++) {
-			if (done[(int) instructions[i].prereqs[j]]) {
+			if (done[(int)instructions[i].prereqs[j]]) {
 				continue;
 			}
 			all_prereqs_done = false;
@@ -174,10 +163,10 @@ get_candidate(
 	}
 
 	for (size_t i = 0; i < n_starters; i++) {
-		if (done[(int) starters[i]]) {
+		if (done[(int)starters[i]]) {
 			continue;
 		}
-		if (in_progress[(int) starters[i]]) {
+		if (in_progress[(int)starters[i]]) {
 			continue;
 		}
 		candidates[m++] = starters[i];

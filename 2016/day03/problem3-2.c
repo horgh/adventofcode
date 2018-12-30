@@ -3,8 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-bool
-__valid_triangle(const int, const int, const int);
+bool __valid_triangle(const int, const int, const int);
 
 int
 main(void)
@@ -59,8 +58,7 @@ main(void)
 	return 0;
 }
 
-__attribute__((const))
-bool
+__attribute__((const)) bool
 __valid_triangle(const int a, const int b, const int c)
 {
 	if (a + b <= c) {
@@ -70,7 +68,8 @@ __valid_triangle(const int a, const int b, const int c)
 		return false;
 	}
 	if (b + c <= a) {
-		return false;;
+		return false;
+		;
 	}
 	return true;
 }

@@ -26,32 +26,39 @@ struct Target {
 	int y;
 };
 
-enum Location {WALL, OPEN, TARGET};
+enum Location { WALL, OPEN, TARGET };
 
-static void
-__destroy_locations(enum Location * * const);
-static int
-__shortest_tour(enum Location * * const,
-		struct Target * const, const size_t, const int,
-		const int, int const);
-static int
-__permute_targets(enum Location * * const,
-		struct Target * const, const size_t, const int,
-		const int, struct Target * const,
-		const size_t, int const);
-static int
-__tour(enum Location * * const, struct Target * const,
-		const size_t, const int, const int, int const);
-static int
-__shortest_path(enum Location * * const, const int,
-		const int, const int, const int);
-static bool
-__enqueue(struct Queue * const, const int, const int, const int);
-static bool
-__add_neighbours(enum Location * * const, struct Queue * const,
-		const struct Position * const, const int);
+static void __destroy_locations(enum Location ** const);
+static int __shortest_tour(enum Location ** const,
+		struct Target * const,
+		const size_t,
+		const int,
+		const int,
+		int const);
+static int __permute_targets(enum Location ** const,
+		struct Target * const,
+		const size_t,
+		const int,
+		const int,
+		struct Target * const,
+		const size_t,
+		int const);
+static int __tour(enum Location ** const,
+		struct Target * const,
+		const size_t,
+		const int,
+		const int,
+		int const);
+static int __shortest_path(
+		enum Location ** const, const int, const int, const int, const int);
+static bool __enqueue(struct Queue * const, const int, const int, const int);
+static bool __add_neighbours(enum Location ** const,
+		struct Queue * const,
+		const struct Position * const,
+		const int);
 
-int main(const int argc, const char * const * const argv)
+int
+main(const int argc, const char * const * const argv)
 {
 	if (argc != 3) {
 		printf("Usage: %s <input file> <part>\n", argv[0]);
@@ -66,8 +73,7 @@ int main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
-	enum Location * * const locations = calloc(MAX_WIDTH,
-			sizeof(enum Location *));
+	enum Location ** const locations = calloc(MAX_WIDTH, sizeof(enum Location *));
 	if (!locations) {
 		printf("%s\n", strerror(errno));
 		fclose(fh);
@@ -93,7 +99,7 @@ int main(const int argc, const char * const * const argv)
 	}
 
 	size_t height = 0;
-	//size_t width = 0;
+	// size_t width = 0;
 
 	size_t targets_i = 0;
 
@@ -121,12 +127,12 @@ int main(const int argc, const char * const * const argv)
 			if (isdigit(buf[i])) {
 				locations[i][height] = TARGET;
 				if (buf[i] == '0') {
-					startx = (int) i;
-					starty = (int) height;
+					startx = (int)i;
+					starty = (int)height;
 				} else {
-					targets[targets_i].x = (int) i;
-					targets[targets_i].y = (int) height;
-					//printf("found target %zu at %d,%d\n", targets_i, (int) i,
+					targets[targets_i].x = (int)i;
+					targets[targets_i].y = (int)height;
+					// printf("found target %zu at %d,%d\n", targets_i, (int) i,
 					//		(int) height);
 					targets_i++;
 				}
@@ -134,7 +140,7 @@ int main(const int argc, const char * const * const argv)
 			}
 
 			if (buf[i] == '\n') {
-				//width = i;
+				// width = i;
 				continue;
 			}
 
@@ -155,7 +161,7 @@ int main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
-	//for (size_t y = 0; y < height; y++) {
+	// for (size_t y = 0; y < height; y++) {
 	//	for (size_t x = 0; x < width; x++) {
 	//		if (locations[x][y] == WALL) {
 	//			printf("W");
@@ -168,9 +174,9 @@ int main(const int argc, const char * const * const argv)
 	//	printf("\n");
 	//}
 
-	//printf("starting position is %d,%d\n", startx, starty);
-	const int steps = __shortest_tour(locations, targets, targets_i, startx,
-			starty, atoi(part));
+	// printf("starting position is %d,%d\n", startx, starty);
+	const int steps = __shortest_tour(
+			locations, targets, targets_i, startx, starty, atoi(part));
 	printf("%d\n", steps);
 
 	__destroy_locations(locations);
@@ -180,7 +186,7 @@ int main(const int argc, const char * const * const argv)
 }
 
 static void
-__destroy_locations(enum Location * * const locations)
+__destroy_locations(enum Location ** const locations)
 {
 	if (!locations) {
 		return;
@@ -194,9 +200,12 @@ __destroy_locations(enum Location * * const locations)
 }
 
 static int
-__shortest_tour(enum Location * * const locations,
-		struct Target * const targets, const size_t targets_sz, const int startx,
-		const int starty, int const part)
+__shortest_tour(enum Location ** const locations,
+		struct Target * const targets,
+		const size_t targets_sz,
+		const int startx,
+		const int starty,
+		int const part)
 {
 	struct Target * current_targets = calloc(targets_sz, sizeof(struct Target));
 	if (!current_targets) {
@@ -207,34 +216,40 @@ __shortest_tour(enum Location * * const locations,
 	// Optimization: Record shortest paths from x0,y0 to x1,y1 and check whether
 	// we've calculated it previously.
 
-	const int steps = __permute_targets(locations, targets, targets_sz,
-			startx, starty, current_targets, 0, part);
+	const int steps = __permute_targets(
+			locations, targets, targets_sz, startx, starty, current_targets, 0, part);
 	free(current_targets);
 	return steps;
 }
 
 // Permute by removing from targets and adding to current_targets.
 static int
-__permute_targets(enum Location * * const locations,
-		struct Target * const targets, const size_t targets_sz, const int startx,
-		const int starty, struct Target * const current_targets,
-		const size_t current_targets_sz, int const part)
+__permute_targets(enum Location ** const locations,
+		struct Target * const targets,
+		const size_t targets_sz,
+		const int startx,
+		const int starty,
+		struct Target * const current_targets,
+		const size_t current_targets_sz,
+		int const part)
 {
 	if (targets_sz == 0) {
 #ifdef DEBUG
-		printf("starting tour from %d,%d (%zu targets)\n", startx, starty,
+		printf("starting tour from %d,%d (%zu targets)\n",
+				startx,
+				starty,
 				current_targets_sz);
 #endif
-		return __tour(locations, current_targets, current_targets_sz, startx,
-				starty, part);
+		return __tour(
+				locations, current_targets, current_targets_sz, startx, starty, part);
 	}
 
 	int steps = INT_MAX;
 
 	for (size_t i = 0; i < targets_sz; i++) {
 		// Copy pool of targets without the one we extract as head.
-		struct Target * const new_targets = calloc(targets_sz-1,
-				sizeof(struct Target));
+		struct Target * const new_targets =
+				calloc(targets_sz - 1, sizeof(struct Target));
 		if (!new_targets) {
 			printf("%s\n", strerror(errno));
 			return -1;
@@ -251,8 +266,13 @@ __permute_targets(enum Location * * const locations,
 
 		current_targets[current_targets_sz] = targets[i];
 
-		const int permutation_steps = __permute_targets(locations, new_targets,
-				targets_sz-1, startx, starty, current_targets, current_targets_sz+1,
+		const int permutation_steps = __permute_targets(locations,
+				new_targets,
+				targets_sz - 1,
+				startx,
+				starty,
+				current_targets,
+				current_targets_sz + 1,
 				part);
 		if (permutation_steps == -1) {
 			printf("__permute_targets\n");
@@ -271,8 +291,12 @@ __permute_targets(enum Location * * const locations,
 
 // Visit all targets in the given order and find the shortest path to do this.
 static int
-__tour(enum Location * * const locations, struct Target * const targets,
-		const size_t targets_sz, const int startx, const int starty, int const part)
+__tour(enum Location ** const locations,
+		struct Target * const targets,
+		const size_t targets_sz,
+		const int startx,
+		const int starty,
+		int const part)
 {
 	int steps = 0;
 
@@ -280,8 +304,8 @@ __tour(enum Location * * const locations, struct Target * const targets,
 	int y = starty;
 
 	for (size_t i = 0; i < targets_sz; i++) {
-		const int path_steps = __shortest_path(locations, x, y, targets[i].x,
-				targets[i].y);
+		const int path_steps =
+				__shortest_path(locations, x, y, targets[i].x, targets[i].y);
 		if (path_steps == -1) {
 			printf("__shortest_path\n");
 			return -1;
@@ -307,8 +331,11 @@ __tour(enum Location * * const locations, struct Target * const targets,
 }
 
 static int
-__shortest_path(enum Location * * const locations, const int srcx,
-		const int srcy, const int dstx, const int dsty)
+__shortest_path(enum Location ** const locations,
+		const int srcx,
+		const int srcy,
+		const int dstx,
+		const int dsty)
 {
 #ifdef DEBUG
 	printf("looking for path from %d,%d to %d,%d\n", srcx, srcy, dstx, dsty);
@@ -417,16 +444,18 @@ __enqueue(struct Queue * const q, const int x, const int y, const int steps)
 }
 
 static bool
-__add_neighbours(enum Location * * const locations, struct Queue * const q,
-		const struct Position * const p, const int steps)
+__add_neighbours(enum Location ** const locations,
+		struct Queue * const q,
+		const struct Position * const p,
+		const int steps)
 {
 	const int x = p->x;
 	const int y = p->y;
 
 	// Up
 	if (y > 0) {
-		if (locations[x][y-1] == OPEN || locations[x][y-1] == TARGET) {
-			if (!__enqueue(q, x, y-1, steps+1)) {
+		if (locations[x][y - 1] == OPEN || locations[x][y - 1] == TARGET) {
+			if (!__enqueue(q, x, y - 1, steps + 1)) {
 				printf("__enqueue\n");
 				return false;
 			}
@@ -435,8 +464,8 @@ __add_neighbours(enum Location * * const locations, struct Queue * const q,
 
 	// Down
 	if (y < MAX_HEIGHT) {
-		if (locations[x][y+1] == OPEN || locations[x][y+1] == TARGET) {
-			if (!__enqueue(q, x, y+1, steps+1)) {
+		if (locations[x][y + 1] == OPEN || locations[x][y + 1] == TARGET) {
+			if (!__enqueue(q, x, y + 1, steps + 1)) {
 				printf("__enqueue\n");
 				return false;
 			}
@@ -445,8 +474,8 @@ __add_neighbours(enum Location * * const locations, struct Queue * const q,
 
 	// Right
 	if (x < MAX_WIDTH) {
-		if (locations[x+1][y] == OPEN || locations[x+1][y] == TARGET) {
-			if (!__enqueue(q, x+1, y, steps+1)) {
+		if (locations[x + 1][y] == OPEN || locations[x + 1][y] == TARGET) {
+			if (!__enqueue(q, x + 1, y, steps + 1)) {
 				printf("__enqueue\n");
 				return false;
 			}
@@ -455,8 +484,8 @@ __add_neighbours(enum Location * * const locations, struct Queue * const q,
 
 	// Left
 	if (x > 0) {
-		if (locations[x-1][y] == OPEN || locations[x-1][y] == TARGET) {
-			if (!__enqueue(q, x-1, y, steps+1)) {
+		if (locations[x - 1][y] == OPEN || locations[x - 1][y] == TARGET) {
+			if (!__enqueue(q, x - 1, y, steps + 1)) {
 				printf("__enqueue\n");
 				return false;
 			}

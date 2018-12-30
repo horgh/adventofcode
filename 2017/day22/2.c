@@ -5,15 +5,15 @@
 
 #define MAP_SIZE 4096
 
-#define UP    0
+#define UP 0
 #define RIGHT 1
-#define DOWN  2
-#define LEFT  3
+#define DOWN 2
+#define LEFT 3
 
 #define WEAKENED 3
 #define INFECTED 1
-#define FLAGGED  2
-#define CLEAN    0
+#define FLAGGED 2
+#define CLEAN 0
 
 #define DEBUG 0
 
@@ -21,14 +21,9 @@ struct node {
 	int state;
 };
 
-static void
-destroy_grid(struct node * * const, size_t const);
-static void
-print_grid(
-		struct node * * const,
-		size_t const,
-		size_t const,
-		size_t const);
+static void destroy_grid(struct node ** const, size_t const);
+static void print_grid(
+		struct node ** const, size_t const, size_t const, size_t const);
 
 int
 main(int const argc, char const * const * const argv)
@@ -42,7 +37,7 @@ main(int const argc, char const * const * const argv)
 	FILE * const fh = stdin;
 	char buf[4096] = {0};
 
-	struct node * * const grid = calloc(MAP_SIZE, sizeof(struct node *));
+	struct node ** const grid = calloc(MAP_SIZE, sizeof(struct node *));
 	if (!grid) {
 		fprintf(stderr, "calloc(): %s\n", strerror(errno));
 		return 1;
@@ -56,8 +51,8 @@ main(int const argc, char const * const * const argv)
 		}
 	}
 
-	size_t const row_start = MAP_SIZE/2;
-	size_t const col_start = MAP_SIZE/2;
+	size_t const row_start = MAP_SIZE / 2;
+	size_t const col_start = MAP_SIZE / 2;
 
 	if (DEBUG) {
 		printf("map starts at %zu, %zu\n", row_start, col_start);
@@ -66,7 +61,7 @@ main(int const argc, char const * const * const argv)
 	size_t num_rows = 0;
 
 	while (1) {
-		if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+		if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				destroy_grid(grid, MAP_SIZE);
@@ -88,9 +83,9 @@ main(int const argc, char const * const * const argv)
 		size_t col = col_start;
 		while (*ptr != '\0') {
 			if (*ptr == '#') {
-				grid[row_start+num_rows][col].state = INFECTED;
+				grid[row_start + num_rows][col].state = INFECTED;
 			} else {
-				grid[row_start+num_rows][col].state = CLEAN;
+				grid[row_start + num_rows][col].state = CLEAN;
 			}
 			col++;
 			ptr++;
@@ -101,8 +96,8 @@ main(int const argc, char const * const * const argv)
 
 	size_t const initial_dimensions = num_rows;
 
-	size_t pos_row = row_start+(initial_dimensions/2);
-	size_t pos_col = col_start+(initial_dimensions/2);
+	size_t pos_row = row_start + (initial_dimensions / 2);
+	size_t pos_col = col_start + (initial_dimensions / 2);
 
 	if (DEBUG) {
 		printf("starting at %zu, %zu\n", pos_row, pos_col);
@@ -114,7 +109,7 @@ main(int const argc, char const * const * const argv)
 	int infections = 0;
 
 	for (int i = 0; i < steps; i++) {
-		struct node * const n = grid[pos_row]+pos_col;
+		struct node * const n = grid[pos_row] + pos_col;
 
 		if (n->state == CLEAN) {
 			switch (direction) {
@@ -231,7 +226,7 @@ main(int const argc, char const * const * const argv)
 }
 
 static void
-destroy_grid(struct node * * const g, size_t const sz)
+destroy_grid(struct node ** const g, size_t const sz)
 {
 	if (!g) {
 		return;
@@ -246,26 +241,23 @@ destroy_grid(struct node * * const g, size_t const sz)
 
 static void
 print_grid(
-		struct node * * const g,
-		size_t const row,
-		size_t const col,
-		size_t const sz)
+		struct node ** const g, size_t const row, size_t const col, size_t const sz)
 {
 	for (size_t i = 0; i < sz; i++) {
 		for (size_t j = 0; j < sz; j++) {
-			if (g[row+i][col+j].state == WEAKENED) {
+			if (g[row + i][col + j].state == WEAKENED) {
 				printf("W");
 				continue;
 			}
-			if (g[row+i][col+j].state == INFECTED) {
+			if (g[row + i][col + j].state == INFECTED) {
 				printf("#");
 				continue;
 			}
-			if (g[row+i][col+j].state == FLAGGED) {
+			if (g[row + i][col + j].state == FLAGGED) {
 				printf("F");
 				continue;
 			}
-			if (g[row+i][col+j].state == CLEAN) {
+			if (g[row + i][col + j].state == CLEAN) {
 				printf(".");
 				continue;
 			}

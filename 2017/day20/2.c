@@ -28,18 +28,11 @@ struct particle {
 	uint64_t destroyed;
 };
 
-static struct particle *
-parse_line(char const * const);
-static void
-destroy_particles(struct particle * * const);
-static void
-print_particle(struct particle const * const);
-static void
-move_particle(struct particle * const);
-static void
-collide(struct particle * * const,
-		size_t const,
-		uint64_t const);
+static struct particle * parse_line(char const * const);
+static void destroy_particles(struct particle ** const);
+static void print_particle(struct particle const * const);
+static void move_particle(struct particle * const);
+static void collide(struct particle ** const, size_t const, uint64_t const);
 
 int
 main(int const argc, char const * const * const argv)
@@ -48,7 +41,7 @@ main(int const argc, char const * const * const argv)
 		fprintf(stderr, "Usage: %s <steps>\n", argv[0]);
 		return 1;
 	}
-	uint64_t const steps = (uint64_t) atoll(argv[1]);
+	uint64_t const steps = (uint64_t)atoll(argv[1]);
 
 	FILE * const fh = stdin;
 	char buf[4096] = {0};
@@ -57,7 +50,7 @@ main(int const argc, char const * const * const argv)
 	struct particle * particles[MAX_PARTICLES] = {0};
 
 	while (1) {
-		if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+		if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				destroy_particles(particles);
@@ -82,7 +75,7 @@ main(int const argc, char const * const * const argv)
 			return 1;
 		}
 
-		particles[num_particles]->id = (int) num_particles;
+		particles[num_particles]->id = (int)num_particles;
 
 		num_particles++;
 	}
@@ -256,13 +249,13 @@ parse_line(char const * const s)
 }
 
 static void
-destroy_particles(struct particle * * const particles)
+destroy_particles(struct particle ** const particles)
 {
 	if (!particles) {
 		return;
 	}
 
-	for (size_t i = 0; ; i++) {
+	for (size_t i = 0;; i++) {
 		struct particle * const p = particles[i];
 		if (!p) {
 			break;
@@ -275,12 +268,18 @@ destroy_particles(struct particle * * const particles)
 static void
 print_particle(struct particle const * const p)
 {
-	printf( "p=<%" PRId64 ",%" PRId64 ",%" PRId64 ">,"
+	printf("p=<%" PRId64 ",%" PRId64 ",%" PRId64 ">,"
 				 " v=<%" PRId64 ",%" PRId64 ",%" PRId64 ">,"
 				 " a=<%" PRId64 ",%" PRId64 ",%" PRId64 ">",
-			p->x,    p->y,    p->z,
-			p->velx, p->vely, p->velz,
-			p->aclx, p->acly, p->aclz);
+			p->x,
+			p->y,
+			p->z,
+			p->velx,
+			p->vely,
+			p->velz,
+			p->aclx,
+			p->acly,
+			p->aclz);
 
 	if (p->destroyed) {
 		printf(" ---destroyed by collision---");
@@ -296,13 +295,13 @@ move_particle(struct particle * const p)
 	p->vely += p->acly;
 	p->velz += p->aclz;
 
-	p->x    += p->velx;
-	p->y    += p->vely;
-	p->z    += p->velz;
+	p->x += p->velx;
+	p->y += p->vely;
+	p->z += p->velz;
 }
 
 static void
-collide(struct particle * * const particles,
+collide(struct particle ** const particles,
 		size_t const num_particles,
 		uint64_t const step)
 {
@@ -312,15 +311,13 @@ collide(struct particle * * const particles,
 			continue;
 		}
 
-		for (size_t j = i+1; j < num_particles; j++) {
+		for (size_t j = i + 1; j < num_particles; j++) {
 			struct particle * const p1 = particles[j];
 			if (p1->destroyed && p1->destroyed < step) {
 				continue;
 			}
 
-			if (p0->x == p1->x &&
-					p0->y == p1->y &&
-					p0->z == p1->z) {
+			if (p0->x == p1->x && p0->y == p1->y && p0->z == p1->z) {
 				p0->destroyed = step;
 				p1->destroyed = step;
 			}

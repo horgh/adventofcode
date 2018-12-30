@@ -8,27 +8,16 @@
 #include <string.h>
 #include <util.h>
 
-static int
-place_marble(
-		int * const,
-		int const,
-		int const,
-		int const);
+static int place_marble(int * const, int const, int const, int const);
 
-static int
-place_special_marble(
-		uint64_t * const,
-		int * const,
-		int const,
-		int const,
-		int const,
-		int const);
+static int place_special_marble(
+		uint64_t * const, int * const, int const, int const, int const, int const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	char buf[4096] = {0};
 	assert(fgets(buf, 4096, stdin) != NULL);
@@ -44,7 +33,7 @@ main(int const argc, char const * const * const argv)
 	int const last_marble = atoi(ptr);
 
 	uint64_t scores[1024] = {0};
-	int * const circle = calloc((size_t) last_marble+1, sizeof(int));
+	int * const circle = calloc((size_t)last_marble + 1, sizeof(int));
 	assert(circle != NULL);
 	int circle_sz = 0;
 	int current_pos = 0;
@@ -59,8 +48,8 @@ main(int const argc, char const * const * const argv)
 
 	for (int i = 3; i <= last_marble; i++) {
 		if (i > 0 && i % 23 == 0) {
-			current_pos = place_special_marble(scores, circle, circle_sz,
-					current_pos, current_player, i);
+			current_pos = place_special_marble(
+					scores, circle, circle_sz, current_pos, current_player, i);
 			circle_sz--;
 		} else {
 			current_pos = place_marble(circle, circle_sz, current_pos, i);
@@ -87,22 +76,21 @@ main(int const argc, char const * const * const argv)
 }
 
 static int
-place_marble(
-		int * const circle,
+place_marble(int * const circle,
 		int const circle_sz,
 		int const current_pos,
 		int const marble)
 {
 	int new_pos = 0;
-	if (current_pos < circle_sz-1) {
-		new_pos = current_pos+2;
-	} else if (current_pos == circle_sz-1) {
+	if (current_pos < circle_sz - 1) {
+		new_pos = current_pos + 2;
+	} else if (current_pos == circle_sz - 1) {
 		new_pos = 1;
 	}
 
 	if (new_pos < circle_sz) {
-		size_t const n = sizeof(int) * (size_t) (circle_sz-new_pos);
-		memcpy(circle+new_pos+1, circle+new_pos, n);
+		size_t const n = sizeof(int) * (size_t)(circle_sz - new_pos);
+		memcpy(circle + new_pos + 1, circle + new_pos, n);
 	}
 	circle[new_pos] = marble;
 
@@ -110,25 +98,24 @@ place_marble(
 }
 
 static int
-place_special_marble(
-		uint64_t * const scores,
+place_special_marble(uint64_t * const scores,
 		int * const circle,
 		int const circle_sz,
 		int const current_pos,
 		int const current_player,
 		int const marble)
 {
-	scores[current_player] += (uint64_t) marble;
+	scores[current_player] += (uint64_t)marble;
 
-	int new_pos = current_pos-7;
+	int new_pos = current_pos - 7;
 	if (new_pos < 0) {
-		new_pos = circle_sz+new_pos;
+		new_pos = circle_sz + new_pos;
 	}
 
-	scores[current_player] += (uint64_t) circle[new_pos];
+	scores[current_player] += (uint64_t)circle[new_pos];
 
-	size_t const n = sizeof(int) * (size_t) (circle_sz-new_pos-1);
-	memcpy(circle+new_pos, circle+new_pos+1, n);
+	size_t const n = sizeof(int) * (size_t)(circle_sz - new_pos - 1);
+	memcpy(circle + new_pos, circle + new_pos + 1, n);
 
 	return new_pos;
 }

@@ -12,14 +12,13 @@ struct Instruction {
 	char step;
 };
 
-static int
-cmp_char(void const * const, void const * const);
+static int cmp_char(void const * const, void const * const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Instruction instructions[1024] = {0};
 	size_t n = 0;
@@ -34,7 +33,7 @@ main(int const argc, char const * const * const argv)
 
 		ptr += strlen("Step ");
 		char const prereq = *ptr;
-		ptr += 1+strlen(" must be finished before step ");
+		ptr += 1 + strlen(" must be finished before step ");
 		char const step = *ptr;
 
 		bool found = false;
@@ -53,14 +52,14 @@ main(int const argc, char const * const * const argv)
 
 	int seen[1024] = {0};
 	for (size_t i = 0; i < n; i++) {
-		seen[(int) instructions[i].step] = 1;
+		seen[(int)instructions[i].step] = 1;
 	}
 
 	char starters[1024] = {0};
 	size_t n_starters = 0;
 	for (size_t i = 0; i < n; i++) {
 		for (size_t j = 0; j < instructions[i].n_prereqs; j++) {
-			if (seen[(int) instructions[i].prereqs[j]]) {
+			if (seen[(int)instructions[i].prereqs[j]]) {
 				continue;
 			}
 			bool found = false;
@@ -80,12 +79,12 @@ main(int const argc, char const * const * const argv)
 		char candidates[1024] = {0};
 		size_t m = 0;
 		for (size_t i = 0; i < n; i++) {
-			if (done[(int) instructions[i].step]) {
+			if (done[(int)instructions[i].step]) {
 				continue;
 			}
 			bool all_prereqs_done = true;
 			for (size_t j = 0; j < instructions[i].n_prereqs; j++) {
-				if (done[(int) instructions[i].prereqs[j]]) {
+				if (done[(int)instructions[i].prereqs[j]]) {
 					continue;
 				}
 				all_prereqs_done = false;
@@ -96,7 +95,7 @@ main(int const argc, char const * const * const argv)
 		}
 
 		for (size_t i = 0; i < n_starters; i++) {
-			if (done[(int) starters[i]]) {
+			if (done[(int)starters[i]]) {
 				continue;
 			}
 			candidates[m++] = starters[i];
@@ -106,8 +105,8 @@ main(int const argc, char const * const * const argv)
 			break;
 		}
 		qsort(candidates, m, sizeof(char), cmp_char);
-	  printf("%c", candidates[0]);
-		done[(int) candidates[0]] = 1;
+		printf("%c", candidates[0]);
+		done[(int)candidates[0]] = 1;
 	}
 
 	printf("\n");

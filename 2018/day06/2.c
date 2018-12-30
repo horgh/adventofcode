@@ -12,13 +12,7 @@ struct Coordinate {
 	int y;
 };
 
-static int
-distance(
-		int const,
-		int const,
-		int const,
-		int const
-		);
+static int distance(int const, int const, int const, int const);
 
 #define SZ 512
 
@@ -54,12 +48,8 @@ main(int const argc, char const * const * const argv)
 	for (size_t x = 0; x < SZ; x++) {
 		for (size_t y = 0; y < SZ; y++) {
 			for (size_t i = 0; i < n; i++) {
-				total_distances[x][y] += distance(
-						(int) x,
-						(int) y,
-						coordinates[i].x,
-						coordinates[i].y
-						);
+				total_distances[x][y] +=
+						distance((int)x, (int)y, coordinates[i].x, coordinates[i].y);
 			}
 		}
 	}
@@ -78,11 +68,7 @@ main(int const argc, char const * const * const argv)
 }
 
 static int
-distance(
-		int const x_0,
-		int const y_0,
-		int const x_1,
-		int const y_1
-		) {
-	return abs(x_0-x_1)+abs(y_0-y_1);
+distance(int const x_0, int const y_0, int const x_1, int const y_1)
+{
+	return abs(x_0 - x_1) + abs(y_0 - y_1);
 }

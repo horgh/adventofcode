@@ -5,25 +5,25 @@
 #include <string.h>
 
 #define NW 0
-#define N  1
+#define N 1
 #define NE 2
 #define SE 3
-#define S  4
+#define S 4
 #define SW 5
 
-static int
-get_move(char const * const);
+static int get_move(char const * const);
 
-int main(int const argc, char const * const * const argv)
+int
+main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 
 	char buf[41960] = {0};
 
-	if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+	if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 		fprintf(stderr, "fgets(): %s\n", strerror(errno));
 		return 1;
 	}
@@ -35,20 +35,20 @@ int main(int const argc, char const * const * const argv)
 		int const move = get_move(ptr);
 		if (move == NW) {
 			north += 1;
-			east  -= 1;
+			east -= 1;
 		} else if (move == N) {
 			north += 2;
 		} else if (move == NE) {
 			north += 1;
-			east  += 1;
+			east += 1;
 		} else if (move == SE) {
 			north -= 1;
-			east  += 1;
+			east += 1;
 		} else if (move == S) {
 			north -= 2;
 		} else if (move == SW) {
 			north -= 1;
-			east  -= 1;
+			east -= 1;
 		} else {
 			fprintf(stderr, "unrecognized move: %d\n", move);
 			return 1;
@@ -63,7 +63,7 @@ int main(int const argc, char const * const * const argv)
 	}
 
 	north = abs(north);
-	east  = abs(east);
+	east = abs(east);
 
 	int moves = 0;
 	while (north || east) {

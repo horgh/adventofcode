@@ -7,12 +7,9 @@
 #include <string.h>
 #include <util.h>
 
-static char * *
-expand(char const * const,
-		size_t * const);
+static char ** expand(char const * const, size_t * const);
 
-static char const *
-find_end_of_group(char const * const);
+static char const * find_end_of_group(char const * const);
 
 #define SZ 2048
 #define STRING_SZ 4096
@@ -20,15 +17,15 @@ find_end_of_group(char const * const);
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	char buf[40960] = {0};
 	assert(fgets(buf, 40960, stdin) != NULL);
 	trim_right(buf);
 
 	assert(buf[0] == '^');
-	char const * ptr = buf+1;
+	char const * ptr = buf + 1;
 	char * ptr2 = buf;
 	while (*ptr2 != '\0') {
 		if (*ptr2 == '$') {
@@ -39,7 +36,7 @@ main(int const argc, char const * const * const argv)
 	}
 
 	size_t n_pieces = 0;
-	char * * const pieces = expand(ptr, &n_pieces);
+	char ** const pieces = expand(ptr, &n_pieces);
 
 	size_t max = 0;
 	for (size_t i = 0; i < n_pieces; i++) {
@@ -57,11 +54,10 @@ main(int const argc, char const * const * const argv)
 	return 0;
 }
 
-static char * *
-expand(char const * const s,
-		size_t * const ret_n_pieces)
+static char **
+expand(char const * const s, size_t * const ret_n_pieces)
 {
-	char * * pieces = calloc(SZ, sizeof(char *));
+	char ** pieces = calloc(SZ, sizeof(char *));
 	assert(pieces != NULL);
 	size_t n_pieces = 0;
 	size_t len = 0;
@@ -70,7 +66,7 @@ expand(char const * const s,
 	assert(pieces[n_pieces] != NULL);
 	n_pieces++;
 
-	char * * const done_pieces = calloc(SZ, sizeof(char *));
+	char ** const done_pieces = calloc(SZ, sizeof(char *));
 	assert(done_pieces != NULL);
 	size_t n_done_pieces = 0;
 
@@ -81,16 +77,16 @@ expand(char const * const s,
 				pieces[i][len] = *ptr;
 			}
 			len++;
-			assert(len+1 != STRING_SZ);
+			assert(len + 1 != STRING_SZ);
 			ptr++;
 			continue;
 		}
 
 		if (*ptr == '(') {
 			size_t n_pieces2 = 0;
-			char * * const pieces2 = expand(ptr+1, &n_pieces2);
+			char ** const pieces2 = expand(ptr + 1, &n_pieces2);
 
-			char * * const pieces3 = calloc(n_pieces*n_pieces2, sizeof(char *));
+			char ** const pieces3 = calloc(n_pieces * n_pieces2, sizeof(char *));
 			assert(pieces3 != NULL);
 
 			bool has_detour = false;
@@ -104,12 +100,12 @@ expand(char const * const s,
 			for (size_t i = 0; i < n_pieces; i++) {
 				for (size_t j = 0; j < n_pieces2; j++) {
 					char * const s2 = calloc(STRING_SZ, sizeof(char));
-					assert(strlen(pieces[i])+strlen(pieces2[j])+1 <= STRING_SZ);
+					assert(strlen(pieces[i]) + strlen(pieces2[j]) + 1 <= STRING_SZ);
 
 					if (has_detour && strlen(pieces2[j]) > 0) {
 						strcat(s2, pieces[i]);
 						size_t k = strlen(s2);
-						for (size_t l = 0; l < strlen(pieces2[j])/2; l++) {
+						for (size_t l = 0; l < strlen(pieces2[j]) / 2; l++) {
 							s2[k++] = pieces2[j][l];
 						}
 						done_pieces[n_done_pieces++] = s2;
@@ -143,7 +139,7 @@ expand(char const * const s,
 				len = strlen(pieces[0]);
 			}
 
-			ptr = find_end_of_group(ptr+1);
+			ptr = find_end_of_group(ptr + 1);
 			continue;
 		}
 
@@ -174,8 +170,7 @@ expand(char const * const s,
 	}
 }
 
-__attribute__((pure))
-static char const *
+__attribute__((pure)) static char const *
 find_end_of_group(char const * const s)
 {
 	char const * ptr = s;
@@ -191,7 +186,7 @@ find_end_of_group(char const * const s)
 
 		if (*ptr == ')') {
 			if (n_braces == 0) {
-				return ptr+1;
+				return ptr + 1;
 			}
 			n_braces--;
 			ptr++;

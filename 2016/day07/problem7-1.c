@@ -5,10 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-static bool
-__ipv7_supports_tls(const char * const);
-static bool
-__is_abba(const char * const);
+static bool __ipv7_supports_tls(const char * const);
+static bool __is_abba(const char * const);
 
 int
 main(const int argc, const char * const * const argv)
@@ -36,8 +34,8 @@ main(const int argc, const char * const * const argv)
 			break;
 		}
 
-		if (buf[strlen(buf)-1] == '\n') {
-			buf[strlen(buf)-1] = '\0';
+		if (buf[strlen(buf) - 1] == '\n') {
+			buf[strlen(buf) - 1] = '\0';
 		}
 
 		if (__ipv7_supports_tls(buf)) {
@@ -96,7 +94,7 @@ __ipv7_supports_tls(const char * const ip)
 			continue;
 		}
 
-		if (buf_i >= sizeof(buf)-1) {
+		if (buf_i >= sizeof(buf) - 1) {
 			printf("ipv7 too long\n");
 			return false;
 		}
@@ -124,10 +122,8 @@ __is_abba(const char * const s)
 	}
 
 	for (size_t i = 0; i < strlen(s); i++) {
-		if (i+3 < strlen(s)) {
-			if (s[i] != s[i+1] &&
-					s[i+1] == s[i+2] &&
-					s[i] == s[i+3]) {
+		if (i + 3 < strlen(s)) {
+			if (s[i] != s[i + 1] && s[i + 1] == s[i + 2] && s[i] == s[i + 3]) {
 #ifdef DEBUG
 				printf("%s is abba\n", s);
 #endif

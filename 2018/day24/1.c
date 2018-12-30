@@ -31,41 +31,30 @@ struct Group {
 	struct Group * attacking;
 };
 
-static char const *
-parse_immunities_or_weaknesses(char const * const,
-		struct Group * const,
-		bool const);
+static char const * parse_immunities_or_weaknesses(
+		char const * const, struct Group * const, bool const);
 
-static void
-print_group(struct Group const * const);
+static void print_group(struct Group const * const);
 
-static int
-count_units(struct Group const * const,
-		size_t const);
+static int count_units(struct Group const * const, size_t const);
 
-static int
-cmp_groups_selection(void const * const, void const * const);
+static int cmp_groups_selection(void const * const, void const * const);
 
-static void
-choose_target(struct Group * * const,
-		size_t const,
-		struct Group * const);
+static void choose_target(
+		struct Group ** const, size_t const, struct Group * const);
 
-static uint64_t
-calc_damage(struct Group const * const,
-		struct Group const * const);
+static uint64_t calc_damage(
+		struct Group const * const, struct Group const * const);
 
-static int
-cmp_groups_attacking(void const * const, void const * const);
+static int cmp_groups_attacking(void const * const, void const * const);
 
-static void
-attack(struct Group * const);
+static void attack(struct Group * const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Group immunes[128] = {0};
 	size_t n_immunes = 0;
@@ -98,7 +87,7 @@ main(int const argc, char const * const * const argv)
 			n = &n_infections;
 		}
 
-		g[*n].id = (int) *n+1;
+		g[*n].id = (int)*n + 1;
 		if (!in_infections) {
 			g[*n].type = Immune;
 		} else {
@@ -138,10 +127,10 @@ main(int const argc, char const * const * const argv)
 			assert(strncmp(ptr, ") ", strlen(") ")) == 0);
 			ptr += 2;
 		}
-		if (strncmp(ptr, "with an attack that does ",
-					strlen("with an attack that does ")) != 0) {
-			printf("parsing expecting attack power, but at [%s]\n",
-					ptr);
+		if (strncmp(ptr,
+						"with an attack that does ",
+						strlen("with an attack that does ")) != 0) {
+			printf("parsing expecting attack power, but at [%s]\n", ptr);
 			assert(1 == 0);
 		}
 		ptr += strlen("with an attack that does ");
@@ -153,11 +142,12 @@ main(int const argc, char const * const * const argv)
 		size_t i = 0;
 		while (isalpha(*ptr)) {
 			g[*n].attack[i++] = *ptr;
-			assert(i+1 != ATTACK_SZ);
+			assert(i + 1 != ATTACK_SZ);
 			ptr++;
 		}
-		assert(strncmp(ptr, " damage at initiative ",
-					strlen(" damage at initiative ")) == 0);
+		assert(strncmp(ptr,
+							 " damage at initiative ",
+							 strlen(" damage at initiative ")) == 0);
 		ptr += strlen(" damage at initiative ");
 		g[*n].initiative = atoi(ptr);
 		*n += 1;
@@ -175,9 +165,9 @@ main(int const argc, char const * const * const argv)
 		}
 	}
 
-	size_t const n_all_groups = n_immunes+n_infections;
-	struct Group * * const all_groups = calloc(n_all_groups,
-			sizeof(struct Group *));
+	size_t const n_all_groups = n_immunes + n_infections;
+	struct Group ** const all_groups =
+			calloc(n_all_groups, sizeof(struct Group *));
 	assert(all_groups != NULL);
 	{
 		size_t i = 0;
@@ -200,12 +190,12 @@ main(int const argc, char const * const * const argv)
 			printf("round %d\n", round);
 			printf("Immune System:\n");
 			for (size_t i = 0; i < n_immunes; i++) {
-				printf("Group %d contains %d units\n", immunes[i].id,
-						immunes[i].units);
+				printf("Group %d contains %d units\n", immunes[i].id, immunes[i].units);
 			}
 			printf("Infection:\n");
 			for (size_t i = 0; i < n_infections; i++) {
-				printf("Group %d contains %d units\n", infections[i].id,
+				printf("Group %d contains %d units\n",
+						infections[i].id,
 						infections[i].units);
 			}
 			printf("\n");
@@ -218,8 +208,11 @@ main(int const argc, char const * const * const argv)
 						continue;
 					}
 					uint64_t damage = calc_damage(&infections[i], &immunes[j]);
-					printf("Infection group %d would deal defending group %d %" PRIu64 " damage\n",
-							infections[i].id, immunes[j].id, damage);
+					printf("Infection group %d would deal defending group %d %" PRIu64
+								 " damage\n",
+							infections[i].id,
+							immunes[j].id,
+							damage);
 				}
 			}
 			for (size_t i = 0; i < n_immunes; i++) {
@@ -231,15 +224,18 @@ main(int const argc, char const * const * const argv)
 						continue;
 					}
 					uint64_t damage = calc_damage(&immunes[i], &infections[j]);
-					printf("Immune System group %d would deal defending group %d %" PRIu64 " damage\n",
-							immunes[i].id, infections[j].id, damage);
+					printf("Immune System group %d would deal defending group %d %" PRIu64
+								 " damage\n",
+							immunes[i].id,
+							infections[j].id,
+							damage);
 				}
 			}
 			printf("\n");
 		}
 
-		qsort(all_groups, n_all_groups, sizeof(struct Group *),
-				cmp_groups_selection);
+		qsort(
+				all_groups, n_all_groups, sizeof(struct Group *), cmp_groups_selection);
 		for (size_t i = 0; i < n_all_groups; i++) {
 			all_groups[i]->attacking = NULL;
 		}
@@ -247,24 +243,23 @@ main(int const argc, char const * const * const argv)
 			choose_target(all_groups, n_all_groups, all_groups[i]);
 		}
 
-		qsort(all_groups, n_all_groups, sizeof(struct Group *),
-				cmp_groups_attacking);
+		qsort(
+				all_groups, n_all_groups, sizeof(struct Group *), cmp_groups_attacking);
 		for (size_t i = 0; i < n_all_groups; i++) {
 			attack(all_groups[i]);
 		}
 		round++;
 	}
 
-	int const units = count_units(immunes, n_immunes)+
-		count_units(infections, n_infections);
+	int const units =
+			count_units(immunes, n_immunes) + count_units(infections, n_infections);
 	printf("%d\n", units);
 	return 0;
 }
 
 static char const *
-parse_immunities_or_weaknesses(char const * const buf,
-		struct Group * const g,
-		bool const immunity)
+parse_immunities_or_weaknesses(
+		char const * const buf, struct Group * const g, bool const immunity)
 {
 	char const * ptr = buf;
 	while (1) {
@@ -275,7 +270,7 @@ parse_immunities_or_weaknesses(char const * const buf,
 			} else {
 				g->weaknesses[g->n_weaknesses][i++] = *ptr;
 			}
-			assert(i+1 != ATTACK_SZ);
+			assert(i + 1 != ATTACK_SZ);
 			ptr++;
 		}
 		if (immunity) {
@@ -306,7 +301,7 @@ print_group(struct Group const * const g)
 		printf("immune to ");
 		for (size_t i = 0; i < g->n_immunities; i++) {
 			printf("%s", g->immunities[i]);
-			if (i+1 < g->n_immunities) {
+			if (i + 1 < g->n_immunities) {
 				printf(", ");
 			}
 		}
@@ -320,19 +315,20 @@ print_group(struct Group const * const g)
 		printf("weak to ");
 		for (size_t i = 0; i < g->n_weaknesses; i++) {
 			printf("%s", g->weaknesses[i]);
-			if (i+1 < g->n_weaknesses) {
+			if (i + 1 < g->n_weaknesses) {
 				printf(", ");
 			}
 		}
 		printf(") ");
 	}
 	printf("with an attack that does %d %s damage at initiative %d\n",
-			g->ap, g->attack, g->initiative);
+			g->ap,
+			g->attack,
+			g->initiative);
 }
 
 static int
-count_units(struct Group const * const g,
-		size_t const n)
+count_units(struct Group const * const g, size_t const n)
 {
 	int count = 0;
 	for (size_t i = 0; i < n; i++) {
@@ -341,8 +337,7 @@ count_units(struct Group const * const g,
 	return count;
 }
 
-__attribute__((pure))
-static int
+__attribute__((pure)) static int
 cmp_groups_selection(void const * const a_v, void const * const b_v)
 {
 	struct Group * const * const aa = a_v;
@@ -350,10 +345,10 @@ cmp_groups_selection(void const * const a_v, void const * const b_v)
 	struct Group const * const a = *aa;
 	struct Group const * const b = *bb;
 
-	if (a->units*a->ap < b->units*b->ap) {
+	if (a->units * a->ap < b->units * b->ap) {
 		return 1;
 	}
-	if (a->units*a->ap > b->units*b->ap) {
+	if (a->units * a->ap > b->units * b->ap) {
 		return -1;
 	}
 	if (a->initiative < b->initiative) {
@@ -367,7 +362,7 @@ cmp_groups_selection(void const * const a_v, void const * const b_v)
 }
 
 static void
-choose_target(struct Group * * const all_groups,
+choose_target(struct Group ** const all_groups,
 		size_t const n_all_groups,
 		struct Group * const g)
 {
@@ -411,10 +406,10 @@ choose_target(struct Group * * const all_groups,
 			target_damage = damage;
 			continue;
 		}
-		if (g2->units*g2->ap < target->units*target->ap) {
+		if (g2->units * g2->ap < target->units * target->ap) {
 			continue;
 		}
-		if (g2->units*g2->ap > target->units*target->ap) {
+		if (g2->units * g2->ap > target->units * target->ap) {
 			target = g2;
 			target_damage = damage;
 			continue;
@@ -432,27 +427,25 @@ choose_target(struct Group * * const all_groups,
 	g->attacking = target;
 }
 
-__attribute__((pure))
-static uint64_t
-calc_damage(struct Group const * const attacker,
-		struct Group const * const defender)
+__attribute__((pure)) static uint64_t
+calc_damage(
+		struct Group const * const attacker, struct Group const * const defender)
 {
 	for (size_t i = 0; i < defender->n_immunities; i++) {
 		if (strcmp(defender->immunities[i], attacker->attack) == 0) {
 			return 0;
 		}
 	}
-	uint64_t const damage = (uint64_t) (attacker->ap*attacker->units);
+	uint64_t const damage = (uint64_t)(attacker->ap * attacker->units);
 	for (size_t i = 0; i < defender->n_weaknesses; i++) {
 		if (strcmp(defender->weaknesses[i], attacker->attack) == 0) {
-			return damage*2;
+			return damage * 2;
 		}
 	}
 	return damage;
 }
 
-__attribute__((pure))
-static int
+__attribute__((pure)) static int
 cmp_groups_attacking(void const * const a_v, void const * const b_v)
 {
 	struct Group * const * const aa = a_v;
@@ -479,8 +472,8 @@ attack(struct Group * const attacker)
 	}
 	uint64_t const damage = calc_damage(attacker, defender);
 
-	uint64_t const units_lost = damage/(uint64_t) defender->hp;
-	defender->units -= (int) units_lost;
+	uint64_t const units_lost = damage / (uint64_t)defender->hp;
+	defender->units -= (int)units_lost;
 	if (defender->units < 0) {
 		defender->units = 0;
 	}
@@ -490,7 +483,12 @@ attack(struct Group * const attacker)
 		} else {
 			printf("Infection ");
 		}
-		printf("group %d attacks defending group %d, killing %" PRIu64 " units (damage %" PRIu64 ")\n", attacker->id, defender->id, units_lost, damage);
+		printf("group %d attacks defending group %d, killing %" PRIu64
+					 " units (damage %" PRIu64 ")\n",
+				attacker->id,
+				defender->id,
+				units_lost,
+				damage);
 	}
 	if (units_lost == 0) {
 		if (false) {

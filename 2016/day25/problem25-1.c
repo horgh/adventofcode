@@ -10,7 +10,7 @@
 #define MAX_ARG_LENGTH 32
 #define REGISTER_COUNT 4
 
-enum InstructionType {CPY, INC, DEC, JNZ, TGL, OUT};
+enum InstructionType { CPY, INC, DEC, JNZ, TGL, OUT };
 
 struct Instruction {
 	enum InstructionType type;
@@ -19,24 +19,20 @@ struct Instruction {
 	int number;
 };
 
-static void
-__destroy_instructions(struct Instruction * const);
-static void
-__destroy_instruction(struct Instruction * const);
-static void
-__print_instruction(const struct Instruction * const);
-static void
-__run_program(int64_t * const,
-		struct Instruction * const, const size_t,
-		int64_t * const, size_t * const,
+static void __destroy_instructions(struct Instruction * const);
+static void __destroy_instruction(struct Instruction * const);
+static void __print_instruction(const struct Instruction * const);
+static void __run_program(int64_t * const,
+		struct Instruction * const,
+		const size_t,
+		int64_t * const,
+		size_t * const,
 		const size_t);
-static int
-__register_to_index(const char * const);
-static bool
-__alternating_transmission(const int64_t * const,
-		const size_t);
+static int __register_to_index(const char * const);
+static bool __alternating_transmission(const int64_t * const, const size_t);
 
-int main(const int argc, const char * const * const argv)
+int
+main(const int argc, const char * const * const argv)
 {
 	if (argc != 2) {
 		printf("Usage: %s <input file>\n", argv[0]);
@@ -52,8 +48,8 @@ int main(const int argc, const char * const * const argv)
 
 	// Read in the program's instructions.
 
-	struct Instruction * const instructions = calloc(MAX_INSTRUCTIONS,
-			sizeof(struct Instruction));
+	struct Instruction * const instructions =
+			calloc(MAX_INSTRUCTIONS, sizeof(struct Instruction));
 	if (!instructions) {
 		printf("%s\n", strerror(errno));
 		fclose(fh);
@@ -69,7 +65,7 @@ int main(const int argc, const char * const * const argv)
 			break;
 		}
 
-		struct Instruction * const instruction = instructions+instructions_index;
+		struct Instruction * const instruction = instructions + instructions_index;
 		instructions_index++;
 
 		const char * ptr = buf;
@@ -122,7 +118,7 @@ int main(const int argc, const char * const * const argv)
 		}
 
 		while (*ptr != ' ' && *ptr != '\n' && *ptr != 0) {
-			if (strlen(instruction->arg0) == MAX_ARG_LENGTH-1) {
+			if (strlen(instruction->arg0) == MAX_ARG_LENGTH - 1) {
 				printf("argument 0 is too long\n");
 				fclose(fh);
 				__destroy_instructions(instructions);
@@ -149,7 +145,7 @@ int main(const int argc, const char * const * const argv)
 		}
 
 		while (*ptr != '\n' && *ptr != 0) {
-			if (strlen(instruction->arg1) == MAX_ARG_LENGTH-1) {
+			if (strlen(instruction->arg1) == MAX_ARG_LENGTH - 1) {
 				printf("argument 1 is too long\n");
 				fclose(fh);
 				__destroy_instructions(instructions);
@@ -166,36 +162,39 @@ int main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
-	const size_t num_instructions = (size_t) instructions_index;
+	const size_t num_instructions = (size_t)instructions_index;
 
 	if (0) {
 		for (size_t i = 0; i < num_instructions; i++) {
-			const struct Instruction * const instruction = instructions+i;
+			const struct Instruction * const instruction = instructions + i;
 			printf("Parsed instruction: ");
 			__print_instruction(instruction);
 		}
 	}
 
-
 	// Run the program.
 
 	int64_t registers[REGISTER_COUNT];
-	memset(registers, 0, sizeof(int64_t)*REGISTER_COUNT);
+	memset(registers, 0, sizeof(int64_t) * REGISTER_COUNT);
 
 	const size_t max_transmissions = 128;
 
-	for (size_t i = 0; ; i++) {
-		memset(registers, 0, sizeof(int64_t)*REGISTER_COUNT);
+	for (size_t i = 0;; i++) {
+		memset(registers, 0, sizeof(int64_t) * REGISTER_COUNT);
 
-		registers[0] = (int64_t) i;
+		registers[0] = (int64_t)i;
 
 		int64_t transmissions[max_transmissions];
-		memset(transmissions, 0, sizeof(int64_t)*max_transmissions);
+		memset(transmissions, 0, sizeof(int64_t) * max_transmissions);
 
 		size_t num_transmissions = 0;
 
-		__run_program(registers, instructions, num_instructions, transmissions,
-				&num_transmissions, max_transmissions);
+		__run_program(registers,
+				instructions,
+				num_instructions,
+				transmissions,
+				&num_transmissions,
+				max_transmissions);
 
 		if (__alternating_transmission(transmissions, num_transmissions)) {
 			printf("%zu\n", i);
@@ -216,7 +215,7 @@ __destroy_instructions(struct Instruction * const instructions)
 	}
 
 	for (size_t i = 0; i < MAX_INSTRUCTIONS; i++) {
-		__destroy_instruction(instructions+i);
+		__destroy_instruction(instructions + i);
 	}
 
 	free(instructions);
@@ -242,13 +241,27 @@ static void
 __print_instruction(const struct Instruction * const instruction)
 {
 	switch (instruction->type) {
-		case CPY: printf("CPY"); break;
-		case INC: printf("INC"); break;
-		case DEC: printf("DEC"); break;
-		case JNZ: printf("JNZ"); break;
-		case TGL: printf("TGL"); break;
-		case OUT: printf("OUT"); break;
-		default: printf("UNKNOWN"); break;
+	case CPY:
+		printf("CPY");
+		break;
+	case INC:
+		printf("INC");
+		break;
+	case DEC:
+		printf("DEC");
+		break;
+	case JNZ:
+		printf("JNZ");
+		break;
+	case TGL:
+		printf("TGL");
+		break;
+	case OUT:
+		printf("OUT");
+		break;
+	default:
+		printf("UNKNOWN");
+		break;
 	}
 
 	printf(" %s", instruction->arg0);
@@ -262,21 +275,23 @@ __print_instruction(const struct Instruction * const instruction)
 
 static void
 __run_program(int64_t * const registers,
-		struct Instruction * const instructions, const size_t num_instructions,
-		int64_t * const transmissions, size_t * const num_transmissions,
+		struct Instruction * const instructions,
+		const size_t num_instructions,
+		int64_t * const transmissions,
+		size_t * const num_transmissions,
 		const size_t max_transmissions)
 {
 	int instructions_index = 0;
 
-	//printf("Executing\n");
+	// printf("Executing\n");
 
 	while (1) {
-		if (instructions_index >= (int) num_instructions) {
+		if (instructions_index >= (int)num_instructions) {
 			break;
 		}
 
-		const struct Instruction * const instruction
-			= instructions+instructions_index;
+		const struct Instruction * const instruction =
+				instructions + instructions_index;
 
 		//__print_instruction(instruction);
 
@@ -343,12 +358,12 @@ __run_program(int64_t * const registers,
 			int distance = -1;
 			const int r2 = __register_to_index(instruction->arg1);
 			if (r2 != -1) {
-				distance = (int) registers[r2];
+				distance = (int)registers[r2];
 			} else {
 				distance = atoi(instruction->arg1);
 			}
 
-			//printf("jumping %d\n", distance);
+			// printf("jumping %d\n", distance);
 			instructions_index += distance;
 			continue;
 		}
@@ -357,51 +372,51 @@ __run_program(int64_t * const registers,
 			const int r = __register_to_index(instruction->arg0);
 			int target_instruction = -1;
 			if (r != -1) {
-				target_instruction = instructions_index+(int) registers[r];
+				target_instruction = instructions_index + (int)registers[r];
 			} else {
-				target_instruction = instructions_index+atoi(instruction->arg0);
+				target_instruction = instructions_index + atoi(instruction->arg0);
 			}
 
-			//printf("target instruction %d\n", target_instruction);
+			// printf("target instruction %d\n", target_instruction);
 
 			// Target might be outside of the program. Do nothing.
 			if (target_instruction < 0 ||
-					target_instruction >= (int) num_instructions) {
+					target_instruction >= (int)num_instructions) {
 				instructions_index++;
 				continue;
 			}
 
+			struct Instruction * const instruction2 =
+					instructions + target_instruction;
 
-			struct Instruction * const instruction2 = instructions+target_instruction;
-
-			//printf("toggling ");
+			// printf("toggling ");
 			//__print_instruction(instruction2);
 
 			switch (instruction2->type) {
-				case CPY:
-					instruction2->type = JNZ;
-					break;
-				case INC:
-					instruction2->type = DEC;
-					break;
-				case DEC:
-					instruction2->type = INC;
-					break;
-				case JNZ:
-					instruction2->type = CPY;
-					break;
-				case TGL:
-					instruction2->type = INC;
-					break;
-				case OUT:
-					instruction2->type = INC;
-					break;
-				default:
-					printf("unknown instruction\n");
-					exit(1);
+			case CPY:
+				instruction2->type = JNZ;
+				break;
+			case INC:
+				instruction2->type = DEC;
+				break;
+			case DEC:
+				instruction2->type = INC;
+				break;
+			case JNZ:
+				instruction2->type = CPY;
+				break;
+			case TGL:
+				instruction2->type = INC;
+				break;
+			case OUT:
+				instruction2->type = INC;
+				break;
+			default:
+				printf("unknown instruction\n");
+				exit(1);
 			}
 
-			//printf("it is now ");
+			// printf("it is now ");
 			//__print_instruction(instruction2);
 
 			instructions_index++;
@@ -452,8 +467,8 @@ __register_to_index(const char * const s)
 }
 
 static bool
-__alternating_transmission(const int64_t * const transmissions,
-		const size_t num_transmissions)
+__alternating_transmission(
+		const int64_t * const transmissions, const size_t num_transmissions)
 {
 	for (size_t j = 0; j < num_transmissions; j++) {
 		if (j % 2 == 0) {

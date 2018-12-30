@@ -2,8 +2,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-static void
-__destroy_queue_element(struct QueueElement * const, void (void * const));
+static void __destroy_queue_element(
+		struct QueueElement * const, void(void * const));
 
 bool
 enqueue(struct Queue * const queue, void * const data)
@@ -91,11 +91,11 @@ __destroy_queue_element(struct QueueElement * qe, void fn(void * const))
 
 #include <assert.h>
 
-int main(void)
+int
+main(void)
 {
 	struct Queue * q = NULL;
 	int * v = NULL;
-
 
 	// One element.
 
@@ -117,7 +117,6 @@ int main(void)
 	assert(v == NULL);
 
 	destroy_queue(q, free);
-
 
 	// Two elements.
 
@@ -148,7 +147,6 @@ int main(void)
 
 	destroy_queue(q, free);
 
-
 	// Two elements. Enqueue but don't dequeue. Test destruction with elements.
 	q = calloc(1, sizeof(struct Queue));
 	assert(q != NULL);
@@ -166,7 +164,6 @@ int main(void)
 	assert(enqueue(q, v));
 
 	destroy_queue(q, free);
-
 
 	return 0;
 }

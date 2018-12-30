@@ -6,8 +6,8 @@
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	int feet = 0;
 	while (1) {
@@ -32,10 +32,10 @@ main(int const argc, char const * const * const argv)
 
 		int const h = atoi(ptr);
 
-		int const face_0 = 2*l + 2*w;
-		int const face_1 = 2*w + 2*h;
-		int const face_2 = 2*h + 2*l;
-		int const volume = l*w*h;
+		int const face_0 = 2 * l + 2 * w;
+		int const face_1 = 2 * w + 2 * h;
+		int const face_2 = 2 * h + 2 * l;
+		int const volume = l * w * h;
 
 		if (face_0 <= face_1 && face_0 <= face_2) {
 			feet += face_0;

@@ -8,13 +8,22 @@
 #include <util.h>
 
 enum Op {
-	ADDR, ADDI,
-	MULR, MULI,
-	BANR, BANI,
-	BORR, BORI,
-	SETR, SETI,
-	GTIR, GTRI, GTRR,
-	EQIR, EQRI, EQRR
+	ADDR,
+	ADDI,
+	MULR,
+	MULI,
+	BANR,
+	BANI,
+	BORR,
+	BORI,
+	SETR,
+	SETI,
+	GTIR,
+	GTRI,
+	GTRR,
+	EQIR,
+	EQRI,
+	EQRR
 };
 
 struct Instruction {
@@ -24,64 +33,47 @@ struct Instruction {
 	int c;
 };
 
-static void
-print_instruction(struct Instruction const * const);
+static void print_instruction(struct Instruction const * const);
 
-static void
-op_addr(int * const regs, struct Instruction const * const);
+static void op_addr(int * const regs, struct Instruction const * const);
 
-static void
-op_addi(int * const regs, struct Instruction const * const);
+static void op_addi(int * const regs, struct Instruction const * const);
 
-static void
-op_mulr(int * const regs, struct Instruction const * const);
+static void op_mulr(int * const regs, struct Instruction const * const);
 
-static void
-op_muli(int * const regs, struct Instruction const * const);
+static void op_muli(int * const regs, struct Instruction const * const);
 
-static void
-op_banr(int * const regs, struct Instruction const * const);
+static void op_banr(int * const regs, struct Instruction const * const);
 
-static void
-op_bani(int * const regs, struct Instruction const * const);
+static void op_bani(int * const regs, struct Instruction const * const);
 
-static void
-op_borr(int * const regs, struct Instruction const * const);
+static void op_borr(int * const regs, struct Instruction const * const);
 
-static void
-op_bori(int * const regs, struct Instruction const * const);
+static void op_bori(int * const regs, struct Instruction const * const);
 
-static void
-op_setr(int * const regs, struct Instruction const * const);
+static void op_setr(int * const regs, struct Instruction const * const);
 
-static void
-op_seti(int * const regs, struct Instruction const * const);
+static void op_seti(int * const regs, struct Instruction const * const);
 
-static void
-op_gtir(int * const regs, struct Instruction const * const);
+static void op_gtir(int * const regs, struct Instruction const * const);
 
-static void
-op_gtri(int * const regs, struct Instruction const * const);
+static void op_gtri(int * const regs, struct Instruction const * const);
 
-static void
-op_gtrr(int * const regs, struct Instruction const * const);
+static void op_gtrr(int * const regs, struct Instruction const * const);
 
-static void
-op_eqir(int * const regs, struct Instruction const * const);
+static void op_eqir(int * const regs, struct Instruction const * const);
 
-static void
-op_eqri(int * const regs, struct Instruction const * const);
+static void op_eqri(int * const regs, struct Instruction const * const);
 
-static void
-op_eqrr(int * const regs, struct Instruction const * const);
+static void op_eqrr(int * const regs, struct Instruction const * const);
 
 #define REGISTERS_SZ 6
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Instruction instructions[128] = {0};
 	size_t n_instructions = 0;
@@ -163,7 +155,7 @@ main(int const argc, char const * const * const argv)
 	int ip = 0;
 	int regs[REGISTERS_SZ] = {0};
 	while (1) {
-		if (ip >= (int) n_instructions) {
+		if (ip >= (int)n_instructions) {
 			break;
 		}
 
@@ -300,49 +292,49 @@ print_instruction(struct Instruction const * const instr)
 static void
 op_addr(int * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = (int) (regs[instr->a]+regs[instr->b]);
+	regs[instr->c] = (int)(regs[instr->a] + regs[instr->b]);
 }
 
 static void
 op_addi(int * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = (int) (regs[instr->a]+instr->b);
+	regs[instr->c] = (int)(regs[instr->a] + instr->b);
 }
 
 static void
 op_mulr(int * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = (int) (regs[instr->a]*regs[instr->b]);
+	regs[instr->c] = (int)(regs[instr->a] * regs[instr->b]);
 }
 
 static void
 op_muli(int * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = (int) (regs[instr->a]*instr->b);
+	regs[instr->c] = (int)(regs[instr->a] * instr->b);
 }
 
 static void
 op_banr(int * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = regs[instr->a]&regs[instr->b];
+	regs[instr->c] = regs[instr->a] & regs[instr->b];
 }
 
 static void
 op_bani(int * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = regs[instr->a]&instr->b;
+	regs[instr->c] = regs[instr->a] & instr->b;
 }
 
 static void
 op_borr(int * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = regs[instr->a]|regs[instr->b];
+	regs[instr->c] = regs[instr->a] | regs[instr->b];
 }
 
 static void
 op_bori(int * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = regs[instr->a]|instr->b;
+	regs[instr->c] = regs[instr->a] | instr->b;
 }
 
 static void

@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-int main(const int argc, const char * const * const argv)
+int
+main(const int argc, const char * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 
@@ -17,7 +18,7 @@ int main(const int argc, const char * const * const argv)
 	int i = 0;
 
 	while (1) {
-		if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+		if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				return 1;
@@ -34,7 +35,7 @@ int main(const int argc, const char * const * const argv)
 	i = 0;
 	while (1) {
 		int const next = instr[i];
-		if (i+next >= count) {
+		if (i + next >= count) {
 			jumps++;
 			break;
 		}

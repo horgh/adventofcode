@@ -18,8 +18,8 @@ main(int const argc, char const * const * const argv)
 
 	for (int y = 0; y < SZ; y++) {
 		for (int x = 0; x < SZ; x++) {
-			int const rack_id = x+1+10;
-			int power_level = rack_id*(y+1);
+			int const rack_id = x + 1 + 10;
+			int power_level = rack_id * (y + 1);
 			power_level += serial;
 			power_level *= rack_id;
 			if (power_level < 100) {
@@ -45,19 +45,19 @@ main(int const argc, char const * const * const argv)
 
 	for (int sz = 2; sz <= SZ; sz++) {
 		for (int y = 0; y < SZ; y++) {
-			if (y+sz >= SZ) {
+			if (y + sz >= SZ) {
 				continue;
 			}
 			for (int x = 0; x < SZ; x++) {
-				if (x+sz >= SZ) {
+				if (x + sz >= SZ) {
 					continue;
 				}
 				int power = grid_acc[x][y];
-				for (int yy = y; yy < y+sz-1; yy++) {
-					power += grid[x+sz-1][yy];
+				for (int yy = y; yy < y + sz - 1; yy++) {
+					power += grid[x + sz - 1][yy];
 				}
-				for (int xx = x; xx < x+sz; xx++) {
-					power += grid[xx][y+sz-1];
+				for (int xx = x; xx < x + sz; xx++) {
+					power += grid[xx][y + sz - 1];
 				}
 				grid_acc[x][y] = power;
 				if (power <= max_power) {
@@ -71,6 +71,6 @@ main(int const argc, char const * const * const argv)
 		}
 	}
 
-	printf("%d,%d,%d\n", max_x+1, max_y+1, max_sz);
+	printf("%d,%d,%d\n", max_x + 1, max_y + 1, max_sz);
 	return 0;
 }

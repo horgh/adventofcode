@@ -12,19 +12,16 @@ struct program {
 	struct htable * h;
 };
 
-static struct program *
-parse_line(char const * const);
-static void
-program_destroy(void * const);
-static void
-print_program(struct program const * const);
-static char *
-get_lowest(struct htable const * const, char const * const);
+static struct program * parse_line(char const * const);
+static void program_destroy(void * const);
+static void print_program(struct program const * const);
+static char * get_lowest(struct htable const * const, char const * const);
 
-int main(int const argc, char const * const * const argv)
+int
+main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 
@@ -39,7 +36,7 @@ int main(int const argc, char const * const * const argv)
 	char const * last_name = NULL;
 
 	while (1) {
-		if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+		if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				hash_free(h, program_destroy);
@@ -91,7 +88,7 @@ int main(int const argc, char const * const * const argv)
 static struct program *
 parse_line(char const * const s)
 {
-	char * const name = calloc(strlen(s)+1, sizeof(char));
+	char * const name = calloc(strlen(s) + 1, sizeof(char));
 	if (!name) {
 		fprintf(stderr, "calloc(): %s\n", strerror(errno));
 		return NULL;
@@ -148,9 +145,7 @@ parse_line(char const * const s)
 		return program;
 	}
 
-	if (*ptr != '-' ||
-			*(ptr+1) != '>' ||
-			*(ptr+2) != ' ') {
+	if (*ptr != '-' || *(ptr + 1) != '>' || *(ptr + 2) != ' ') {
 		fprintf(stderr, "missing '-> '\n");
 		program_destroy(program);
 		return NULL;
@@ -165,7 +160,7 @@ parse_line(char const * const s)
 	}
 
 	while (1) {
-		char * const p2 = calloc(strlen(ptr)+1, sizeof(char));
+		char * const p2 = calloc(strlen(ptr) + 1, sizeof(char));
 		if (!p2) {
 			fprintf(stderr, "calloc(): %s\n", strerror(errno));
 			program_destroy(program);
@@ -228,7 +223,7 @@ print_program(struct program const * const p)
 		return;
 	}
 
-	void * * const keys = hash_get_keys(p->h);
+	void ** const keys = hash_get_keys(p->h);
 	if (!keys) {
 		fprintf(stderr, "hash_get_keys()\n");
 		return;
@@ -245,7 +240,7 @@ print_program(struct program const * const p)
 static char *
 get_lowest(struct htable const * const h, char const * const name)
 {
-	void * * const keys = hash_get_keys(h);
+	void ** const keys = hash_get_keys(h);
 	if (!keys) {
 		fprintf(stderr, "hash_get_keys()\n");
 		return NULL;
@@ -271,7 +266,7 @@ get_lowest(struct htable const * const h, char const * const name)
 	hash_free_keys(keys);
 
 	// Because we free the keys
-	char * const name_copy = calloc(strlen(name)+1, sizeof(char));
+	char * const name_copy = calloc(strlen(name) + 1, sizeof(char));
 	if (!name_copy) {
 		fprintf(stderr, "calloc(): %s\n", strerror(errno));
 		return NULL;

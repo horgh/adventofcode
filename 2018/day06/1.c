@@ -12,21 +12,15 @@ struct Coordinate {
 	int y;
 };
 
-static int
-distance(
-		int const,
-		int const,
-		int const,
-		int const
-		);
+static int distance(int const, int const, int const, int const);
 
 #define SZ 512
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Coordinate coordinates[1024] = {0};
 	size_t n = 0;
@@ -52,12 +46,8 @@ main(int const argc, char const * const * const argv)
 		for (size_t y = 0; y < SZ; y++) {
 			int distances[1024] = {0};
 			for (size_t i = 0; i < n; i++) {
-				distances[i] = distance(
-						(int) x,
-						(int) y,
-						coordinates[i].x,
-						coordinates[i].y
-						);
+				distances[i] =
+						distance((int)x, (int)y, coordinates[i].x, coordinates[i].y);
 			}
 
 			int shortest = distances[0];
@@ -80,7 +70,7 @@ main(int const argc, char const * const * const argv)
 				m[x][y] = -1;
 				continue;
 			}
-			m[x][y] = (int) shortest_id;
+			m[x][y] = (int)shortest_id;
 		}
 	}
 
@@ -92,7 +82,7 @@ main(int const argc, char const * const * const argv)
 				continue;
 			}
 
-			if (x == 0 || x == SZ-1 || y == 0 || y == SZ-1) {
+			if (x == 0 || x == SZ - 1 || y == 0 || y == SZ - 1) {
 				infinites[m[x][y]] = true;
 				continue;
 			}
@@ -116,11 +106,7 @@ main(int const argc, char const * const * const argv)
 }
 
 static int
-distance(
-		int const x_0,
-		int const y_0,
-		int const x_1,
-		int const y_1
-		) {
-	return abs(x_0-x_1)+abs(y_0-y_1);
+distance(int const x_0, int const y_0, int const x_1, int const y_1)
+{
+	return abs(x_0 - x_1) + abs(y_0 - y_1);
 }

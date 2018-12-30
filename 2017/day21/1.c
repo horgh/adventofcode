@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_RULES          1024
-#define MAX_SIZE           4096
+#define MAX_RULES 1024
+#define MAX_SIZE 4096
 #define MAX_INPUT_PATTERNS 128
 
 #define DEBUG 0
@@ -13,82 +13,51 @@
 struct grid {
 	size_t capacity;
 	size_t size;
-	bool * * pixels;
+	bool ** pixels;
 };
 
 struct rule {
-	struct grid * * inputs;
+	struct grid ** inputs;
 	size_t num_inputs;
 	struct grid * output;
 };
 
-static void
-destroy_rules(struct rule * * const);
-static void
-destroy_rule(struct rule * const);
-static void
-destroy_grid(struct grid * const);
-static struct rule *
-parse_line(char const * const);
-static struct grid *
-new_grid(size_t const);
-static char const *
-parse_grid(struct grid * const, char const * const);
-static char const *
-parse_row(struct grid * const, size_t const, char const * const);
-static bool
-add_inputs(struct rule * const, struct grid const * const);
-static struct grid *
-copy_grid(struct grid const * const);
-static void
-transpose_grid(
-		struct grid * const,
-		struct grid const * const,
-		size_t const,
-		size_t const);
-static void
-flip_vertical(struct grid * const);
-static void
-swap_rows(struct grid * const, size_t const, size_t const);
-static void
-flip_horizontal(struct grid * const);
-static void
-swap_columns(struct grid * const, size_t const, size_t const);
-static void
-rotate(struct grid * const);
-static void
-move_pixel(
-		struct grid * const,
+static void destroy_rules(struct rule ** const);
+static void destroy_rule(struct rule * const);
+static void destroy_grid(struct grid * const);
+static struct rule * parse_line(char const * const);
+static struct grid * new_grid(size_t const);
+static char const * parse_grid(struct grid * const, char const * const);
+static char const * parse_row(
+		struct grid * const, size_t const, char const * const);
+static bool add_inputs(struct rule * const, struct grid const * const);
+static struct grid * copy_grid(struct grid const * const);
+static void transpose_grid(
+		struct grid * const, struct grid const * const, size_t const, size_t const);
+static void flip_vertical(struct grid * const);
+static void swap_rows(struct grid * const, size_t const, size_t const);
+static void flip_horizontal(struct grid * const);
+static void swap_columns(struct grid * const, size_t const, size_t const);
+static void rotate(struct grid * const);
+static void move_pixel(struct grid * const,
 		struct grid const * const,
 		size_t const,
 		size_t const,
 		size_t const,
 		size_t const);
-static bool
-rule_matches_grid(struct rule const * const, struct grid const * const);
-static bool
-grids_match(struct grid const * const, struct grid const * const);
-static void
-add_input_to_rule(struct rule * const, struct grid const * const);
-static void
-print_rule(struct rule const * const);
-static void
-print_grid(struct grid const * const);
-static bool
-run(
-		struct rule * * const,
-		size_t const,
-		struct grid * const,
-		size_t const);
-static struct grid *
-apply_rules(
-		struct rule * * const,
+static bool rule_matches_grid(
+		struct rule const * const, struct grid const * const);
+static bool grids_match(struct grid const * const, struct grid const * const);
+static void add_input_to_rule(struct rule * const, struct grid const * const);
+static void print_rule(struct rule const * const);
+static void print_grid(struct grid const * const);
+static bool run(
+		struct rule ** const, size_t const, struct grid * const, size_t const);
+static struct grid * apply_rules(struct rule ** const,
 		size_t const,
 		struct grid const * const,
 		size_t const);
-static struct grid *
-match(
-		struct rule * * const,
+static struct grid * match(struct rule ** const,
 		size_t const,
 		struct grid const * const,
 		size_t const,
@@ -102,7 +71,7 @@ main(int const argc, char const * const * const argv)
 		fprintf(stderr, "Usage: %s <steps>\n", argv[0]);
 		return 1;
 	}
-	size_t const steps = (size_t) atoi(argv[1]);
+	size_t const steps = (size_t)atoi(argv[1]);
 
 	FILE * const fh = stdin;
 	char buf[4096] = {0};
@@ -111,7 +80,7 @@ main(int const argc, char const * const * const argv)
 	size_t num_rules = 0;
 
 	while (1) {
-		if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+		if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				destroy_rules(rules);
@@ -179,13 +148,13 @@ main(int const argc, char const * const * const argv)
 }
 
 static void
-destroy_rules(struct rule * * const rules)
+destroy_rules(struct rule ** const rules)
 {
 	if (!rules) {
 		return;
 	}
 
-	for (size_t i = 0; ; i++) {
+	for (size_t i = 0;; i++) {
 		if (!rules[i]) {
 			break;
 		}
@@ -412,7 +381,8 @@ add_inputs(struct rule * const r, struct grid const * const input_pattern)
 			flip_vertical(g);
 
 			if (DEBUG) {
-				printf("grid after flipping vertically, before flipping horizontally:\n");
+				printf(
+						"grid after flipping vertically, before flipping horizontally:\n");
 				print_grid(g);
 			}
 
@@ -464,8 +434,7 @@ copy_grid(struct grid const * const g)
 }
 
 static void
-transpose_grid(
-		struct grid * const target,
+transpose_grid(struct grid * const target,
 		struct grid const * const source,
 		size_t const dest_row,
 		size_t const dest_col)
@@ -475,7 +444,8 @@ transpose_grid(
 	for (size_t row = 0; row < source->size; row++) {
 		for (size_t col = 0; col < source->size; col++) {
 			// TODO: I do no bounds checking! Raaaggh!!
-			target->pixels[target_row+row][target_col+col] = source->pixels[row][col];
+			target->pixels[target_row + row][target_col + col] =
+					source->pixels[row][col];
 		}
 	}
 }
@@ -610,8 +580,7 @@ rotate(struct grid * const g)
 }
 
 static void
-move_pixel(
-		struct grid * const target,
+move_pixel(struct grid * const target,
 		struct grid const * const source,
 		size_t const source_row,
 		size_t const source_col,
@@ -619,7 +588,7 @@ move_pixel(
 		size_t const target_col)
 {
 	target->pixels[target_row][target_col] =
-		source->pixels[source_row][source_col];
+			source->pixels[source_row][source_col];
 }
 
 static bool
@@ -703,8 +672,7 @@ print_grid(struct grid const * const g)
 }
 
 static bool
-run(
-		struct rule * * const rules,
+run(struct rule ** const rules,
 		size_t const num_rules,
 		struct grid * const initial_grid,
 		size_t const steps)
@@ -765,8 +733,7 @@ run(
 }
 
 static struct grid *
-apply_rules(
-		struct rule * * const rules,
+apply_rules(struct rule ** const rules,
 		size_t const num_rules,
 		struct grid const * const g,
 		size_t const sz)
@@ -777,26 +744,25 @@ apply_rules(
 		return NULL;
 	}
 
-	for (size_t row = 0; row < g->size/sz; row++) {
-		for (size_t col = 0; col < g->size/sz; col++) {
-			struct grid const * const output = match(rules, num_rules, g, row*sz,
-					col*sz, sz);
+	for (size_t row = 0; row < g->size / sz; row++) {
+		for (size_t col = 0; col < g->size / sz; col++) {
+			struct grid const * const output =
+					match(rules, num_rules, g, row * sz, col * sz, sz);
 			if (!output) {
 				continue;
 			}
 
-			transpose_grid(g2, output, row*(sz+1), col*(sz+1));
+			transpose_grid(g2, output, row * (sz + 1), col * (sz + 1));
 		}
 	}
 
-	g2->size = g->size/sz*(sz+1);
+	g2->size = g->size / sz * (sz + 1);
 
 	return g2;
 }
 
 static struct grid *
-match(
-		struct rule * * const rules,
+match(struct rule ** const rules,
 		size_t const num_rules,
 		struct grid const * const g,
 		size_t const target_row,
@@ -812,7 +778,7 @@ match(
 
 	for (size_t row = 0; row < sz; row++) {
 		for (size_t col = 0; col < sz; col++) {
-			g2->pixels[row][col] = g->pixels[target_row+row][target_col+col];
+			g2->pixels[row][col] = g->pixels[target_row + row][target_col + col];
 		}
 	}
 

@@ -4,13 +4,12 @@
 #include <inttypes.h>
 #include <limits.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <string.h>
 
-static uint64_t
-__calc_decompressed_length(const char * const);
+static uint64_t __calc_decompressed_length(const char * const);
 
 int
 main(const int argc, const char * const * const argv)
@@ -36,8 +35,8 @@ main(const int argc, const char * const * const argv)
 			break;
 		}
 
-		if (buf[strlen(buf)-1] == '\n') {
-			buf[strlen(buf)-1] = '\0';
+		if (buf[strlen(buf) - 1] == '\n') {
+			buf[strlen(buf) - 1] = '\0';
 		}
 
 		uint64_t line_len = __calc_decompressed_length(buf);
@@ -46,7 +45,7 @@ main(const int argc, const char * const * const argv)
 			return 1;
 		}
 
-		//printf("=> %s: %" PRIu64 "\n", buf, line_len);
+		// printf("=> %s: %" PRIu64 "\n", buf, line_len);
 
 		if (decompressed_len > UINT64_MAX - line_len) {
 			printf("overflow\n");
@@ -72,13 +71,13 @@ __calc_decompressed_length(const char * const buf)
 {
 	uint64_t decompressed_len = 0;
 
-	char * s = calloc(strlen(buf)+1, sizeof(char));
+	char * s = calloc(strlen(buf) + 1, sizeof(char));
 	if (!s) {
 		printf("%s\n", strerror(ENOMEM));
 		return UINT64_MAX;
 	}
 
-	for (size_t i = 0; i < strlen(buf); ) {
+	for (size_t i = 0; i < strlen(buf);) {
 		if (isspace(buf[i])) {
 			i++;
 			continue;
@@ -97,7 +96,7 @@ __calc_decompressed_length(const char * const buf)
 
 		size_t piece_len = 0;
 		size_t count = 0;
-		int matches = sscanf(buf+i, "(%zux%zu)", &piece_len, &count);
+		int matches = sscanf(buf + i, "(%zux%zu)", &piece_len, &count);
 		if (matches != 2) {
 			printf("sscanf failed\n");
 			free(s);
@@ -111,8 +110,8 @@ __calc_decompressed_length(const char * const buf)
 		// Advance past the )
 		i++;
 
-		memset(s, 0, strlen(buf)+1);
-		strncat(s, buf+i, piece_len);
+		memset(s, 0, strlen(buf) + 1);
+		strncat(s, buf + i, piece_len);
 
 		uint64_t piece_decompressed_len = __calc_decompressed_length(s);
 		if (piece_decompressed_len == UINT64_MAX) {
@@ -126,20 +125,20 @@ __calc_decompressed_length(const char * const buf)
 			return UINT64_MAX;
 		}
 
-		if (decompressed_len > UINT64_MAX - piece_decompressed_len*count) {
+		if (decompressed_len > UINT64_MAX - piece_decompressed_len * count) {
 			printf("overflow\n");
 			free(s);
 			return UINT64_MAX;
 		}
 
-		decompressed_len += piece_decompressed_len*count;
+		decompressed_len += piece_decompressed_len * count;
 
 		i += piece_len;
 	}
 
 	free(s);
 
-	//printf("...%s: %" PRIu64 "\n", buf, decompressed_len);
+	// printf("...%s: %" PRIu64 "\n", buf, decompressed_len);
 
 	return decompressed_len;
 }

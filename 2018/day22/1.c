@@ -14,31 +14,22 @@ struct Position {
 	int erosion_level;
 };
 
-static void
-draw(struct Position * * const,
-		int const,
-		int const,
-		int const);
+static void draw(struct Position ** const, int const, int const, int const);
 
-static void
-get_type(struct Position * * const,
+static void get_type(struct Position ** const,
 		int const,
 		int const,
 		int const,
 		int const,
 		int const);
-static int
-get_geologic_index(struct Position * * const,
-		int const,
-		int const,
-		int const,
-		int const);
+static int get_geologic_index(
+		struct Position ** const, int const, int const, int const, int const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	char buf[4096] = {0};
 
@@ -64,12 +55,12 @@ main(int const argc, char const * const * const argv)
 		printf("depth: %d target: %d,%d\n", depth, target_x, target_y);
 	}
 
-	size_t sz = (size_t) (target_x+1);
-	if ((size_t) (target_y+1) > sz) {
-		sz = (size_t) (target_y+1);
+	size_t sz = (size_t)(target_x + 1);
+	if ((size_t)(target_y + 1) > sz) {
+		sz = (size_t)(target_y + 1);
 	}
 
-	struct Position * * const map = calloc(sz, sizeof(struct Position *));
+	struct Position ** const map = calloc(sz, sizeof(struct Position *));
 	assert(map != NULL);
 	for (size_t i = 0; i < sz; i++) {
 		map[i] = calloc(sz, sizeof(struct Position));
@@ -125,7 +116,7 @@ main(int const argc, char const * const * const argv)
 }
 
 static void
-draw(struct Position * * const map,
+draw(struct Position ** const map,
 		int const depth,
 		int const target_x,
 		int const target_y)
@@ -138,18 +129,17 @@ draw(struct Position * * const map,
 }
 
 static void
-get_type(struct Position * * const map,
+get_type(struct Position ** const map,
 		int const depth,
 		int const target_x,
 		int const target_y,
 		int const x,
 		int const y)
 {
-	int const geologic_index = get_geologic_index(map, target_x, target_y,
-			x, y);
-	int const erosion_level = (geologic_index+depth)%20183;
+	int const geologic_index = get_geologic_index(map, target_x, target_y, x, y);
+	int const erosion_level = (geologic_index + depth) % 20183;
 	map[x][y].erosion_level = erosion_level;
-	int const m = erosion_level%3;
+	int const m = erosion_level % 3;
 	if (m == 0) {
 		map[x][y].type = Rocky;
 		return;
@@ -161,9 +151,8 @@ get_type(struct Position * * const map,
 	map[x][y].type = Narrow;
 }
 
-__attribute__((pure))
-static int
-get_geologic_index(struct Position * * const map,
+__attribute__((pure)) static int
+get_geologic_index(struct Position ** const map,
 		int const target_x,
 		int const target_y,
 		int const x,
@@ -176,12 +165,12 @@ get_geologic_index(struct Position * * const map,
 		return 0;
 	}
 	if (y == 0) {
-		return x*16807;
+		return x * 16807;
 	}
 	if (x == 0) {
-		return y*48271;
+		return y * 48271;
 	}
-	assert(x-1 >= 0);
-	assert(y-1 >= 0);
-	return map[x-1][y].erosion_level*map[x][y-1].erosion_level;
+	assert(x - 1 >= 0);
+	assert(y - 1 >= 0);
+	return map[x - 1][y].erosion_level * map[x][y - 1].erosion_level;
 }

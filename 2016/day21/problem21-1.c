@@ -8,22 +8,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char *
-__swap_position(const char * const, const int, const int);
-static char *
-__swap_letter(const char * const, const char, const char);
-static char *
-__rotate_left(const char * const, const int);
-static char *
-__rotate_right(const char * const, const int);
-static char *
-__rotate_based_on_letter(const char * const, const char);
-static char *
-__reverse_positions(const char * const, const int, const int);
-static char *
-__move_position(const char * const, const int, const int);
-static char *
-__instruction(const char * const, const char * const);
+static char * __swap_position(const char * const, const int, const int);
+static char * __swap_letter(const char * const, const char, const char);
+static char * __rotate_left(const char * const, const int);
+static char * __rotate_right(const char * const, const int);
+static char * __rotate_based_on_letter(const char * const, const char);
+static char * __reverse_positions(const char * const, const int, const int);
+static char * __move_position(const char * const, const int, const int);
+static char * __instruction(const char * const, const char * const);
 
 int
 main(const int argc, const char * const * const argv)
@@ -74,7 +66,7 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
-	char * s = calloc(strlen(input)+1, sizeof(char));
+	char * s = calloc(strlen(input) + 1, sizeof(char));
 	if (!s) {
 		printf("%s\n", strerror(errno));
 		fclose(fh);
@@ -99,8 +91,8 @@ main(const int argc, const char * const * const argv)
 			return 1;
 		}
 
-		//printf("%s", buf);
-		//printf("%s to %s\n", s, t);
+		// printf("%s", buf);
+		// printf("%s to %s\n", s, t);
 
 		free(s);
 		s = t;
@@ -119,7 +111,7 @@ main(const int argc, const char * const * const argv)
 static char *
 __swap_position(const char * const s, const int x, const int y)
 {
-	char * const n = calloc(strlen(s)+1, sizeof(char));
+	char * const n = calloc(strlen(s) + 1, sizeof(char));
 	if (!n) {
 		printf("%s\n", strerror(errno));
 		return NULL;
@@ -136,7 +128,7 @@ __swap_position(const char * const s, const int x, const int y)
 static char *
 __swap_letter(const char * const s, const char x, const char y)
 {
-	char * const n = calloc(strlen(s)+1, sizeof(char));
+	char * const n = calloc(strlen(s) + 1, sizeof(char));
 	if (!n) {
 		printf("%s\n", strerror(errno));
 		return NULL;
@@ -162,7 +154,7 @@ __swap_letter(const char * const s, const char x, const char y)
 static char *
 __rotate_left(const char * const s, const int x)
 {
-	char * const n = calloc(strlen(s)+1, sizeof(char));
+	char * const n = calloc(strlen(s) + 1, sizeof(char));
 	if (!n) {
 		printf("%s\n", strerror(errno));
 		return NULL;
@@ -171,9 +163,9 @@ __rotate_left(const char * const s, const int x)
 	memcpy(n, s, strlen(s));
 
 	for (int i = 0; i < x; i++) {
-		for (int j = 0; j < (int) strlen(n)-1; j++) {
-			char tmp = n[j+1];
-			n[j+1] = n[j];
+		for (int j = 0; j < (int)strlen(n) - 1; j++) {
+			char tmp = n[j + 1];
+			n[j + 1] = n[j];
 			n[j] = tmp;
 		}
 	}
@@ -184,7 +176,7 @@ __rotate_left(const char * const s, const int x)
 static char *
 __rotate_right(const char * const s, const int x)
 {
-	char * const n = calloc(strlen(s)+1, sizeof(char));
+	char * const n = calloc(strlen(s) + 1, sizeof(char));
 	if (!n) {
 		printf("%s\n", strerror(errno));
 		return NULL;
@@ -193,9 +185,9 @@ __rotate_right(const char * const s, const int x)
 	memcpy(n, s, strlen(s));
 
 	for (int i = 0; i < x; i++) {
-		for (int j = (int) strlen(n)-1; j > 0; j--) {
-			int index = j+1;
-			if (index >= (int) strlen(n)) {
+		for (int j = (int)strlen(n) - 1; j > 0; j--) {
+			int index = j + 1;
+			if (index >= (int)strlen(n)) {
 				index = 0;
 			}
 			char tmp = n[index];
@@ -212,7 +204,7 @@ __rotate_based_on_letter(const char * const s, const char x)
 {
 	int index = -1;
 
-	for (int i = 0; i < (int) strlen(s); i++) {
+	for (int i = 0; i < (int)strlen(s); i++) {
 		if (s[i] == x) {
 			index = i;
 			break;
@@ -225,16 +217,16 @@ __rotate_based_on_letter(const char * const s, const char x)
 	}
 
 	if (index < 4) {
-		return __rotate_right(s, 1+index);
+		return __rotate_right(s, 1 + index);
 	}
 
-	return __rotate_right(s, 1+index+1);
+	return __rotate_right(s, 1 + index + 1);
 }
 
 static char *
 __reverse_positions(const char * const s, const int x, const int y)
 {
-	char * const n = calloc(strlen(s)+1, sizeof(char));
+	char * const n = calloc(strlen(s) + 1, sizeof(char));
 	if (!n) {
 		printf("%s\n", strerror(errno));
 		return NULL;
@@ -252,7 +244,7 @@ __reverse_positions(const char * const s, const int x, const int y)
 static char *
 __move_position(const char * const s, const int x, const int y)
 {
-	char * const n = calloc(strlen(s)+1, sizeof(char));
+	char * const n = calloc(strlen(s) + 1, sizeof(char));
 	if (!n) {
 		printf("%s\n", strerror(errno));
 		return NULL;
@@ -260,7 +252,7 @@ __move_position(const char * const s, const int x, const int y)
 
 	int j = 0;
 
-	for (int i = 0; i < (int) strlen(s); i++) {
+	for (int i = 0; i < (int)strlen(s); i++) {
 		if (i == x) {
 			continue;
 		}
@@ -287,7 +279,7 @@ __move_position(const char * const s, const int x, const int y)
 		j++;
 	}
 
-	if (x == (int) strlen(s)) {
+	if (x == (int)strlen(s)) {
 		n[j] = s[x];
 	}
 
@@ -375,8 +367,9 @@ __instruction(const char * const s, const char * const instruction)
 		return __rotate_right(s, x);
 	}
 
-	if (strncmp(ptr, "rotate based on position of letter ",
-				strlen("rotate based on position of letter ")) == 0) {
+	if (strncmp(ptr,
+					"rotate based on position of letter ",
+					strlen("rotate based on position of letter ")) == 0) {
 		ptr += strlen("rotate based on position of letter ");
 
 		char x = -1;

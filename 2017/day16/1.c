@@ -5,16 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-static bool
-dance(char * const, char const * const);
-static char const *
-parse_move(char const * const, char * const);
-static bool
-perform_move(char * const, char const * const);
-static void
-rotate(char * const);
-static int
-index(char const * const, char const);
+static bool dance(char * const, char const * const);
+static char const * parse_move(char const * const, char * const);
+static bool perform_move(char * const, char const * const);
+static void rotate(char * const);
+static int index(char const * const, char const);
 
 int
 main(int const argc, char const * const * const argv)
@@ -29,9 +24,9 @@ main(int const argc, char const * const * const argv)
 
 	char buf[512000] = {0};
 
-	if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
-			fprintf(stderr, "fgets(): %s\n", strerror(errno));
-			return 1;
+	if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
+		fprintf(stderr, "fgets(): %s\n", strerror(errno));
+		return 1;
 	}
 
 	char * ptr = buf;
@@ -45,7 +40,7 @@ main(int const argc, char const * const * const argv)
 
 	char programs[256] = {0};
 	for (int i = 0; i < n; i++) {
-		programs[i] = (char) ('a'+(char)i);
+		programs[i] = (char)('a' + (char)i);
 	}
 
 	if (!dance(programs, buf)) {
@@ -95,7 +90,7 @@ static bool
 perform_move(char * const programs, char const * const move)
 {
 	if (move[0] == 's') {
-		int const size = atoi(move+1);
+		int const size = atoi(move + 1);
 		for (int i = 0; i < size; i++) {
 			rotate(programs);
 		}
@@ -103,7 +98,7 @@ perform_move(char * const programs, char const * const move)
 	}
 
 	if (move[0] == 'x') {
-		char const * ptr = move+1;
+		char const * ptr = move + 1;
 		int const a = atoi(ptr);
 
 		while (isdigit(*ptr)) {
@@ -149,8 +144,8 @@ static void
 rotate(char * const s)
 {
 	size_t const sz = strlen(s);
-	char const tmp = s[sz-1];
-	memcpy(s+1, s, strlen(s)-1);
+	char const tmp = s[sz - 1];
+	memcpy(s + 1, s, strlen(s) - 1);
 	s[0] = tmp;
 }
 

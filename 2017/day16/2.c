@@ -7,9 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define SPIN     0
+#define SPIN 0
 #define EXCHANGE 1
-#define PARTNER  2
+#define PARTNER 2
 
 struct Move {
 	int type;
@@ -23,23 +23,13 @@ struct Move {
 	char program1;
 };
 
-static void
-destroy_moves(struct Move * * const);
-static struct Move *
-parse_move(char const * const);
-static bool
-dance(char * const,
-		struct Move * * const,
-		size_t const);
-static bool
-perform_move(char * const,
-		struct Move const * const);
-static void
-rotate(char * const);
-static int
-index(char const * const, char const);
-static void
-print_move(struct Move const *);
+static void destroy_moves(struct Move ** const);
+static struct Move * parse_move(char const * const);
+static bool dance(char * const, struct Move ** const, size_t const);
+static bool perform_move(char * const, struct Move const * const);
+static void rotate(char * const);
+static int index(char const * const, char const);
+static void print_move(struct Move const *);
 
 int
 main(int const argc, char const * const * const argv)
@@ -54,9 +44,9 @@ main(int const argc, char const * const * const argv)
 
 	char buf[512000] = {0};
 
-	if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
-			fprintf(stderr, "fgets(): %s\n", strerror(errno));
-			return 1;
+	if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
+		fprintf(stderr, "fgets(): %s\n", strerror(errno));
+		return 1;
 	}
 
 	char * ptr = buf;
@@ -70,12 +60,12 @@ main(int const argc, char const * const * const argv)
 
 	char programs[256] = {0};
 	for (int i = 0; i < n; i++) {
-		char const c = (char) ('a'+(char)i);
+		char const c = (char)('a' + (char)i);
 		programs[i] = c;
 	}
 
 	size_t const max_moves = 10240;
-	struct Move * * const moves = calloc(max_moves, sizeof(struct Move *));
+	struct Move ** const moves = calloc(max_moves, sizeof(struct Move *));
 	if (!moves) {
 		fprintf(stderr, "calloc(): %s\n", strerror(errno));
 		return 1;
@@ -106,7 +96,6 @@ main(int const argc, char const * const * const argv)
 		}
 	}
 
-
 	if (!dance(programs, moves, num_moves)) {
 		fprintf(stderr, "dancing failed\n");
 		destroy_moves(moves);
@@ -126,7 +115,7 @@ main(int const argc, char const * const * const argv)
 
 		// Find a nice spot where we start to repeat to cut down our work
 		if (strcmp(programs, orig) == 0) {
-			m = m%i;
+			m = m % i;
 			// +1 when we start our loop
 			i = 0;
 		}
@@ -139,7 +128,7 @@ main(int const argc, char const * const * const argv)
 }
 
 static void
-destroy_moves(struct Move * * const moves)
+destroy_moves(struct Move ** const moves)
 {
 	if (!moves) {
 		return;
@@ -204,9 +193,7 @@ parse_move(char const * const moves)
 }
 
 static bool
-dance(char * const programs,
-		struct Move * * const moves,
-		size_t const num_moves)
+dance(char * const programs, struct Move ** const moves, size_t const num_moves)
 {
 	for (size_t i = 0; i < num_moves; i++) {
 		if (!perform_move(programs, moves[i])) {
@@ -223,8 +210,7 @@ dance(char * const programs,
 }
 
 static bool
-perform_move(char * const programs,
-		struct Move const * const move)
+perform_move(char * const programs, struct Move const * const move)
 {
 	if (move->type == SPIN) {
 		for (int i = 0; i < move->amount; i++) {
@@ -262,8 +248,8 @@ static void
 rotate(char * const s)
 {
 	size_t const sz = strlen(s);
-	char const tmp = s[sz-1];
-	memcpy(s+1, s, strlen(s)-1);
+	char const tmp = s[sz - 1];
+	memcpy(s + 1, s, strlen(s) - 1);
 	s[0] = tmp;
 }
 
@@ -296,5 +282,9 @@ print_move(struct Move const * move)
 	}
 
 	printf("amount: %d index0: %d index1: %d program0: %c program1: %c\n",
-			move->amount, move->index0, move->index1, move->program0, move->program1);
+			move->amount,
+			move->index0,
+			move->index1,
+			move->program0,
+			move->program1);
 }

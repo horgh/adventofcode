@@ -16,13 +16,10 @@ struct Queue {
 	struct QueueElement * last;
 };
 
-bool
-enqueue(struct Queue * const, void * const);
+bool enqueue(struct Queue * const, void * const);
 
-void *
-dequeue(struct Queue * const);
+void * dequeue(struct Queue * const);
 
-void
-destroy_queue(struct Queue *, void (void * const));
+void destroy_queue(struct Queue *, void(void * const));
 
 #endif

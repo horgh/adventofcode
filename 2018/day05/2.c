@@ -6,14 +6,13 @@
 #include <string.h>
 #include <util.h>
 
-static void
-reduce(char * const);
+static void reduce(char * const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	char buf[409600] = {0};
 	assert(fgets(buf, 409600, stdin) != NULL);
@@ -55,10 +54,9 @@ static void
 reduce(char * const s)
 {
 	char * ptr = s;
-	while (*ptr != '\0' && *(ptr+1) != '\0') {
-		if (*ptr - 32 == *(ptr+1) ||
-				*ptr + 32 == *(ptr+1)) {
-			memcpy(ptr, ptr+2, strlen(ptr+2)+1);
+	while (*ptr != '\0' && *(ptr + 1) != '\0') {
+		if (*ptr - 32 == *(ptr + 1) || *ptr + 32 == *(ptr + 1)) {
+			memcpy(ptr, ptr + 2, strlen(ptr + 2) + 1);
 			continue;
 		}
 		ptr++;

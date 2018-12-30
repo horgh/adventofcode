@@ -7,11 +7,7 @@
 #include <string.h>
 #include <util.h>
 
-enum Action {
-	Begin,
-	Sleep,
-	Wake
-};
+enum Action { Begin, Sleep, Wake };
 
 struct Record {
 	int month;
@@ -22,14 +18,13 @@ struct Record {
 	int id;
 };
 
-static int
-cmp_record(void const * const, void const * const);
+static int cmp_record(void const * const, void const * const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Record records[2048] = {0};
 	size_t n = 0;
@@ -129,7 +124,7 @@ main(int const argc, char const * const * const argv)
 			continue;
 		}
 		most_asleep_minutes = guard_to_sleep_time[i];
-		most_asleep_id = (int) i;
+		most_asleep_id = (int)i;
 	}
 
 	int times_asleep = -1;
@@ -142,7 +137,7 @@ main(int const argc, char const * const * const argv)
 		most_asleep_minute = i;
 	}
 
-	printf("%d\n", most_asleep_id*most_asleep_minute);
+	printf("%d\n", most_asleep_id * most_asleep_minute);
 	return 0;
 }
 

@@ -23,25 +23,17 @@ struct Instruction {
 	char out_register[8];
 };
 
-static void
-run_instruction(struct Instruction const * const,
-		struct htable * const);
+static void run_instruction(
+		struct Instruction const * const, struct htable * const);
 
-static void
-print_instruction(struct Instruction const * const);
+static void print_instruction(struct Instruction const * const);
 
-static void
-copy_register(char * const,
-		char const * * const);
+static void copy_register(char * const, char const ** const);
 
-static void
-set_register(struct htable * const,
-		char const * const,
-		uint16_t const);
+static void set_register(
+		struct htable * const, char const * const, uint16_t const);
 
-static uint16_t
-get_register(struct htable * const,
-		char const * const);
+static uint16_t get_register(struct htable * const, char const * const);
 
 int
 main(int const argc, char const * const * const argv)
@@ -79,7 +71,7 @@ main(int const argc, char const * const * const argv)
 		}
 
 		if (isdigit(*ptr)) {
-			instructions[n].in_signal = (uint16_t) atoi(ptr);
+			instructions[n].in_signal = (uint16_t)atoi(ptr);
 			instructions[n].lhs = InSignal;
 			while (isdigit(*ptr)) {
 				ptr++;
@@ -102,14 +94,14 @@ main(int const argc, char const * const * const argv)
 		} else if (strncmp(ptr, "LSHIFT ", strlen("LSHIFT ")) == 0) {
 			instructions[n].operation = Lshift;
 			ptr += strlen("LSHIFT ");
-			instructions[n].in_signal = (uint16_t) atoi(ptr);
+			instructions[n].in_signal = (uint16_t)atoi(ptr);
 			while (isdigit(*ptr)) {
 				ptr++;
 			}
 		} else if (strncmp(ptr, "RSHIFT ", strlen("RSHIFT ")) == 0) {
 			instructions[n].operation = Rshift;
 			ptr += strlen("RSHIFT ");
-			instructions[n].in_signal = (uint16_t) atoi(ptr);
+			instructions[n].in_signal = (uint16_t)atoi(ptr);
 			while (isdigit(*ptr)) {
 				ptr++;
 			}
@@ -120,7 +112,7 @@ main(int const argc, char const * const * const argv)
 			n++;
 			continue;
 		} else {
-			printf("line %zu: parse failure: [%s]\n", n+1, ptr);
+			printf("line %zu: parse failure: [%s]\n", n + 1, ptr);
 			return 1;
 		}
 
@@ -145,16 +137,16 @@ main(int const argc, char const * const * const argv)
 		}
 	}
 
-	uint16_t const interesting_signal = get_register(registers,
-			interesting_register);
+	uint16_t const interesting_signal =
+			get_register(registers, interesting_register);
 	assert(hash_free(registers, free));
 	printf("%d\n", interesting_signal);
 	return 0;
 }
 
 static void
-run_instruction(struct Instruction const * const instr,
-		struct htable * const registers)
+run_instruction(
+		struct Instruction const * const instr, struct htable * const registers)
 {
 	if (instr->operation == Signal) {
 		if (instr->lhs == InSignal) {
@@ -205,7 +197,7 @@ run_instruction(struct Instruction const * const instr,
 			return;
 		}
 		uint16_t const a = get_register(registers, instr->in_register_0);
-		uint16_t const signal = (uint16_t) (a << instr->in_signal);
+		uint16_t const signal = (uint16_t)(a << instr->in_signal);
 		set_register(registers, instr->out_register, signal);
 		return;
 	}
@@ -215,7 +207,7 @@ run_instruction(struct Instruction const * const instr,
 			return;
 		}
 		uint16_t const a = get_register(registers, instr->in_register_0);
-		uint16_t const signal = (uint16_t) (a >> instr->in_signal);
+		uint16_t const signal = (uint16_t)(a >> instr->in_signal);
 		set_register(registers, instr->out_register, signal);
 		return;
 	}
@@ -225,7 +217,7 @@ run_instruction(struct Instruction const * const instr,
 			return;
 		}
 		uint16_t const a = get_register(registers, instr->in_register_0);
-		uint16_t const signal = (uint16_t) ~a;
+		uint16_t const signal = (uint16_t)~a;
 		set_register(registers, instr->out_register, signal);
 		return;
 	}
@@ -246,24 +238,34 @@ print_instruction(struct Instruction const * const instr)
 		break;
 	case And:
 		if (instr->lhs == InSignal) {
-			printf("%d AND %s -> %s\n", instr->in_signal,
-					instr->in_register_1, instr->out_register);
+			printf("%d AND %s -> %s\n",
+					instr->in_signal,
+					instr->in_register_1,
+					instr->out_register);
 		} else {
-			printf("%s AND %s -> %s\n", instr->in_register_0,
-					instr->in_register_1, instr->out_register);
+			printf("%s AND %s -> %s\n",
+					instr->in_register_0,
+					instr->in_register_1,
+					instr->out_register);
 		}
 		break;
 	case Or:
-		printf("%s OR %s -> %s\n", instr->in_register_0,
-				instr->in_register_1, instr->out_register);
+		printf("%s OR %s -> %s\n",
+				instr->in_register_0,
+				instr->in_register_1,
+				instr->out_register);
 		break;
 	case Lshift:
-		printf("%s LSHIFT %d -> %s\n", instr->in_register_0,
-				instr->in_signal, instr->out_register);
+		printf("%s LSHIFT %d -> %s\n",
+				instr->in_register_0,
+				instr->in_signal,
+				instr->out_register);
 		break;
 	case Rshift:
-		printf("%s RSHIFT %d -> %s\n", instr->in_register_0,
-				instr->in_signal, instr->out_register);
+		printf("%s RSHIFT %d -> %s\n",
+				instr->in_register_0,
+				instr->in_signal,
+				instr->out_register);
 		break;
 	case Not:
 		printf("NOT %s -> %s\n", instr->in_register_0, instr->out_register);
@@ -275,12 +277,11 @@ print_instruction(struct Instruction const * const instr)
 }
 
 static void
-copy_register(char * const dst,
-		char const * * const src)
+copy_register(char * const dst, char const ** const src)
 {
 	size_t i = 0;
 	while (isalpha(**src)) {
-		dst[i++]  = **src;
+		dst[i++] = **src;
 		*src += 1;
 	}
 }
@@ -302,8 +303,7 @@ set_register(struct htable * const registers,
 }
 
 static uint16_t
-get_register(struct htable * const h,
-		char const * const reg)
+get_register(struct htable * const h, char const * const reg)
 {
 	uint16_t const * const a = hash_get(h, reg);
 	if (!a) {

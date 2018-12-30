@@ -5,7 +5,7 @@
 #include <string.h>
 
 #define DOWN 0
-#define UP   1
+#define UP 1
 
 struct scanner {
 	int range;
@@ -14,30 +14,24 @@ struct scanner {
 	int direction;
 };
 
-static void
-scanners_destroy(struct scanner * * const, size_t const);
-static void
-parse_line(char const * const,
-		struct scanner * * const,
-		size_t * const);
-static void
-scanners_print(struct scanner * * const,
-		size_t const);
-static int
-run(struct scanner * * const, size_t const);
-static void
-move_scanners(struct scanner * * const, size_t const);
+static void scanners_destroy(struct scanner ** const, size_t const);
+static void parse_line(
+		char const * const, struct scanner ** const, size_t * const);
+static void scanners_print(struct scanner ** const, size_t const);
+static int run(struct scanner ** const, size_t const);
+static void move_scanners(struct scanner ** const, size_t const);
 
-int main(int const argc, char const * const * const argv)
+int
+main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 
 	char buf[41960] = {0};
 
-	struct scanner * * const scanners = calloc(128, sizeof(struct scanner *));
+	struct scanner ** const scanners = calloc(128, sizeof(struct scanner *));
 	if (!scanners) {
 		fprintf(stderr, "calloc(): %s\n", strerror(errno));
 		return 1;
@@ -45,7 +39,7 @@ int main(int const argc, char const * const * const argv)
 
 	size_t num_scanners = 0;
 	while (1) {
-		if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+		if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				scanners_destroy(scanners, num_scanners);
@@ -70,7 +64,7 @@ int main(int const argc, char const * const * const argv)
 }
 
 static void
-scanners_destroy(struct scanner * * const scanners, size_t const num_scanners)
+scanners_destroy(struct scanner ** const scanners, size_t const num_scanners)
 {
 	for (size_t i = 0; i < num_scanners; i++) {
 		struct scanner * const sc = scanners[i];
@@ -85,7 +79,7 @@ scanners_destroy(struct scanner * * const scanners, size_t const num_scanners)
 
 static void
 parse_line(char const * const line,
-		struct scanner * * const scanners,
+		struct scanner ** const scanners,
 		size_t * const num_scanners)
 {
 	const char * ptr = line;
@@ -108,7 +102,7 @@ parse_line(char const * const line,
 
 	sc->range = atoi(ptr);
 
-	while ((int) *num_scanners < sc->depth) {
+	while ((int)*num_scanners < sc->depth) {
 		*num_scanners += 1;
 	}
 
@@ -118,8 +112,7 @@ parse_line(char const * const line,
 }
 
 static void
-scanners_print(struct scanner * * const scanners,
-		size_t const num_scanners)
+scanners_print(struct scanner ** const scanners, size_t const num_scanners)
 {
 	for (size_t i = 0; i < num_scanners; i++) {
 		struct scanner const * const sc = scanners[i];
@@ -133,7 +126,7 @@ scanners_print(struct scanner * * const scanners,
 }
 
 static int
-run(struct scanner * * const scanners, size_t const num_scanners)
+run(struct scanner ** const scanners, size_t const num_scanners)
 {
 	int severity = 0;
 
@@ -150,7 +143,7 @@ run(struct scanner * * const scanners, size_t const num_scanners)
 }
 
 static void
-move_scanners(struct scanner * * const scanners, size_t const num_scanners)
+move_scanners(struct scanner ** const scanners, size_t const num_scanners)
 {
 	for (size_t i = 0; i < num_scanners; i++) {
 		struct scanner * const sc = scanners[i];
@@ -159,7 +152,7 @@ move_scanners(struct scanner * * const scanners, size_t const num_scanners)
 		}
 
 		if (sc->direction == DOWN) {
-			if (sc->index+1 == sc->range) {
+			if (sc->index + 1 == sc->range) {
 				sc->index--;
 				sc->direction = UP;
 				continue;
@@ -168,7 +161,7 @@ move_scanners(struct scanner * * const scanners, size_t const num_scanners)
 			continue;
 		}
 
-		if (sc->index-1 == -1) {
+		if (sc->index - 1 == -1) {
 			sc->index++;
 			sc->direction = DOWN;
 			continue;

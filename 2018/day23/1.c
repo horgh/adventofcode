@@ -16,19 +16,16 @@ struct Bot {
 	int64_t radius;
 };
 
-static struct Bot const *
-find_strongest_bot(struct Bot const * const,
-		size_t const);
+static struct Bot const * find_strongest_bot(
+		struct Bot const * const, size_t const);
 
-static bool
-in_range(struct Bot const * const,
-		struct Bot const * const);
+static bool in_range(struct Bot const * const, struct Bot const * const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Bot bots[1024] = {0};
 	size_t n_bots = 0;
@@ -64,16 +61,17 @@ main(int const argc, char const * const * const argv)
 	if (0) {
 		for (size_t i = 0; i < n_bots; i++) {
 			printf("pos=<%" PRId64 ",%" PRId64 ",%" PRId64 ">, r=%" PRId64 "\n",
-					bots[i].x, bots[i].y, bots[i].z, bots[i].radius);
+					bots[i].x,
+					bots[i].y,
+					bots[i].z,
+					bots[i].radius);
 		}
 	}
 
-	struct Bot const * const strongest_bot = find_strongest_bot(bots,
-			n_bots);
+	struct Bot const * const strongest_bot = find_strongest_bot(bots, n_bots);
 	assert(strongest_bot != NULL);
 	if (0) {
-		printf("strongest bot has radius %" PRId64 "\n",
-				strongest_bot->radius);
+		printf("strongest bot has radius %" PRId64 "\n", strongest_bot->radius);
 	}
 
 	int count = 0;
@@ -88,8 +86,7 @@ main(int const argc, char const * const * const argv)
 }
 
 static struct Bot const *
-find_strongest_bot(struct Bot const * const bots,
-		size_t const n_bots)
+find_strongest_bot(struct Bot const * const bots, size_t const n_bots)
 {
 	struct Bot const * strongest = NULL;
 	for (size_t i = 0; i < n_bots; i++) {
@@ -104,10 +101,9 @@ find_strongest_bot(struct Bot const * const bots,
 }
 
 static bool
-in_range(struct Bot const * const b0,
-		struct Bot const * const b1)
+in_range(struct Bot const * const b0, struct Bot const * const b1)
 {
-	int64_t const distance = llabs(b0->x - b1->x) +
-		llabs(b0->y - b1->y) + llabs(b0->z - b1->z);
+	int64_t const distance =
+			llabs(b0->x - b1->x) + llabs(b0->y - b1->y) + llabs(b0->z - b1->z);
 	return distance <= b0->radius;
 }

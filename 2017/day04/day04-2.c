@@ -5,15 +5,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char *
-get_word(char const * const, int * const);
-static int
-cmpchar(void const *, void const *);
+static char * get_word(char const * const, int * const);
+static int cmpchar(void const *, void const *);
 
-int main(const int argc, const char * const * const argv)
+int
+main(const int argc, const char * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 
@@ -22,7 +21,7 @@ int main(const int argc, const char * const * const argv)
 	int count = 0;
 
 	while (1) {
-		if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+		if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				return 1;
@@ -79,7 +78,7 @@ int main(const int argc, const char * const * const argv)
 static char *
 get_word(char const * const s, int * const idx)
 {
-	char const * ptr = s+*idx;
+	char const * ptr = s + *idx;
 
 	while (isspace(*ptr)) {
 		ptr++;

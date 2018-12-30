@@ -5,20 +5,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void
-__destroy_screen(bool * *, const size_t);
-static void
-__draw_rect(bool * const * const, const size_t,
-		const size_t, const int, const int);
-static void
-__rotate_row(bool * const * const, const size_t,
-		const size_t, const int, const int);
-static void
-__rotate_column(bool * const * const, const size_t,
-		const size_t, const int, const int);
-static void
-__print_rect(bool * const * const, const size_t,
-		const size_t);
+static void __destroy_screen(bool **, const size_t);
+static void __draw_rect(
+		bool * const * const, const size_t, const size_t, const int, const int);
+static void __rotate_row(
+		bool * const * const, const size_t, const size_t, const int, const int);
+static void __rotate_column(
+		bool * const * const, const size_t, const size_t, const int, const int);
+static void __print_rect(bool * const * const, const size_t, const size_t);
 
 int
 main(const int argc, const char * const * const argv)
@@ -38,7 +32,7 @@ main(const int argc, const char * const * const argv)
 
 	size_t width = 50;
 	size_t height = 6;
-	bool * * screen = calloc(width, sizeof(bool *));
+	bool ** screen = calloc(width, sizeof(bool *));
 	if (!screen) {
 		printf("%s\n", strerror(ENOMEM));
 		fclose(fh);
@@ -66,8 +60,8 @@ main(const int argc, const char * const * const argv)
 			break;
 		}
 
-		if (buf[strlen(buf)-1] == '\n') {
-			buf[strlen(buf)-1] = '\0';
+		if (buf[strlen(buf) - 1] == '\n') {
+			buf[strlen(buf) - 1] = '\0';
 		}
 
 		int rect_width = 0;
@@ -139,7 +133,7 @@ main(const int argc, const char * const * const argv)
 }
 
 static void
-__destroy_screen(bool * * screen, const size_t width)
+__destroy_screen(bool ** screen, const size_t width)
 {
 	if (!screen) {
 		return;
@@ -153,47 +147,53 @@ __destroy_screen(bool * * screen, const size_t width)
 }
 
 static void
-__draw_rect(bool * const * const screen, const size_t width,
-		const size_t height, const int rect_width, const int rect_height)
+__draw_rect(bool * const * const screen,
+		const size_t width,
+		const size_t height,
+		const int rect_width,
+		const int rect_height)
 {
 	if (!screen) {
 		printf("%s\n", strerror(EINVAL));
 		return;
 	}
 
-	if ((size_t) rect_width > width) {
+	if ((size_t)rect_width > width) {
 		printf("rect width too large\n");
 		return;
 	}
 
-	if ((size_t) rect_height > height) {
+	if ((size_t)rect_height > height) {
 		printf("rect height too large\n");
 		return;
 	}
 
-	for (size_t y = 0; y < (size_t) rect_height; y++) {
-		for (size_t x = 0; x < (size_t) rect_width; x++) {
+	for (size_t y = 0; y < (size_t)rect_height; y++) {
+		for (size_t x = 0; x < (size_t)rect_width; x++) {
 			screen[x][y] = true;
 		}
 	}
 }
 
 static void
-__rotate_row(bool * const * const screen, const size_t width,
-		const size_t height, const int y, const int amount)
+__rotate_row(bool * const * const screen,
+		const size_t width,
+		const size_t height,
+		const int y,
+		const int amount)
 {
 	if (!screen) {
 		printf("%s\n", strerror(EINVAL));
 		return;
 	}
 
-	if ((size_t) y > height) {
+	if ((size_t)y > height) {
 		printf("invalid y\n");
 		return;
 	}
 
 	for (int i = 0; i < amount; i++) {
-		bool prev = screen[width-1][y];
+		bool prev = screen[width - 1][y];
 
 		for (size_t x = 0; x < width; x++) {
 			bool next_prev = screen[x][y];
@@ -204,21 +204,24 @@ __rotate_row(bool * const * const screen, const size_t width,
 }
 
 static void
-__rotate_column(bool * const * const screen, const size_t width,
-		const size_t height, const int x, const int amount)
+__rotate_column(bool * const * const screen,
+		const size_t width,
+		const size_t height,
+		const int x,
+		const int amount)
 {
 	if (!screen) {
 		printf("%s\n", strerror(EINVAL));
 		return;
 	}
 
-	if ((size_t ) x > width) {
+	if ((size_t)x > width) {
 		printf("invalid x\n");
 		return;
 	}
 
 	for (int i = 0; i < amount; i++) {
-		bool prev = screen[x][height-1];
+		bool prev = screen[x][height - 1];
 
 		for (size_t y = 0; y < height; y++) {
 			bool next_prev = screen[x][y];
@@ -229,8 +232,8 @@ __rotate_column(bool * const * const screen, const size_t width,
 }
 
 static void
-__print_rect(bool * const * const screen, const size_t width,
-		const size_t height)
+__print_rect(
+		bool * const * const screen, const size_t width, const size_t height)
 {
 	if (!screen) {
 		printf("%s\n", strerror(EINVAL));

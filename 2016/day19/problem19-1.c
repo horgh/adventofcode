@@ -16,7 +16,7 @@ main(const int argc, const char * const * const argv)
 	}
 	const int input = atoi(argv[1]);
 
-	int * const elves = calloc((size_t) input, sizeof(int));
+	int * const elves = calloc((size_t)input, sizeof(int));
 
 	for (int i = 0; i < input; i++) {
 		elves[i] = 1;
@@ -31,7 +31,7 @@ main(const int argc, const char * const * const argv)
 			int index = -1;
 
 			// To its left until we hit n
-			for (int j = i+1; j < input; j++) {
+			for (int j = i + 1; j < input; j++) {
 				if (elves[j] > 0) {
 					index = j;
 					break;
@@ -51,7 +51,7 @@ main(const int argc, const char * const * const argv)
 
 			// If no other elves found, we're the winner.
 			if (index == -1) {
-				printf("%d\n", i+1);
+				printf("%d\n", i + 1);
 				free(elves);
 				return 0;
 			}

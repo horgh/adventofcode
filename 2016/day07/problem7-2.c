@@ -12,18 +12,12 @@ struct List {
 	struct List * next;
 };
 
-static bool
-__ipv7_supports_ssl(const char * const);
-static struct List *
-__get_abas(struct List *, const char * const);
-static bool
-__is_aba(const char * const);
-static struct List *
-__append_list(struct List *, const char * const);
-static void
-__destroy_list(struct List * const);
-static void
-__print_list(const struct List * const);
+static bool __ipv7_supports_ssl(const char * const);
+static struct List * __get_abas(struct List *, const char * const);
+static bool __is_aba(const char * const);
+static struct List * __append_list(struct List *, const char * const);
+static void __destroy_list(struct List * const);
+static void __print_list(const struct List * const);
 
 int
 main(const int argc, const char * const * const argv)
@@ -53,8 +47,8 @@ main(const int argc, const char * const * const argv)
 			break;
 		}
 
-		if (buf[strlen(buf)-1] == '\n') {
-			buf[strlen(buf)-1] = '\0';
+		if (buf[strlen(buf) - 1] == '\n') {
+			buf[strlen(buf) - 1] = '\0';
 		}
 
 		if (__ipv7_supports_ssl(buf)) {
@@ -106,7 +100,7 @@ __ipv7_supports_ssl(const char * const ip)
 			continue;
 		}
 
-		if (buf_i >= sizeof(buf)-1) {
+		if (buf_i >= sizeof(buf) - 1) {
 			printf("ipv7 too long\n");
 			__destroy_list(abas);
 			__destroy_list(babs);
@@ -167,8 +161,8 @@ __get_abas(struct List * l, const char * const s)
 	}
 
 	for (size_t i = 0; i < strlen(s); i++) {
-		if (__is_aba(s+i)) {
-			l = __append_list(l, s+i);
+		if (__is_aba(s + i)) {
+			l = __append_list(l, s + i);
 		}
 	}
 
@@ -183,9 +177,7 @@ __is_aba(const char * const s)
 		return false;
 	}
 
-	return strlen(s) >= 3 &&
-		s[0] != s[1] &&
-		s[0] == s[2];
+	return strlen(s) >= 3 && s[0] != s[1] && s[0] == s[2];
 }
 
 static struct List *

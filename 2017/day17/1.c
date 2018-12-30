@@ -4,14 +4,8 @@
 
 #define SZ 4096
 
-static int
-step(int const,
-		int * const,
-		int const,
-		int * const,
-		int const);
-static void
-print_buf(int const * const, int const);
+static int step(int const, int * const, int const, int * const, int const);
+static void print_buf(int const * const, int const);
 
 int
 main(int const argc, char const * const * const argv)
@@ -39,7 +33,7 @@ main(int const argc, char const * const * const argv)
 		bufsz++;
 	}
 
-	printf("%d\n", buf[pos+1]);
+	printf("%d\n", buf[pos + 1]);
 	return 0;
 }
 
@@ -60,7 +54,7 @@ step(int const steps,
 
 	newpos++;
 
-	memcpy(tmpbuf, buf, sizeof(int)*(size_t) bufsz);
+	memcpy(tmpbuf, buf, sizeof(int) * (size_t)bufsz);
 
 	buf[newpos] = bufsz;
 
@@ -69,15 +63,15 @@ step(int const steps,
 		return newpos;
 	}
 
-	int const to_copy = bufsz-newpos;
-	memcpy(buf+newpos+1, tmpbuf+newpos, sizeof(int)*(size_t)to_copy);
+	int const to_copy = bufsz - newpos;
+	memcpy(buf + newpos + 1, tmpbuf + newpos, sizeof(int) * (size_t)to_copy);
 	return newpos;
 }
 
 static void
 print_buf(int const * const buf, int const bufsz)
 {
-	for (size_t i = 0; i < (size_t) bufsz; i++) {
+	for (size_t i = 0; i < (size_t)bufsz; i++) {
 		if (i == 0) {
 			printf("%d", buf[i]);
 			continue;

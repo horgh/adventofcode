@@ -5,10 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static size_t
-choose_next_recipe(int const * const,
-		size_t const,
-		size_t const);
+static size_t choose_next_recipe(int const * const, size_t const, size_t const);
 
 #define SZ 1024000
 
@@ -29,11 +26,11 @@ main(int const argc, char const * const * const argv)
 	size_t elf0 = 0;
 	size_t elf1 = 1;
 
-	for (int i = 0; i < recipes_to_make+10; i++) {
-		int const new_recipe = recipes[elf0]+recipes[elf1];
+	for (int i = 0; i < recipes_to_make + 10; i++) {
+		int const new_recipe = recipes[elf0] + recipes[elf1];
 		if (new_recipe >= 10) {
-			recipes[n_recipes++] = new_recipe/10;
-			recipes[n_recipes++] = new_recipe%10;
+			recipes[n_recipes++] = new_recipe / 10;
+			recipes[n_recipes++] = new_recipe % 10;
 		} else {
 			recipes[n_recipes++] = new_recipe;
 		}
@@ -42,7 +39,7 @@ main(int const argc, char const * const * const argv)
 	}
 
 	for (size_t i = 0; i < 10; i++) {
-		printf("%d", recipes[(size_t) recipes_to_make+i]);
+		printf("%d", recipes[(size_t)recipes_to_make + i]);
 	}
 	printf("\n");
 	return 0;
@@ -53,7 +50,7 @@ choose_next_recipe(int const * const recipes,
 		size_t const n_recipes,
 		size_t const current_recipe)
 {
-	size_t const steps = (size_t) recipes[current_recipe] + 1;
+	size_t const steps = (size_t)recipes[current_recipe] + 1;
 	size_t const new_pos = current_recipe + steps;
 	if (new_pos < n_recipes) {
 		return new_pos;

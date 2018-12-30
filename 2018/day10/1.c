@@ -14,18 +14,14 @@ struct Point {
 	int vy;
 };
 
-static void
-move(struct Point * const,
-		size_t const);
-static bool
-draw(struct Point const * const,
-		size_t const);
+static void move(struct Point * const, size_t const);
+static bool draw(struct Point const * const, size_t const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Point points[4096] = {0};
 	size_t n = 0;
@@ -88,8 +84,7 @@ main(int const argc, char const * const * const argv)
 }
 
 static void
-move(struct Point * const points,
-		size_t const n)
+move(struct Point * const points, size_t const n)
 {
 	for (size_t i = 0; i < n; i++) {
 		points[i].x += points[i].vx;
@@ -100,8 +95,7 @@ move(struct Point * const points,
 #define SZ 230
 
 static bool
-draw(struct Point const * const points,
-		size_t const n)
+draw(struct Point const * const points, size_t const n)
 {
 	bool m[SZ][SZ] = {0};
 	for (size_t i = 0; i < n; i++) {

@@ -23,15 +23,14 @@ struct Constellation {
 	size_t n_points;
 };
 
-static bool
-constellations_linked(struct Constellation const * const,
-		struct Constellation const * const);
+static bool constellations_linked(
+		struct Constellation const * const, struct Constellation const * const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Point points[1306] = {0};
 	size_t n_points = 0;
@@ -75,7 +74,7 @@ main(int const argc, char const * const * const argv)
 	while (1) {
 		for (size_t i = 0; i < n_constellations; i++) {
 			struct Constellation * const c = &constellations[i];
-			for (size_t j = i+1; j < n_constellations; j++) {
+			for (size_t j = i + 1; j < n_constellations; j++) {
 				struct Constellation const * const c2 = &constellations[j];
 				if (!constellations_linked(c, c2)) {
 					continue;
@@ -84,8 +83,8 @@ main(int const argc, char const * const * const argv)
 					c->points[c->n_points++] = c2->points[k];
 					assert(c->n_points != SZ);
 				}
-				for (size_t k = j+1; k < n_constellations; k++) {
-					constellations[k-1] = constellations[k];
+				for (size_t k = j + 1; k < n_constellations; k++) {
+					constellations[k - 1] = constellations[k];
 				}
 				n_constellations--;
 			}
@@ -99,17 +98,16 @@ main(int const argc, char const * const * const argv)
 	return 0;
 }
 
-__attribute__((pure))
-static bool
-constellations_linked(struct Constellation const * const a,
-		struct Constellation const * const b)
+__attribute__((pure)) static bool
+constellations_linked(
+		struct Constellation const * const a, struct Constellation const * const b)
 {
 	for (size_t i = 0; i < a->n_points; i++) {
 		struct Point const * const p = a->points[i];
 		for (size_t j = 0; j < b->n_points; j++) {
 			struct Point const * const p2 = b->points[j];
 			int const dist = abs(p2->x - p->x) + abs(p2->y - p->y) +
-				abs(p2->z - p->z) + abs(p2->t - p->t);
+											 abs(p2->z - p->z) + abs(p2->t - p->t);
 			if (dist <= 3) {
 				return true;
 			}

@@ -4,15 +4,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char const *
-get_num(char const * const, int * const);
-static int
-evenly_divide(char const * const, int const);
+static char const * get_num(char const * const, int * const);
+static int evenly_divide(char const * const, int const);
 
-int main(const int argc, const char * const * const argv)
+int
+main(const int argc, const char * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 
@@ -22,7 +21,7 @@ int main(const int argc, const char * const * const argv)
 
 	int sum = 0;
 	while (1) {
-		if (fgets(buf, (int) sz, fh) == NULL) {
+		if (fgets(buf, (int)sz, fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				return 1;
@@ -98,7 +97,7 @@ evenly_divide(char const * const s, int const n)
 		}
 
 		if (numerator % denominator == 0) {
-			return numerator/denominator;
+			return numerator / denominator;
 		}
 	}
 

@@ -36,78 +36,57 @@ struct Square {
 	enum Direction direction;
 };
 
-static bool
-run_simulation(struct Square * * const,
+static bool run_simulation(struct Square ** const,
 		struct Creature const * const,
 		size_t const,
 		int const);
 
-static void
-find_targets(struct Creature const * const,
+static void find_targets(struct Creature const * const,
 		size_t const,
 		struct Creature const * const,
 		struct Creature * const,
 		size_t * const);
 
-static void
-print_answer(struct Creature const * const,
-		size_t const,
-		uint64_t const);
+static void print_answer(
+		struct Creature const * const, size_t const, uint64_t const);
 
-static void
-take_turn(struct Square * * const,
+static void take_turn(struct Square ** const,
 		struct Creature * const,
 		struct Creature * const,
 		size_t const,
 		int const);
 
-static enum Direction
-choose_direction(struct Square * * const,
+static enum Direction choose_direction(struct Square ** const,
 		struct Creature const * const,
 		struct Creature const * const,
 		size_t const);
 
-static void
-find_in_range_squares(struct Square * * const,
+static void find_in_range_squares(struct Square ** const,
 		struct Creature const * const,
 		size_t const,
 		struct Square * const,
 		size_t * const);
 
-static struct Square *
-shortest_path(struct Square * * const,
-		int const,
-		int const,
-		int const,
-		int const);
+static struct Square * shortest_path(
+		struct Square ** const, int const, int const, int const, int const);
 
-static void
-enqueue_square(struct Queue * const,
+static void enqueue_square(struct Queue * const,
 		int const,
 		int const,
 		int const,
 		enum Direction const);
 
-static void
-add_neighbours(struct Square * * const,
-		struct Queue * const,
-		struct Square const * const);
+static void add_neighbours(
+		struct Square ** const, struct Queue * const, struct Square const * const);
 
-static bool
-square_is_open(struct Square * * const,
-		int const,
-		int const);
+static bool square_is_open(struct Square ** const, int const, int const);
 
-static int
-cmp_squares(void const * const, void const * const);
+static int cmp_squares(void const * const, void const * const);
 
-static bool
-maybe_attack(struct Square * * const,
-		struct Creature const * const,
-		int const);
+static bool maybe_attack(
+		struct Square ** const, struct Creature const * const, int const);
 
-static int
-cmp_creatures(void const * const, void const * const);
+static int cmp_creatures(void const * const, void const * const);
 
 #define MAP_SZ 32
 #define SQUARES_SZ 1024
@@ -116,12 +95,12 @@ cmp_creatures(void const * const, void const * const);
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Creature creatures[CREATURES_SZ] = {0};
 	size_t n_creatures = 0;
-	struct Square * * const map = calloc(MAP_SZ, sizeof(struct Square *));
+	struct Square ** const map = calloc(MAP_SZ, sizeof(struct Square *));
 	assert(map != NULL);
 	for (size_t i = 0; i < MAP_SZ; i++) {
 		map[i] = calloc(MAP_SZ, sizeof(struct Square));
@@ -146,7 +125,7 @@ main(int const argc, char const * const * const argv)
 			} else if (*ptr == 'G' || *ptr == 'E') {
 				creatures[n_creatures].type = *ptr == 'G' ? Goblin : Elf;
 				creatures[n_creatures].hp = 200;
-				creatures[n_creatures].id = (int) n_creatures;
+				creatures[n_creatures].id = (int)n_creatures;
 				creatures[n_creatures].square = &map[x][y];
 				creatures[n_creatures].x = x;
 				creatures[n_creatures].y = y;
@@ -183,7 +162,7 @@ main(int const argc, char const * const * const argv)
 }
 
 static bool
-run_simulation(struct Square * * const map,
+run_simulation(struct Square ** const map,
 		struct Creature const * const creatures,
 		size_t const n_creatures,
 		int const attack_power)
@@ -195,16 +174,16 @@ run_simulation(struct Square * * const map,
 		}
 	}
 
-	struct Square * * const map2 = calloc(MAP_SZ, sizeof(struct Square *));
+	struct Square ** const map2 = calloc(MAP_SZ, sizeof(struct Square *));
 	assert(map2 != NULL);
 	for (size_t i = 0; i < MAP_SZ; i++) {
 		map2[i] = calloc(MAP_SZ, sizeof(struct Square));
 		assert(map2[i] != NULL);
-		memcpy(map2[i], map[i], MAP_SZ*sizeof(struct Square));
+		memcpy(map2[i], map[i], MAP_SZ * sizeof(struct Square));
 	}
 
 	struct Creature creatures2[CREATURES_SZ] = {0};
-	memcpy(creatures2, creatures, CREATURES_SZ*sizeof(struct Creature));
+	memcpy(creatures2, creatures, CREATURES_SZ * sizeof(struct Creature));
 
 	for (size_t i = 0; i < n_creatures; i++) {
 		struct Creature * const creature = &creatures2[i];
@@ -300,11 +279,11 @@ print_answer(struct Creature const * const creatures,
 		hp += creature->hp;
 	}
 
-	printf("%" PRIu64 "\n", rounds*(uint64_t) hp);
+	printf("%" PRIu64 "\n", rounds * (uint64_t)hp);
 }
 
 static void
-take_turn(struct Square * * const map,
+take_turn(struct Square ** const map,
 		struct Creature * const me,
 		struct Creature * const targets,
 		size_t const n_targets,
@@ -314,21 +293,21 @@ take_turn(struct Square * * const map,
 		return;
 	}
 
-	enum Direction const direction = choose_direction(map, me, targets,
-			n_targets);
+	enum Direction const direction =
+			choose_direction(map, me, targets, n_targets);
 	if (direction == Unknown) {
 		return;
 	}
 
 	struct Square * next_square = NULL;
 	if (direction == Up) {
-		next_square = &map[me->square->x][me->square->y-1];
+		next_square = &map[me->square->x][me->square->y - 1];
 	} else if (direction == Right) {
-		next_square = &map[me->square->x+1][me->square->y];
+		next_square = &map[me->square->x + 1][me->square->y];
 	} else if (direction == Down) {
-		next_square = &map[me->square->x][me->square->y+1];
+		next_square = &map[me->square->x][me->square->y + 1];
 	} else if (direction == Left) {
-		next_square = &map[me->square->x-1][me->square->y];
+		next_square = &map[me->square->x - 1][me->square->y];
 	} else {
 		assert(1 == 0);
 	}
@@ -343,15 +322,15 @@ take_turn(struct Square * * const map,
 }
 
 static enum Direction
-choose_direction(struct Square * * const map,
+choose_direction(struct Square ** const map,
 		struct Creature const * const me,
 		struct Creature const * const targets,
 		size_t const n_targets)
 {
 	struct Square in_range_squares[SQUARES_SZ] = {0};
 	size_t n_in_range_squares = 0;
-	find_in_range_squares(map, targets, n_targets, in_range_squares,
-			&n_in_range_squares);
+	find_in_range_squares(
+			map, targets, n_targets, in_range_squares, &n_in_range_squares);
 	if (n_in_range_squares == 0) {
 		return Unknown;
 	}
@@ -359,8 +338,11 @@ choose_direction(struct Square * * const map,
 	struct Square reachable_squares[SQUARES_SZ] = {0};
 	size_t n_reachable_squares = 0;
 	for (size_t i = 0; i < n_in_range_squares; i++) {
-		struct Square * const square = shortest_path(map, me->square->x,
-				me->square->y, in_range_squares[i].x, in_range_squares[i].y);
+		struct Square * const square = shortest_path(map,
+				me->square->x,
+				me->square->y,
+				in_range_squares[i].x,
+				in_range_squares[i].y);
 		if (!square) {
 			continue;
 		}
@@ -372,14 +354,16 @@ choose_direction(struct Square * * const map,
 		return Unknown;
 	}
 
-	qsort(reachable_squares, n_reachable_squares, sizeof(struct Square),
+	qsort(reachable_squares,
+			n_reachable_squares,
+			sizeof(struct Square),
 			cmp_squares);
 
 	return reachable_squares[0].direction;
 }
 
 static void
-find_in_range_squares(struct Square * * const map,
+find_in_range_squares(struct Square ** const map,
 		struct Creature const * const targets,
 		size_t const n_targets,
 		struct Square * const squares,
@@ -389,7 +373,7 @@ find_in_range_squares(struct Square * * const map,
 		struct Creature const * const other = &targets[i];
 
 		int x = other->square->x;
-		int y = other->square->y-1;
+		int y = other->square->y - 1;
 		if (square_is_open(map, x, y)) {
 			squares[*n_squares].x = x;
 			squares[*n_squares].y = y;
@@ -397,7 +381,7 @@ find_in_range_squares(struct Square * * const map,
 			assert(*n_squares <= SQUARES_SZ);
 		}
 
-		x = other->square->x+1;
+		x = other->square->x + 1;
 		y = other->square->y;
 		if (square_is_open(map, x, y)) {
 			squares[*n_squares].x = x;
@@ -407,7 +391,7 @@ find_in_range_squares(struct Square * * const map,
 		}
 
 		x = other->square->x;
-		y = other->square->y+1;
+		y = other->square->y + 1;
 		if (square_is_open(map, x, y)) {
 			squares[*n_squares].x = x;
 			squares[*n_squares].y = y;
@@ -415,7 +399,7 @@ find_in_range_squares(struct Square * * const map,
 			assert(*n_squares <= SQUARES_SZ);
 		}
 
-		x = other->square->x-1;
+		x = other->square->x - 1;
 		y = other->square->y;
 		if (square_is_open(map, x, y)) {
 			squares[*n_squares].x = x;
@@ -427,7 +411,7 @@ find_in_range_squares(struct Square * * const map,
 }
 
 static struct Square *
-shortest_path(struct Square * * const map,
+shortest_path(struct Square ** const map,
 		int const x_0,
 		int const y_0,
 		int const x_1,
@@ -472,7 +456,7 @@ shortest_path(struct Square * * const map,
 			continue;
 		}
 
-		if (shortest_so_far != -1 && square->steps+1 > shortest_so_far) {
+		if (shortest_so_far != -1 && square->steps + 1 > shortest_so_far) {
 			free(square);
 			continue;
 		}
@@ -540,59 +524,55 @@ enqueue_square(struct Queue * const queue,
 }
 
 static void
-add_neighbours(struct Square * * const map,
+add_neighbours(struct Square ** const map,
 		struct Queue * const queue,
 		struct Square const * const from)
 {
 	int new_x = from->x;
-	int new_y = from->y-1;
+	int new_y = from->y - 1;
 	if (square_is_open(map, new_x, new_y)) {
 		enum Direction moving = from->direction;
 		if (moving == Unknown) {
 			moving = Up;
 		}
-		enqueue_square(queue, new_x, new_y, from->steps+1, moving);
+		enqueue_square(queue, new_x, new_y, from->steps + 1, moving);
 	}
 
-	new_x = from->x-1;
+	new_x = from->x - 1;
 	new_y = from->y;
 	if (square_is_open(map, new_x, new_y)) {
 		enum Direction moving = from->direction;
 		if (moving == Unknown) {
 			moving = Left;
 		}
-		enqueue_square(queue, new_x, new_y, from->steps+1, moving);
+		enqueue_square(queue, new_x, new_y, from->steps + 1, moving);
 	}
 
-	new_x = from->x+1;
+	new_x = from->x + 1;
 	new_y = from->y;
 	if (square_is_open(map, new_x, new_y)) {
 		enum Direction moving = from->direction;
 		if (moving == Unknown) {
 			moving = Right;
 		}
-		enqueue_square(queue, new_x, new_y, from->steps+1, moving);
+		enqueue_square(queue, new_x, new_y, from->steps + 1, moving);
 	}
 
 	new_x = from->x;
-	new_y = from->y+1;
+	new_y = from->y + 1;
 	if (square_is_open(map, new_x, new_y)) {
 		enum Direction moving = from->direction;
 		if (moving == Unknown) {
 			moving = Down;
 		}
-		enqueue_square(queue, new_x, new_y, from->steps+1, moving);
+		enqueue_square(queue, new_x, new_y, from->steps + 1, moving);
 	}
 }
 
-__attribute__((pure))
-static bool
-square_is_open(struct Square * * const map,
-		int const x,
-		int const y)
+__attribute__((pure)) static bool
+square_is_open(struct Square ** const map, int const x, int const y)
 {
-	if (x < 0 || x == MAP_SZ ||
-			y < 0 || y == MAP_SZ) {
+	if (x < 0 || x == MAP_SZ || y < 0 || y == MAP_SZ) {
 		return false;
 	}
 	if (map[x][y].type == Wall) {
@@ -604,8 +584,7 @@ square_is_open(struct Square * * const map,
 	return true;
 }
 
-__attribute__((pure))
-static int
+__attribute__((pure)) static int
 cmp_squares(void const * const a_v, void const * const b_v)
 {
 	struct Square const * const a = a_v;
@@ -633,7 +612,7 @@ cmp_squares(void const * const a_v, void const * const b_v)
 }
 
 static bool
-maybe_attack(struct Square * * const map,
+maybe_attack(struct Square ** const map,
 		struct Creature const * const me,
 		int const attack_power)
 {
@@ -641,34 +620,28 @@ maybe_attack(struct Square * * const map,
 	size_t n_targets = 0;
 
 	int x = me->square->x;
-	int y = me->square->y-1;
-	if (y != -1 &&
-			map[x][y].creature &&
-			map[x][y].creature->type != me->type) {
+	int y = me->square->y - 1;
+	if (y != -1 && map[x][y].creature && map[x][y].creature->type != me->type) {
 		targets[n_targets++] = map[x][y].creature;
 	}
 
-	x = me->square->x+1;
+	x = me->square->x + 1;
 	y = me->square->y;
-	if (x != MAP_SZ &&
-			map[x][y].creature &&
+	if (x != MAP_SZ && map[x][y].creature &&
 			map[x][y].creature->type != me->type) {
 		targets[n_targets++] = map[x][y].creature;
 	}
 
 	x = me->square->x;
-	y = me->square->y+1;
-	if (y != MAP_SZ &&
-			map[x][y].creature &&
+	y = me->square->y + 1;
+	if (y != MAP_SZ && map[x][y].creature &&
 			map[x][y].creature->type != me->type) {
 		targets[n_targets++] = map[x][y].creature;
 	}
 
-	x = me->square->x-1;
+	x = me->square->x - 1;
 	y = me->square->y;
-	if (x != -1 &&
-			map[x][y].creature &&
-			map[x][y].creature->type != me->type) {
+	if (x != -1 && map[x][y].creature && map[x][y].creature->type != me->type) {
 		targets[n_targets++] = map[x][y].creature;
 	}
 
@@ -692,8 +665,7 @@ maybe_attack(struct Square * * const map,
 	return true;
 }
 
-__attribute__((pure))
-static int
+__attribute__((pure)) static int
 cmp_creatures(void const * const a_v, void const * const b_v)
 {
 	struct Creature * const * const aa = a_v;

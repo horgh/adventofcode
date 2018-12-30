@@ -27,38 +27,27 @@ struct Bin {
 	bool * chips;
 };
 
-enum ChipType {CHIP_LOW, CHIP_HIGH};
+enum ChipType { CHIP_LOW, CHIP_HIGH };
 
-static void
-__destroy_instructions(struct Instruction * *,
-		const size_t);
-static bool
-__all_instructions_done(struct Instruction * const * const,
-		const size_t);
-static struct Bot *
-__find_bot(struct htable * const, const int);
-static struct Bot *
-__add_bot(struct htable * const, const int);
-static bool
-__bot_receive_chip(struct Bot * const, int);
-static void
-__destroy_bin(void *);
-static void
-__print_bot(const struct hnode * const, void * const);
-static bool
-__bot_action(struct htable * const, struct htable *,
-		const char * const);
-static bool
-__bot_give_chip_to(struct htable * const,
-		struct htable *, const struct Bot * const,
-		const enum ChipType, const char * const,
+static void __destroy_instructions(struct Instruction **, const size_t);
+static bool __all_instructions_done(
+		struct Instruction * const * const, const size_t);
+static struct Bot * __find_bot(struct htable * const, const int);
+static struct Bot * __add_bot(struct htable * const, const int);
+static bool __bot_receive_chip(struct Bot * const, int);
+static void __destroy_bin(void *);
+static void __print_bot(const struct hnode * const, void * const);
+static bool __bot_action(
+		struct htable * const, struct htable *, const char * const);
+static bool __bot_give_chip_to(struct htable * const,
+		struct htable *,
+		const struct Bot * const,
+		const enum ChipType,
+		const char * const,
 		const int);
-static struct Bin *
-__find_bin(struct htable * const, const int);
-static struct Bin *
-__add_bin(struct htable * const, const int);
-static int
-__bin_get_first_chip(const struct Bin *);
+static struct Bin * __find_bin(struct htable * const, const int);
+static struct Bin * __add_bin(struct htable * const, const int);
+static int __bin_get_first_chip(const struct Bin *);
 
 int
 main(const int argc, const char * const * const argv)
@@ -76,8 +65,8 @@ main(const int argc, const char * const * const argv)
 	}
 
 	const size_t instructions_sz = 1024;
-	struct Instruction * * instructions = calloc(instructions_sz,
-			sizeof(struct Instruction *));
+	struct Instruction ** instructions =
+			calloc(instructions_sz, sizeof(struct Instruction *));
 	if (!instructions) {
 		printf("%s\n", strerror(errno));
 		fclose(fh);
@@ -101,8 +90,8 @@ main(const int argc, const char * const * const argv)
 			continue;
 		}
 
-		struct Instruction * const instruction = calloc(1,
-				sizeof(struct Instruction));
+		struct Instruction * const instruction =
+				calloc(1, sizeof(struct Instruction));
 		if (!instruction) {
 			printf("%s\n", strerror(errno));
 			fclose(fh);
@@ -110,7 +99,8 @@ main(const int argc, const char * const * const argv)
 			return 1;
 		}
 
-		instruction->s = strdup(buf);;
+		instruction->s = strdup(buf);
+		;
 		if (!instruction->s) {
 			printf("%s\n", strerror(ENOMEM));
 			fclose(fh);
@@ -156,7 +146,7 @@ main(const int argc, const char * const * const argv)
 
 			if (__bot_action(bots, output_bins, instruction->s)) {
 				instruction->done = true;
-				//printf("=> Instruction complete: %s", instruction->s);
+				// printf("=> Instruction complete: %s", instruction->s);
 			}
 		}
 	}
@@ -200,7 +190,7 @@ main(const int argc, const char * const * const argv)
 	}
 
 	if (bin0 && bin1 && bin2) {
-		printf("%d\n", value0*value1*value2);
+		printf("%d\n", value0 * value1 * value2);
 	}
 
 	hash_free(output_bins, __destroy_bin);
@@ -209,8 +199,7 @@ main(const int argc, const char * const * const argv)
 }
 
 static void
-__destroy_instructions(struct Instruction * * instructions,
-		const size_t sz)
+__destroy_instructions(struct Instruction ** instructions, const size_t sz)
 {
 	for (size_t i = 0; i < sz; i++) {
 		if (!instructions[i]) {
@@ -228,8 +217,8 @@ __destroy_instructions(struct Instruction * * instructions,
 }
 
 static bool
-__all_instructions_done(struct Instruction * const * const instructions,
-		const size_t sz)
+__all_instructions_done(
+		struct Instruction * const * const instructions, const size_t sz)
 {
 	for (size_t i = 0; i < sz; i++) {
 		if (!instructions[i]) {
@@ -287,7 +276,7 @@ __bot_receive_chip(struct Bot * const bot, int chip)
 		return false;
 	}
 
-	//printf("bot %d receives chip %d\n", bot->number, chip);
+	// printf("bot %d receives chip %d\n", bot->number, chip);
 
 	if (bot->chip_low == -1) {
 		bot->chip_low = chip;
@@ -298,7 +287,8 @@ __bot_receive_chip(struct Bot * const bot, int chip)
 			(bot->chip_low == 17 && chip == 61)) {
 		printf("%d\n", bot->number);
 	}
-	//printf("bot %d comparing chip %d vs %d\n", bot->number, chip, bot->chip_low);
+	// printf("bot %d comparing chip %d vs %d\n", bot->number, chip,
+	// bot->chip_low);
 
 	if (chip < bot->chip_low) {
 		bot->chip_high = bot->chip_low;
@@ -327,7 +317,7 @@ __destroy_bin(void * b)
 static void
 __print_bot(const struct hnode * const node, void * const unused)
 {
-	(void) unused;
+	(void)unused;
 
 	const struct Bot * const bot = node->value;
 
@@ -335,20 +325,21 @@ __print_bot(const struct hnode * const node, void * const unused)
 		return;
 	}
 
-	printf("bot %d low: %d high: %d\n", bot->number, bot->chip_low,
-			bot->chip_high);
+	printf(
+			"bot %d low: %d high: %d\n", bot->number, bot->chip_low, bot->chip_high);
 }
 
 static bool
-__bot_action(struct htable * const bots, struct htable * output_bins,
+__bot_action(struct htable * const bots,
+		struct htable * output_bins,
 		const char * const buf)
 {
 	// Bot starting out with a chip.
 
 	int chip_number = 0;
 	int bot_number = 0;
-	int matched = sscanf(buf, "value %d goes to bot %d", &chip_number,
-			&bot_number);
+	int matched =
+			sscanf(buf, "value %d goes to bot %d", &chip_number, &bot_number);
 	if (matched == 2) {
 		struct Bot * bot = __find_bot(bots, bot_number);
 		if (!bot) {
@@ -375,8 +366,13 @@ __bot_action(struct htable * const bots, struct htable * output_bins,
 	memset(target_type1, 0, 1024);
 	int target1 = -1;
 
-	matched = sscanf(buf, "bot %d gives low to %s %d and high to %s %d",
-			&bot_number, target_type0, &target0, target_type1, &target1);
+	matched = sscanf(buf,
+			"bot %d gives low to %s %d and high to %s %d",
+			&bot_number,
+			target_type0,
+			&target0,
+			target_type1,
+			&target1);
 	if (matched != 5) {
 		printf("unknown line %s\n", buf);
 		return false;
@@ -386,7 +382,7 @@ __bot_action(struct htable * const bots, struct htable * output_bins,
 
 	struct Bot * const giver_bot = __find_bot(bots, bot_number);
 	if (!giver_bot) {
-		//printf("giver bot not found (%d)\n", bot_number);
+		// printf("giver bot not found (%d)\n", bot_number);
 		return false;
 	}
 
@@ -394,28 +390,28 @@ __bot_action(struct htable * const bots, struct htable * output_bins,
 	// we have both before trying to give any away.
 
 	if (giver_bot->chip_low == -1 || giver_bot->chip_high == -1) {
-		//printf("bot %d wants to give away chips, but does not have 2\n",
+		// printf("bot %d wants to give away chips, but does not have 2\n",
 		//		giver_bot->number);
 		return false;
 	}
 
 	// Give low.
 
-	if (!__bot_give_chip_to(bots, output_bins, giver_bot, CHIP_LOW, target_type0,
-				target0)) {
+	if (!__bot_give_chip_to(
+					bots, output_bins, giver_bot, CHIP_LOW, target_type0, target0)) {
 		printf("unable to give low chip: %s", buf);
 		return false;
 	}
 
 	// Give high.
 
-	if (!__bot_give_chip_to(bots, output_bins, giver_bot, CHIP_HIGH, target_type1,
-				target1)) {
+	if (!__bot_give_chip_to(
+					bots, output_bins, giver_bot, CHIP_HIGH, target_type1, target1)) {
 		printf("unable to give high chip: %s", buf);
 		return false;
 	}
 
-	//printf("bot %d gave away chips %d and %d\n", giver_bot->number,
+	// printf("bot %d gave away chips %d and %d\n", giver_bot->number,
 	//		giver_bot->chip_low, giver_bot->chip_high);
 
 	giver_bot->chip_low = -1;
@@ -426,8 +422,10 @@ __bot_action(struct htable * const bots, struct htable * output_bins,
 
 static bool
 __bot_give_chip_to(struct htable * const bots,
-		struct htable * output_bins, const struct Bot * const giver_bot,
-		const enum ChipType chip_type, const char * const target_type,
+		struct htable * output_bins,
+		const struct Bot * const giver_bot,
+		const enum ChipType chip_type,
+		const char * const target_type,
 		const int target_number)
 {
 	if (chip_type == CHIP_LOW && giver_bot->chip_low == -1) {
@@ -536,7 +534,7 @@ __bin_get_first_chip(const struct Bin * bin)
 {
 	for (size_t i = 0; i < bin->sz; i++) {
 		if (bin->chips[i]) {
-			return (int) i;
+			return (int)i;
 		}
 	}
 

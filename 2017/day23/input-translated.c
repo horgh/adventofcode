@@ -2,11 +2,12 @@
 #include <stdint.h>
 #include <stdio.h>
 
-int main(void)
+int
+main(void)
 {
 	int64_t b = 105700;
 	int64_t d = 0;
-	//int64_t e = 0;
+	// int64_t e = 0;
 	int64_t f = 0;
 	int64_t g = 0;
 	int64_t h = 0;
@@ -16,9 +17,9 @@ int main(void)
 		d = 2;
 
 		while (1) {
-			//e = 2;
+			// e = 2;
 
-			//while (1) {
+			// while (1) {
 			//	g = d * e - b;
 			//	if (g == 0) {
 			//		f = 0;
@@ -50,7 +51,7 @@ int main(void)
 		}
 
 		g = b - 122700;
-		//printf("%" PRId64 "... (h=%" PRId64 ", f=%" PRId64 ")\n", g, h, f);
+		// printf("%" PRId64 "... (h=%" PRId64 ", f=%" PRId64 ")\n", g, h, f);
 		if (g == 0) {
 			break;
 		}

@@ -4,8 +4,8 @@
 #include <map.h>
 #include <queue.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -18,7 +18,7 @@ main(int const argc, char const * const * const argv)
 		fprintf(stderr, "Usage: %s <steps>\n", argv[0]);
 		return 1;
 	}
-	uint64_t const steps = (uint64_t) atoll(argv[1]);
+	uint64_t const steps = (uint64_t)atoll(argv[1]);
 
 	size_t const sz = 100000;
 	int64_t * const tape = calloc(sz, sizeof(int64_t));
@@ -27,7 +27,7 @@ main(int const argc, char const * const * const argv)
 		return 1;
 	}
 
-	int idx = sz/2;
+	int idx = sz / 2;
 
 	char state = 'A';
 	for (uint64_t i = 0; i < steps; i++) {
@@ -38,7 +38,7 @@ main(int const argc, char const * const * const argv)
 		case 'A':
 			if (tape[idx] == 0) {
 				tape[idx] = 1;
-				if (idx == sz-1) {
+				if (idx == sz - 1) {
 					fprintf(stderr, "end of tape\n");
 					free(tape);
 					return 1;
@@ -68,7 +68,7 @@ main(int const argc, char const * const * const argv)
 				state = 'A';
 			} else {
 				tape[idx] = 1;
-				if (idx == sz-1) {
+				if (idx == sz - 1) {
 					fprintf(stderr, "end of tape (right)\n");
 					free(tape);
 					return 1;
@@ -101,7 +101,7 @@ main(int const argc, char const * const * const argv)
 		case 'D':
 			if (tape[idx] == 0) {
 				tape[idx] = 1;
-				if (idx == sz-1) {
+				if (idx == sz - 1) {
 					fprintf(stderr, "end of tape (right)\n");
 					free(tape);
 					return 1;
@@ -110,7 +110,7 @@ main(int const argc, char const * const * const argv)
 				state = 'A';
 			} else {
 				tape[idx] = 0;
-				if (idx == sz-1) {
+				if (idx == sz - 1) {
 					fprintf(stderr, "end of tape (right)\n");
 					free(tape);
 					return 1;
@@ -143,7 +143,7 @@ main(int const argc, char const * const * const argv)
 		case 'F':
 			if (tape[idx] == 0) {
 				tape[idx] = 1;
-				if (idx == sz-1) {
+				if (idx == sz - 1) {
 					fprintf(stderr, "end of tape (right)\n");
 					free(tape);
 					return 1;
@@ -152,7 +152,7 @@ main(int const argc, char const * const * const argv)
 				state = 'D';
 			} else {
 				tape[idx] = 1;
-				if (idx == sz-1) {
+				if (idx == sz - 1) {
 					fprintf(stderr, "end of tape (right)\n");
 					free(tape);
 					return 1;

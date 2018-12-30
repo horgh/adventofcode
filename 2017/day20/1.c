@@ -26,19 +26,13 @@ struct particle {
 	int64_t aclz;
 };
 
-static struct particle *
-parse_line(char const * const);
-static void
-destroy_particles(struct particle * * const);
-static void
-print_particle(struct particle const * const);
-static struct particle *
-find_closest_particle(struct particle * * const,
-		size_t const);
-static uint64_t
-manhattan_distance(struct particle const * const);
-static void
-move_particle(struct particle * const);
+static struct particle * parse_line(char const * const);
+static void destroy_particles(struct particle ** const);
+static void print_particle(struct particle const * const);
+static struct particle * find_closest_particle(
+		struct particle ** const, size_t const);
+static uint64_t manhattan_distance(struct particle const * const);
+static void move_particle(struct particle * const);
 
 int
 main(int const argc, char const * const * const argv)
@@ -47,7 +41,7 @@ main(int const argc, char const * const * const argv)
 		fprintf(stderr, "Usage: %s <steps>\n", argv[0]);
 		return 1;
 	}
-	uint64_t const steps = (uint64_t) atoll(argv[1]);
+	uint64_t const steps = (uint64_t)atoll(argv[1]);
 
 	FILE * const fh = stdin;
 	char buf[4096] = {0};
@@ -56,7 +50,7 @@ main(int const argc, char const * const * const argv)
 	struct particle * particles[MAX_PARTICLES] = {0};
 
 	while (1) {
-		if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+		if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				destroy_particles(particles);
@@ -81,7 +75,7 @@ main(int const argc, char const * const * const argv)
 			return 1;
 		}
 
-		particles[num_particles]->id = (int) num_particles;
+		particles[num_particles]->id = (int)num_particles;
 
 		num_particles++;
 	}
@@ -249,13 +243,13 @@ parse_line(char const * const s)
 }
 
 static void
-destroy_particles(struct particle * * const particles)
+destroy_particles(struct particle ** const particles)
 {
 	if (!particles) {
 		return;
 	}
 
-	for (size_t i = 0; ; i++) {
+	for (size_t i = 0;; i++) {
 		struct particle * const p = particles[i];
 		if (!p) {
 			break;
@@ -268,17 +262,23 @@ destroy_particles(struct particle * * const particles)
 static void
 print_particle(struct particle const * const p)
 {
-	printf( "p=<%" PRId64 ",%" PRId64 ",%" PRId64 ">,"
+	printf("p=<%" PRId64 ",%" PRId64 ",%" PRId64 ">,"
 				 " v=<%" PRId64 ",%" PRId64 ",%" PRId64 ">,"
 				 " a=<%" PRId64 ",%" PRId64 ",%" PRId64 ">\n",
-			p->x,    p->y,    p->z,
-			p->velx, p->vely, p->velz,
-			p->aclx, p->acly, p->aclz);
+			p->x,
+			p->y,
+			p->z,
+			p->velx,
+			p->vely,
+			p->velz,
+			p->aclx,
+			p->acly,
+			p->aclz);
 }
 
 static struct particle *
-find_closest_particle(struct particle * * const particles,
-		size_t const num_particles)
+find_closest_particle(
+		struct particle ** const particles, size_t const num_particles)
 {
 	struct particle * closest = NULL;
 	uint64_t closest_distance = 0;
@@ -307,26 +307,26 @@ manhattan_distance(struct particle const * const p)
 {
 	uint64_t x = 0;
 	if (p->x >= 0) {
-		x = (uint64_t) p->x;
+		x = (uint64_t)p->x;
 	} else {
-		x = (uint64_t) (p->x * -1);
+		x = (uint64_t)(p->x * -1);
 	}
 
 	uint64_t y = 0;
 	if (p->y >= 0) {
-		y = (uint64_t) p->y;
+		y = (uint64_t)p->y;
 	} else {
-		y = (uint64_t) (p->y * -1);
+		y = (uint64_t)(p->y * -1);
 	}
 
 	uint64_t z = 0;
 	if (p->z >= 0) {
-		z = (uint64_t) p->z;
+		z = (uint64_t)p->z;
 	} else {
-		z = (uint64_t) (p->z * -1);
+		z = (uint64_t)(p->z * -1);
 	}
 
-	return x+y+z;
+	return x + y + z;
 }
 
 static void
@@ -336,7 +336,7 @@ move_particle(struct particle * const p)
 	p->vely += p->acly;
 	p->velz += p->aclz;
 
-	p->x    += p->velx;
-	p->y    += p->vely;
-	p->z    += p->velz;
+	p->x += p->velx;
+	p->y += p->vely;
+	p->z += p->velz;
 }

@@ -15,31 +15,25 @@ struct Bot {
 	int64_t radius;
 };
 
-static int64_t
-mymin(int64_t const, int64_t const);
+static int64_t mymin(int64_t const, int64_t const);
 
-static int64_t
-mymax(int64_t const, int64_t const);
+static int64_t mymax(int64_t const, int64_t const);
 
-static int
-count_in_range(struct Bot const * const,
+static int count_in_range(struct Bot const * const,
 		size_t const,
 		int64_t const,
 		int64_t const,
 		int64_t const,
 		int64_t const);
 
-static int64_t
-distance(struct Bot const * const,
-		int64_t const,
-		int64_t const,
-		int64_t const);
+static int64_t distance(
+		struct Bot const * const, int64_t const, int64_t const, int64_t const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Bot bots[1024] = {0};
 	size_t n_bots = 0;
@@ -75,7 +69,10 @@ main(int const argc, char const * const * const argv)
 	if (0) {
 		for (size_t i = 0; i < n_bots; i++) {
 			printf("pos=<%" PRId64 ",%" PRId64 ",%" PRId64 ">, r=%" PRId64 "\n",
-					bots[i].x, bots[i].y, bots[i].z, bots[i].radius);
+					bots[i].x,
+					bots[i].y,
+					bots[i].z,
+					bots[i].radius);
 		}
 	}
 
@@ -95,11 +92,11 @@ main(int const argc, char const * const * const argv)
 	}
 
 	int64_t x_start = min_x;
-	int64_t x_end   = max_x;
+	int64_t x_end = max_x;
 	int64_t y_start = min_y;
-	int64_t y_end   = max_y;
+	int64_t y_end = max_y;
 	int64_t z_start = min_z;
-	int64_t z_end   = max_z;
+	int64_t z_end = max_z;
 
 	int64_t incr = 100000000;
 	while (1) {
@@ -123,16 +120,16 @@ main(int const argc, char const * const * const argv)
 			}
 		}
 
-		x_start = best_x-incr;
-		x_end   = best_x+incr;
-		y_start = best_y-incr;
-		y_end   = best_y+incr;
-		z_start = best_z-incr;
-		z_end   = best_z+incr;
+		x_start = best_x - incr;
+		x_end = best_x + incr;
+		y_start = best_y - incr;
+		y_end = best_y + incr;
+		z_start = best_z - incr;
+		z_end = best_z + incr;
 
 		incr /= 2;
 		if (incr <= 1) {
-			printf("%" PRId64 "\n", best_x+best_y+best_z);
+			printf("%" PRId64 "\n", best_x + best_y + best_z);
 			break;
 		}
 	}

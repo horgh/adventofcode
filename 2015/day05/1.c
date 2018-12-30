@@ -5,14 +5,13 @@
 #include <string.h>
 #include <util.h>
 
-static bool
-is_nice(char const * const);
+static bool is_nice(char const * const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	int count = 0;
 	while (1) {
@@ -31,8 +30,7 @@ main(int const argc, char const * const * const argv)
 	return 0;
 }
 
-__attribute__((pure))
-static bool
+__attribute__((pure)) static bool
 is_nice(char const * const s)
 {
 	int vowel_count = 0;
@@ -45,7 +43,7 @@ is_nice(char const * const s)
 			vowel_count++;
 		}
 
-		char const next_char = *(ptr+1);
+		char const next_char = *(ptr + 1);
 
 		if (*ptr == next_char) {
 			has_two_in_a_row = true;

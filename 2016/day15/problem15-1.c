@@ -14,18 +14,12 @@ struct Disc {
 	int current_position;
 };
 
-static void
-__destroy_discs(struct Disc * * const);
-static void
-__print_discs(struct Disc * * const);
-static int
-__solve(struct Disc * * const);
-static struct Disc * *
-__copy_discs(struct Disc * * const);
-static bool
-__drops_through(struct Disc * * const);
-static void
-__move_disc(struct Disc * const);
+static void __destroy_discs(struct Disc ** const);
+static void __print_discs(struct Disc ** const);
+static int __solve(struct Disc ** const);
+static struct Disc ** __copy_discs(struct Disc ** const);
+static bool __drops_through(struct Disc ** const);
+static void __move_disc(struct Disc * const);
 
 int
 main(const int argc, const char * const * const argv)
@@ -42,7 +36,7 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
-	struct Disc * * const discs = calloc(MAX_DISCS, sizeof(struct Disc *));
+	struct Disc ** const discs = calloc(MAX_DISCS, sizeof(struct Disc *));
 	if (!discs) {
 		printf("%s\n", strerror(errno));
 		fclose(fh);
@@ -68,7 +62,7 @@ main(const int argc, const char * const * const argv)
 		discs[i] = disc;
 		i++;
 
-		disc->number = (int) i-1;
+		disc->number = (int)i - 1;
 
 		const char * ptr = buf;
 		while (strncmp(ptr, "has ", 4) != 0) {
@@ -115,7 +109,7 @@ main(const int argc, const char * const * const argv)
 }
 
 static void
-__destroy_discs(struct Disc * * const discs)
+__destroy_discs(struct Disc ** const discs)
 {
 	if (!discs) {
 		return;
@@ -133,7 +127,7 @@ __destroy_discs(struct Disc * * const discs)
 }
 
 static void
-__print_discs(struct Disc * * const discs)
+__print_discs(struct Disc ** const discs)
 {
 	if (1) {
 		return;
@@ -146,16 +140,18 @@ __print_discs(struct Disc * * const discs)
 
 		const struct Disc * const disc = discs[i];
 
-		printf("Disc %d: %d positions, current position %d\n", disc->number,
-				disc->positions, disc->current_position);
+		printf("Disc %d: %d positions, current position %d\n",
+				disc->number,
+				disc->positions,
+				disc->current_position);
 	}
 }
 
 static int
-__solve(struct Disc * * const discs)
+__solve(struct Disc ** const discs)
 {
-	for (int t = 0; ; t++) {
-		struct Disc * * const discs2 = __copy_discs(discs);
+	for (int t = 0;; t++) {
+		struct Disc ** const discs2 = __copy_discs(discs);
 		if (!discs2) {
 			printf("__copy_discs\n");
 			return -1;
@@ -181,10 +177,10 @@ __solve(struct Disc * * const discs)
 	return -1;
 }
 
-static struct Disc * *
-__copy_discs(struct Disc * * const discs)
+static struct Disc **
+__copy_discs(struct Disc ** const discs)
 {
-	struct Disc * * const discs2 = calloc(MAX_DISCS, sizeof(struct Disc *));
+	struct Disc ** const discs2 = calloc(MAX_DISCS, sizeof(struct Disc *));
 	if (!discs2) {
 		printf("%s\n", strerror(errno));
 		return NULL;
@@ -214,7 +210,7 @@ __copy_discs(struct Disc * * const discs)
 }
 
 static bool
-__drops_through(struct Disc * * const discs)
+__drops_through(struct Disc ** const discs)
 {
 	// We drop the ball now.
 
@@ -246,7 +242,7 @@ __drops_through(struct Disc * * const discs)
 static void
 __move_disc(struct Disc * const disc)
 {
-	if (disc->current_position == disc->positions-1) {
+	if (disc->current_position == disc->positions - 1) {
 		disc->current_position = 0;
 	} else {
 		disc->current_position++;

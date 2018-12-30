@@ -13,31 +13,27 @@ struct Position {
 	enum AcreType type;
 };
 
-static void
-print_map(struct Position * * const, int const);
+static void print_map(struct Position ** const, int const);
 
-static void
-tick(struct Position * * const, int const);
+static void tick(struct Position ** const, int const);
 
-static int
-count(struct Position * * const,
+static int count(struct Position ** const,
 		int const,
 		enum AcreType const,
 		int const,
 		int const);
 
-static char *
-to_string(struct Position * * const, int const);
+static char * to_string(struct Position ** const, int const);
 
 #define SZ 50
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
-	struct Position * * const map = calloc(SZ, sizeof(struct Position *));
+	struct Position ** const map = calloc(SZ, sizeof(struct Position *));
 	assert(map != NULL);
 	for (size_t i = 0; i < SZ; i++) {
 		map[i] = calloc(SZ, sizeof(struct Position));
@@ -87,7 +83,7 @@ main(int const argc, char const * const * const argv)
 		s = to_string(map, y);
 		if (hash_has_key(h, s)) {
 			if (interesting_minute != -1) {
-				repeats = i-interesting_minute;
+				repeats = i - interesting_minute;
 				free(s);
 				break;
 			}
@@ -104,7 +100,7 @@ main(int const argc, char const * const * const argv)
 	}
 	assert(hash_free(h, NULL));
 
-	int remaining = (minutes-(interesting_minute+1))%repeats;
+	int remaining = (minutes - (interesting_minute + 1)) % repeats;
 	for (int i = 0; i < remaining; i++) {
 		tick(map, y);
 	}
@@ -128,12 +124,12 @@ main(int const argc, char const * const * const argv)
 		free(map[i]);
 	}
 	free(map);
-	printf("%d\n", trees*lumber);
+	printf("%d\n", trees * lumber);
 	return 0;
 }
 
 static void
-print_map(struct Position * * const map, int const sz)
+print_map(struct Position ** const map, int const sz)
 {
 	for (int y = 0; y < sz; y++) {
 		for (int x = 0; x < sz; x++) {
@@ -156,14 +152,14 @@ print_map(struct Position * * const map, int const sz)
 }
 
 static void
-tick(struct Position * * const map, int const sz)
+tick(struct Position ** const map, int const sz)
 {
-	struct Position * * const map2 = calloc(SZ, sizeof(struct Position *));
+	struct Position ** const map2 = calloc(SZ, sizeof(struct Position *));
 	assert(map2 != NULL);
 	for (size_t i = 0; i < SZ; i++) {
 		map2[i] = calloc(SZ, sizeof(struct Position));
 		assert(map2[i] != NULL);
-		memcpy(map2[i], map[i], SZ*sizeof(struct Position));
+		memcpy(map2[i], map[i], SZ * sizeof(struct Position));
 	}
 
 	for (int y = 0; y < sz; y++) {
@@ -202,50 +198,50 @@ tick(struct Position * * const map, int const sz)
 }
 
 static int
-count(struct Position * * const map,
+count(struct Position ** const map,
 		int const sz,
 		enum AcreType const type,
 		int const x,
 		int const y)
 {
 	int c = 0;
-	if (x-1 >= 0 && y-1 >= 0) {
-		if (map[x-1][y-1].type == type) {
+	if (x - 1 >= 0 && y - 1 >= 0) {
+		if (map[x - 1][y - 1].type == type) {
 			c++;
 		}
 	}
-	if (y-1 >= 0) {
-		if (map[x][y-1].type == type) {
+	if (y - 1 >= 0) {
+		if (map[x][y - 1].type == type) {
 			c++;
 		}
 	}
-	if (x+1 != sz && y-1 >= 0) {
-		if (map[x+1][y-1].type == type) {
+	if (x + 1 != sz && y - 1 >= 0) {
+		if (map[x + 1][y - 1].type == type) {
 			c++;
 		}
 	}
-	if (x-1 >= 0) {
-		if (map[x-1][y].type == type) {
+	if (x - 1 >= 0) {
+		if (map[x - 1][y].type == type) {
 			c++;
 		}
 	}
-	if (x+1 != sz) {
-		if (map[x+1][y].type == type) {
+	if (x + 1 != sz) {
+		if (map[x + 1][y].type == type) {
 			c++;
 		}
 	}
-	if (x-1 >= 0 && y+1 != sz) {
-		if (map[x-1][y+1].type == type) {
+	if (x - 1 >= 0 && y + 1 != sz) {
+		if (map[x - 1][y + 1].type == type) {
 			c++;
 		}
 	}
-	if (y+1 != sz) {
-		if (map[x][y+1].type == type) {
+	if (y + 1 != sz) {
+		if (map[x][y + 1].type == type) {
 			c++;
 		}
 	}
-	if (x+1 != sz && y+1 != sz) {
-		if (map[x+1][y+1].type == type) {
+	if (x + 1 != sz && y + 1 != sz) {
+		if (map[x + 1][y + 1].type == type) {
 			c++;
 		}
 	}
@@ -253,9 +249,9 @@ count(struct Position * * const map,
 }
 
 static char *
-to_string(struct Position * * const map, int const sz)
+to_string(struct Position ** const map, int const sz)
 {
-	char * const s = calloc((size_t) (sz*sz+sz), sizeof(char));
+	char * const s = calloc((size_t)(sz * sz + sz), sizeof(char));
 	assert(s != NULL);
 	int i = 0;
 	for (int y = 0; y < sz; y++) {
@@ -275,6 +271,6 @@ to_string(struct Position * * const map, int const sz)
 			assert(1 == 0);
 		}
 	}
-	assert(strlen(s) == sz*sz);
+	assert(strlen(s) == sz * sz);
 	return s;
 }

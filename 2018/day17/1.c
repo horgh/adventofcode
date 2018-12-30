@@ -15,25 +15,19 @@ struct Position {
 	enum GroundType type;
 };
 
-static void
-print_map(struct Position * * const);
+static void print_map(struct Position ** const);
 
-static void
-print_position(struct Position const * const);
+static void print_position(struct Position const * const);
 
-static int
-move(struct Position * * const,
-		int const,
-		int const,
-		int const);
+static int move(struct Position ** const, int const, int const, int const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
-	struct Position * * const map = calloc(SZ, sizeof(struct Position *));
+	struct Position ** const map = calloc(SZ, sizeof(struct Position *));
 	assert(map != NULL);
 	for (size_t i = 0; i < SZ; i++) {
 		map[i] = calloc(SZ, sizeof(struct Position));
@@ -117,14 +111,13 @@ main(int const argc, char const * const * const argv)
 
 	int x = 500;
 	int y = 0;
-	move(map, x, y+1, max_y);
+	move(map, x, y + 1, max_y);
 
 	int count_p1 = 0;
 	int count_p2 = 0;
 	for (y = min_y; y <= max_y; y++) {
 		for (x = 0; x < SZ; x++) {
-			if (map[x][y].type == HadWater ||
-					map[x][y].type == StillWater) {
+			if (map[x][y].type == HadWater || map[x][y].type == StillWater) {
 				count_p1++;
 			}
 			if (map[x][y].type == StillWater) {
@@ -143,7 +136,7 @@ main(int const argc, char const * const * const argv)
 }
 
 static void
-print_map(struct Position * * const map)
+print_map(struct Position ** const map)
 {
 	int x0 = 0;
 	int x1 = 586;
@@ -184,17 +177,13 @@ print_position(struct Position const * const p)
 }
 
 static int
-move(struct Position * * const map,
-		int const x,
-		int const y,
-		int const max_y)
+move(struct Position ** const map, int const x, int const y, int const max_y)
 {
 	if (y == SZ || x < 0 || x == SZ) {
 		return 0;
 	}
 
-	if (map[x][y].type == HadWater ||
-			map[x][y].type == StillWater ||
+	if (map[x][y].type == HadWater || map[x][y].type == StillWater ||
 			map[x][y].type == Clay) {
 		return 0;
 	}
@@ -204,28 +193,26 @@ move(struct Position * * const map,
 		if (y == max_y) {
 			return 1;
 		}
-		if (map[x][y+1].type == HadWater) {
+		if (map[x][y + 1].type == HadWater) {
 			return 1;
 		}
-		if (move(map, x, y+1, max_y)) {
+		if (move(map, x, y + 1, max_y)) {
 			return 1;
 		}
 	}
 
-	int const left = move(map, x-1, y, max_y);
-	int const right = move(map, x+1, y, max_y);
+	int const left = move(map, x - 1, y, max_y);
+	int const right = move(map, x + 1, y, max_y);
 
 	if (left || right) {
 		for (int x2 = x; x2 >= 0; x2--) {
-			if (map[x2][y].type != StillWater &&
-					map[x2][y].type != HadWater) {
+			if (map[x2][y].type != StillWater && map[x2][y].type != HadWater) {
 				break;
 			}
 			map[x2][y].type = HadWater;
 		}
 		for (int x2 = x; x2 < SZ; x2++) {
-			if (map[x2][y].type != StillWater &&
-					map[x2][y].type != HadWater) {
+			if (map[x2][y].type != StillWater && map[x2][y].type != HadWater) {
 				break;
 			}
 			map[x2][y].type = HadWater;

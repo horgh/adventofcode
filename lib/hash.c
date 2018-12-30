@@ -1,5 +1,5 @@
-#include <errno.h>
 #include "hash.h"
+#include <errno.h>
 #include <openssl/evp.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,19 +43,19 @@ md5(char const * const s)
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	unsigned char * const h = md5("hi");
 	char hh[256] = {0};
 	size_t hhptr = 0;
 	for (size_t i = 0; i < 16; i++) {
-		sprintf(hh+hhptr, "%02x", *(h+i));
+		sprintf(hh + hhptr, "%02x", *(h + i));
 		hhptr += 2;
 	}
 
 	char const expected[] = "49f68a5c8493ec2c0bf489821c21fc3b";
-	assert(memcmp(hh, expected, strlen(expected)+1) == 0);
+	assert(memcmp(hh, expected, strlen(expected) + 1) == 0);
 
 	free(h);
 

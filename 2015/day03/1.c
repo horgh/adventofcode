@@ -8,8 +8,8 @@
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	char buf[8192] = {0};
 	assert(fgets(buf, 8192, stdin) != NULL);

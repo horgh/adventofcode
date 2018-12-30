@@ -3,12 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void
-reverse(int * const, int const, int const, int const);
-static void
-print_list(int const * const, int const);
+static void reverse(int * const, int const, int const, int const);
+static void print_list(int const * const, int const);
 
-int main(int const argc, char const * const * const argv)
+int
+main(int const argc, char const * const * const argv)
 {
 	if (argc != 2) {
 		fprintf(stderr, "Usage: %s <list size>\n", argv[0]);
@@ -20,7 +19,7 @@ int main(int const argc, char const * const * const argv)
 
 	char buf[20480] = {0};
 
-	if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+	if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 		if (!feof(fh)) {
 			fprintf(stderr, "fgets(): %s\n", strerror(errno));
 			return 1;
@@ -29,9 +28,9 @@ int main(int const argc, char const * const * const argv)
 
 	int instructions[256] = {0};
 	int instruction_count = 0;
-	char const *ptr = buf;
+	char const * ptr = buf;
 	while (*ptr != '\0' && *ptr != '\n') {
-		instructions[instruction_count] = (int) *ptr;
+		instructions[instruction_count] = (int)*ptr;
 		instruction_count++;
 		ptr++;
 	}
@@ -42,7 +41,7 @@ int main(int const argc, char const * const * const argv)
 	instructions[instruction_count++] = 47;
 	instructions[instruction_count++] = 23;
 
-	int * const list = calloc((size_t) list_size, sizeof(int));
+	int * const list = calloc((size_t)list_size, sizeof(int));
 	if (!list) {
 		fprintf(stderr, "calloc(): %s\n", strerror(errno));
 		return 1;
@@ -87,13 +86,13 @@ int main(int const argc, char const * const * const argv)
 	int dense[16] = {0};
 	for (int i = 0; i < 16; i++) {
 		for (int j = 0; j < 16; j++) {
-			int const pos = i*16+j;
+			int const pos = i * 16 + j;
 			dense[i] ^= list[pos];
 		}
 	}
 
 	for (int i = 0; i < 16; i++) {
-		printf("%02x", (unsigned int) dense[i]);
+		printf("%02x", (unsigned int)dense[i]);
 	}
 	printf("\n");
 
@@ -104,14 +103,14 @@ int main(int const argc, char const * const * const argv)
 static void
 reverse(int * const list, int const list_size, int const idx, int const length)
 {
-	for (int i = 0; i < length/2; i++) {
-		int idx0 = idx+i;
+	for (int i = 0; i < length / 2; i++) {
+		int idx0 = idx + i;
 		if (idx0 >= list_size) {
-			idx0 = idx0-list_size;
+			idx0 = idx0 - list_size;
 		}
-		int idx1 = idx+length-1-i;
+		int idx1 = idx + length - 1 - i;
 		if (idx1 >= list_size) {
-			idx1 = idx1-list_size;
+			idx1 = idx1 - list_size;
 		}
 
 		int const tmp = list[idx0];

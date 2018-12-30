@@ -7,14 +7,13 @@
 #include <string.h>
 #include <util.h>
 
-static int
-consume_node(char const * const, char const * * const);
+static int consume_node(char const * const, char const ** const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	char buf[40960] = {0};
 	assert(fgets(buf, 40960, stdin) != NULL);
@@ -28,7 +27,7 @@ main(int const argc, char const * const * const argv)
 }
 
 static int
-consume_node(char const * const s, char const * * const after)
+consume_node(char const * const s, char const ** const after)
 {
 	if (*s == '\0') {
 		return 0;

@@ -11,17 +11,12 @@ struct Note {
 	bool plant;
 };
 
-static void
-print_state(bool const * const);
+static void print_state(bool const * const);
 
-static void
-print_note(struct Note const * const);
+static void print_note(struct Note const * const);
 
-static bool
-grows(bool const * const,
-		int const,
-		struct Note const * const,
-		size_t const);
+static bool grows(
+		bool const * const, int const, struct Note const * const, size_t const);
 
 #define SZ 300
 #define MIDPOINT 150
@@ -29,8 +24,8 @@ grows(bool const * const,
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	bool state[SZ] = {0};
 	size_t n_states = MIDPOINT;
@@ -97,10 +92,10 @@ main(int const argc, char const * const * const argv)
 		}
 		bool next_state[SZ] = {0};
 		for (int j = 0; j < SZ; j++) {
-			if (j-2 < 0) {
+			if (j - 2 < 0) {
 				continue;
 			}
-			if (j+2 >= SZ) {
+			if (j + 2 >= SZ) {
 				continue;
 			}
 			if (!grows(state, j, notes, n_notes)) {
@@ -116,7 +111,7 @@ main(int const argc, char const * const * const argv)
 		if (!state[j]) {
 			continue;
 		}
-		sum += (int) j-MIDPOINT;
+		sum += (int)j - MIDPOINT;
 	}
 	printf("%d\n", sum);
 	return 0;
@@ -163,11 +158,11 @@ grows(bool const * const state,
 		if (!notes[i].plant) {
 			continue;
 		}
-		if (state[pos-2] == notes[i].pattern[0] &&
-				state[pos-1] == notes[i].pattern[1] &&
-				state[pos]   == notes[i].pattern[2] &&
-				state[pos+1] == notes[i].pattern[3] &&
-				state[pos+2] == notes[i].pattern[4]) {
+		if (state[pos - 2] == notes[i].pattern[0] &&
+				state[pos - 1] == notes[i].pattern[1] &&
+				state[pos] == notes[i].pattern[2] &&
+				state[pos + 1] == notes[i].pattern[3] &&
+				state[pos + 2] == notes[i].pattern[4]) {
 			return true;
 		}
 	}

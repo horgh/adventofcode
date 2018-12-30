@@ -12,14 +12,11 @@ struct Position {
 	enum AcreType type;
 };
 
-static void
-print_map(struct Position * * const, int const);
+static void print_map(struct Position ** const, int const);
 
-static void
-tick(struct Position * * const, int const);
+static void tick(struct Position ** const, int const);
 
-static int
-count(struct Position * * const,
+static int count(struct Position ** const,
 		int const,
 		enum AcreType const,
 		int const,
@@ -30,10 +27,10 @@ count(struct Position * * const,
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
-	struct Position * * const map = calloc(SZ, sizeof(struct Position *));
+	struct Position ** const map = calloc(SZ, sizeof(struct Position *));
 	assert(map != NULL);
 	for (size_t i = 0; i < SZ; i++) {
 		map[i] = calloc(SZ, sizeof(struct Position));
@@ -93,12 +90,12 @@ main(int const argc, char const * const * const argv)
 		free(map[i]);
 	}
 	free(map);
-	printf("%d\n", trees*lumber);
+	printf("%d\n", trees * lumber);
 	return 0;
 }
 
 static void
-print_map(struct Position * * const map, int const sz)
+print_map(struct Position ** const map, int const sz)
 {
 	for (int y = 0; y < sz; y++) {
 		for (int x = 0; x < sz; x++) {
@@ -121,14 +118,14 @@ print_map(struct Position * * const map, int const sz)
 }
 
 static void
-tick(struct Position * * const map, int const sz)
+tick(struct Position ** const map, int const sz)
 {
-	struct Position * * const map2 = calloc(SZ, sizeof(struct Position *));
+	struct Position ** const map2 = calloc(SZ, sizeof(struct Position *));
 	assert(map2 != NULL);
 	for (size_t i = 0; i < SZ; i++) {
 		map2[i] = calloc(SZ, sizeof(struct Position));
 		assert(map2[i] != NULL);
-		memcpy(map2[i], map[i], SZ*sizeof(struct Position));
+		memcpy(map2[i], map[i], SZ * sizeof(struct Position));
 	}
 
 	for (int y = 0; y < sz; y++) {
@@ -167,50 +164,50 @@ tick(struct Position * * const map, int const sz)
 }
 
 static int
-count(struct Position * * const map,
+count(struct Position ** const map,
 		int const sz,
 		enum AcreType const type,
 		int const x,
 		int const y)
 {
 	int c = 0;
-	if (x-1 >= 0 && y-1 >= 0) {
-		if (map[x-1][y-1].type == type) {
+	if (x - 1 >= 0 && y - 1 >= 0) {
+		if (map[x - 1][y - 1].type == type) {
 			c++;
 		}
 	}
-	if (y-1 >= 0) {
-		if (map[x][y-1].type == type) {
+	if (y - 1 >= 0) {
+		if (map[x][y - 1].type == type) {
 			c++;
 		}
 	}
-	if (x+1 != sz && y-1 >= 0) {
-		if (map[x+1][y-1].type == type) {
+	if (x + 1 != sz && y - 1 >= 0) {
+		if (map[x + 1][y - 1].type == type) {
 			c++;
 		}
 	}
-	if (x-1 >= 0) {
-		if (map[x-1][y].type == type) {
+	if (x - 1 >= 0) {
+		if (map[x - 1][y].type == type) {
 			c++;
 		}
 	}
-	if (x+1 != sz) {
-		if (map[x+1][y].type == type) {
+	if (x + 1 != sz) {
+		if (map[x + 1][y].type == type) {
 			c++;
 		}
 	}
-	if (x-1 >= 0 && y+1 != sz) {
-		if (map[x-1][y+1].type == type) {
+	if (x - 1 >= 0 && y + 1 != sz) {
+		if (map[x - 1][y + 1].type == type) {
 			c++;
 		}
 	}
-	if (y+1 != sz) {
-		if (map[x][y+1].type == type) {
+	if (y + 1 != sz) {
+		if (map[x][y + 1].type == type) {
 			c++;
 		}
 	}
-	if (x+1 != sz && y+1 != sz) {
-		if (map[x+1][y+1].type == type) {
+	if (x + 1 != sz && y + 1 != sz) {
+		if (map[x + 1][y + 1].type == type) {
 			c++;
 		}
 	}

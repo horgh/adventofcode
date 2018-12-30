@@ -7,14 +7,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char *
-__fill_disk(const char * const, const int);
-static char *
-__make_output(const char * const, const int);
-static char *
-__reverse(char * const);
-static char *
-__make_checksum(const char * const, const int);
+static char * __fill_disk(const char * const, const int);
+static char * __make_output(const char * const, const int);
+static char * __reverse(char * const);
+static char * __make_checksum(const char * const, const int);
 
 int
 main(const int argc, const char * const * const argv)
@@ -37,13 +33,13 @@ main(const int argc, const char * const * const argv)
 static char *
 __fill_disk(const char * const input, const int wanted_length)
 {
-	//printf("making output...\n");
+	// printf("making output...\n");
 	char * const output = __make_output(input, wanted_length);
 	assert(output != NULL);
 	output[wanted_length] = 0;
-	//printf("output: %s length %zu\n", output, strlen(output));
+	// printf("output: %s length %zu\n", output, strlen(output));
 
-	//printf("making checksum...\n");
+	// printf("making checksum...\n");
 	char * const checksum = __make_checksum(output, wanted_length);
 	free(output);
 
@@ -53,15 +49,15 @@ __fill_disk(const char * const input, const int wanted_length)
 static char *
 __make_output(const char * const input, const int wanted_length)
 {
-	char * output = calloc(strlen(input)+1, sizeof(char));
+	char * output = calloc(strlen(input) + 1, sizeof(char));
 	assert(output != NULL);
 	memcpy(output, input, strlen(input));
 
 	// Avoid as much use of strlen as we can. Slow. Weird!
 	size_t len = strlen(output);
 
-	while (len < (size_t) wanted_length) {
-		//printf("output %zu...\n", len);
+	while (len < (size_t)wanted_length) {
+		// printf("output %zu...\n", len);
 
 		char * const b = __reverse(output);
 		assert(b != NULL);
@@ -74,8 +70,7 @@ __make_output(const char * const input, const int wanted_length)
 			}
 		}
 
-		char * const new_output = calloc(len+len+1+1,
-				sizeof(char));
+		char * const new_output = calloc(len + len + 1 + 1, sizeof(char));
 		assert(new_output != NULL);
 
 		strcat(new_output, output);
@@ -86,7 +81,7 @@ __make_output(const char * const input, const int wanted_length)
 		free(output);
 
 		output = new_output;
-		len += len+1;
+		len += len + 1;
 	}
 
 	return output;
@@ -95,11 +90,11 @@ __make_output(const char * const input, const int wanted_length)
 static char *
 __reverse(char * const s)
 {
-	char * const r = calloc(strlen(s)+1, sizeof(char));
+	char * const r = calloc(strlen(s) + 1, sizeof(char));
 	assert(r != NULL);
 
 	int j = 0;
-	for (int i = (int) strlen(s)-1; i >= 0; i--) {
+	for (int i = (int)strlen(s) - 1; i >= 0; i--) {
 		r[j] = s[i];
 		j++;
 	}
@@ -115,18 +110,18 @@ __make_checksum(const char * const s, const int wanted_length)
 	// Avoid use of strlen. Slow. Weird!
 	size_t sz = strlen(s);
 
-	char * const checksum = calloc(sz+1, sizeof(char));
+	char * const checksum = calloc(sz + 1, sizeof(char));
 	assert(checksum != NULL);
 
 	size_t j = 0;
-	for (size_t i = 0; i < sz-1; i += 2) {
-		if (ptr[i] == '0' && ptr[i+1] == '0') {
+	for (size_t i = 0; i < sz - 1; i += 2) {
+		if (ptr[i] == '0' && ptr[i + 1] == '0') {
 			checksum[j] = '1';
 			j++;
 			continue;
 		}
 
-		if (ptr[i] == '1' && ptr[i+1] == '1') {
+		if (ptr[i] == '1' && ptr[i + 1] == '1') {
 			checksum[j] = '1';
 			j++;
 			continue;
@@ -136,7 +131,7 @@ __make_checksum(const char * const s, const int wanted_length)
 		j++;
 	}
 
-	//printf("checksum %s (length %zu)\n", checksum, strlen(checksum));
+	// printf("checksum %s (length %zu)\n", checksum, strlen(checksum));
 	if (strlen(checksum) % 2 == 0) {
 		char * const new_checksum = __make_checksum(checksum, wanted_length);
 		free(checksum);

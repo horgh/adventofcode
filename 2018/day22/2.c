@@ -21,55 +21,36 @@ struct Position {
 	struct AStarNode * nodes[3];
 };
 
-static void
-draw(struct Position * * const,
-		int const,
-		int const,
-		int const);
+static void draw(struct Position ** const, int const, int const, int const);
 
-static void
-get_type(struct Position * * const,
+static void get_type(struct Position ** const,
 		int const,
 		int const,
 		int const,
 		int const,
 		int const);
 
-static uint64_t
-get_geologic_index(struct Position * * const,
-		int const,
-		int const,
-		int const,
-		int const);
+static uint64_t get_geologic_index(
+		struct Position ** const, int const, int const, int const, int const);
 
-static void
-print_map(struct Position * * const,
-		int const,
-		int const);
+static void print_map(struct Position ** const, int const, int const);
 
-static uint64_t
-search(struct Position * * const,
-		int64_t const,
-		int64_t const,
-		enum Tool const);
+static uint64_t search(
+		struct Position ** const, int64_t const, int64_t const, enum Tool const);
 
-static uint64_t
-cost(struct AStarNode const * const,
-		struct AStarNode const * const);
+static uint64_t cost(
+		struct AStarNode const * const, struct AStarNode const * const);
 
-static uint64_t
-heuristic(struct AStarNode const * const,
-		struct AStarNode const * const);
+static uint64_t heuristic(
+		struct AStarNode const * const, struct AStarNode const * const);
 
-static struct AStarNode * *
-get_neighbours(struct AStarGraph const * const,
+static struct AStarNode ** get_neighbours(struct AStarGraph const * const,
 		struct AStarNode const * const,
 		size_t * const);
 
-static void
-get_neighbours_at(struct Position * * const,
+static void get_neighbours_at(struct Position ** const,
 		struct AStarNode const * const,
-		struct AStarNode * * const,
+		struct AStarNode ** const,
 		size_t * const,
 		int64_t const,
 		int64_t const);
@@ -81,8 +62,8 @@ get_neighbours_at(struct Position * * const,
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	char buf[4096] = {0};
 
@@ -108,8 +89,7 @@ main(int const argc, char const * const * const argv)
 		printf("depth: %d target: %d,%d\n", depth, target_x, target_y);
 	}
 
-	struct Position * * const map = calloc(MAP_SZ_X,
-			sizeof(struct Position *));
+	struct Position ** const map = calloc(MAP_SZ_X, sizeof(struct Position *));
 	assert(map != NULL);
 	for (size_t i = 0; i < MAP_SZ_X; i++) {
 		map[i] = calloc(MAP_SZ_Y, sizeof(struct Position));
@@ -122,8 +102,8 @@ main(int const argc, char const * const * const argv)
 		print_map(map, target_x, target_y);
 	}
 
-	uint64_t const steps = search(map, (int64_t) target_x,
-			(int64_t) target_y, Torch);
+	uint64_t const steps =
+			search(map, (int64_t)target_x, (int64_t)target_y, Torch);
 	printf("%" PRIu64 "\n", steps);
 
 	for (size_t i = 0; i < MAP_SZ_X; i++) {
@@ -134,7 +114,7 @@ main(int const argc, char const * const * const argv)
 }
 
 static void
-draw(struct Position * * const map,
+draw(struct Position ** const map,
 		int const depth,
 		int const target_x,
 		int const target_y)
@@ -147,18 +127,18 @@ draw(struct Position * * const map,
 }
 
 static void
-get_type(struct Position * * const map,
+get_type(struct Position ** const map,
 		int const depth,
 		int const target_x,
 		int const target_y,
 		int const x,
 		int const y)
 {
-	uint64_t const geologic_index = get_geologic_index(map, target_x,
-			target_y, x, y);
-	uint64_t const erosion_level = (geologic_index+(uint64_t) depth)%20183;
+	uint64_t const geologic_index =
+			get_geologic_index(map, target_x, target_y, x, y);
+	uint64_t const erosion_level = (geologic_index + (uint64_t)depth) % 20183;
 	map[x][y].erosion_level = erosion_level;
-	uint64_t const m = erosion_level%3;
+	uint64_t const m = erosion_level % 3;
 	if (m == 0) {
 		map[x][y].type = Rocky;
 		return;
@@ -170,9 +150,8 @@ get_type(struct Position * * const map,
 	map[x][y].type = Narrow;
 }
 
-__attribute__((pure))
-static uint64_t
-get_geologic_index(struct Position * * const map,
+__attribute__((pure)) static uint64_t
+get_geologic_index(struct Position ** const map,
 		int const target_x,
 		int const target_y,
 		int const x,
@@ -185,20 +164,18 @@ get_geologic_index(struct Position * * const map,
 		return 0;
 	}
 	if (y == 0) {
-		return (uint64_t) x*16807;
+		return (uint64_t)x * 16807;
 	}
 	if (x == 0) {
-		return (uint64_t) y*48271;
+		return (uint64_t)y * 48271;
 	}
-	assert(x-1 >= 0);
-	assert(y-1 >= 0);
-	return map[x-1][y].erosion_level*map[x][y-1].erosion_level;
+	assert(x - 1 >= 0);
+	assert(y - 1 >= 0);
+	return map[x - 1][y].erosion_level * map[x][y - 1].erosion_level;
 }
 
 static void
-print_map(struct Position * * const map,
-		int const target_x,
-		int const target_y)
+print_map(struct Position ** const map, int const target_x, int const target_y)
 {
 	for (int y = 0; y < MAP_SZ_Y; y++) {
 		for (int x = 0; x < MAP_SZ_X; x++) {
@@ -229,13 +206,13 @@ print_map(struct Position * * const map,
 }
 
 static uint64_t
-search(struct Position * * const map,
+search(struct Position ** const map,
 		int64_t const target_x,
 		int64_t const target_y,
 		enum Tool const target_tool)
 {
-	struct AStarGraph * const graph = a_star_graph_create(
-			MAP_SZ_X*MAP_SZ_Y*3);
+	struct AStarGraph * const graph =
+			a_star_graph_create(MAP_SZ_X * MAP_SZ_Y * 3);
 	graph->data = map;
 
 	struct AStarNode * start = NULL;
@@ -259,15 +236,14 @@ search(struct Position * * const map,
 		}
 	}
 
-	uint64_t const distance = a_star_search(graph, start, target, cost,
-			heuristic, get_neighbours);
+	uint64_t const distance =
+			a_star_search(graph, start, target, cost, heuristic, get_neighbours);
 	a_star_graph_free(graph);
 	return distance;
 }
 
 static uint64_t
-cost(struct AStarNode const * const from,
-		struct AStarNode const * const to)
+cost(struct AStarNode const * const from, struct AStarNode const * const to)
 {
 	if (from->coords[2] != to->coords[2]) {
 		return from->g + 7;
@@ -276,37 +252,37 @@ cost(struct AStarNode const * const from,
 }
 
 static uint64_t
-heuristic(struct AStarNode const * const from,
-		struct AStarNode const * const to)
+heuristic(
+		struct AStarNode const * const from, struct AStarNode const * const to)
 {
-	uint64_t cost = (uint64_t) llabs(from->coords[0] - to->coords[0]) +
-		(uint64_t) llabs(from->coords[1] - to->coords[1]);
+	uint64_t cost = (uint64_t)llabs(from->coords[0] - to->coords[0]) +
+									(uint64_t)llabs(from->coords[1] - to->coords[1]);
 	return cost;
 }
 
-static struct AStarNode * *
+static struct AStarNode **
 get_neighbours(struct AStarGraph const * const graph,
 		struct AStarNode const * const current,
 		size_t * const n_neighbours)
 {
-	struct AStarNode * * neighbours = calloc(NEIGHBOURS_SZ,
-			sizeof(struct AStarNode *));
+	struct AStarNode ** neighbours =
+			calloc(NEIGHBOURS_SZ, sizeof(struct AStarNode *));
 	assert(neighbours != NULL);
 	*n_neighbours = 0;
 	int64_t const x = current->coords[0];
 	int64_t const y = current->coords[1];
-	struct Position * * const map = graph->data;
-	get_neighbours_at(map, current, neighbours, n_neighbours, x,   y-1);
-	get_neighbours_at(map, current, neighbours, n_neighbours, x+1, y);
-	get_neighbours_at(map, current, neighbours, n_neighbours, x,   y+1);
-	get_neighbours_at(map, current, neighbours, n_neighbours, x-1, y);
+	struct Position ** const map = graph->data;
+	get_neighbours_at(map, current, neighbours, n_neighbours, x, y - 1);
+	get_neighbours_at(map, current, neighbours, n_neighbours, x + 1, y);
+	get_neighbours_at(map, current, neighbours, n_neighbours, x, y + 1);
+	get_neighbours_at(map, current, neighbours, n_neighbours, x - 1, y);
 	return neighbours;
 }
 
 static void
-get_neighbours_at(struct Position * * const map,
+get_neighbours_at(struct Position ** const map,
 		struct AStarNode const * const current,
-		struct AStarNode * * const neighbours,
+		struct AStarNode ** const neighbours,
 		size_t * const n_neighbours,
 		int64_t const new_x,
 		int64_t const new_y)

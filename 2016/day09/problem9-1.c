@@ -6,8 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char *
-__decompress(char *);
+static char * __decompress(char *);
 
 int
 main(const int argc, const char * const * const argv)
@@ -33,8 +32,8 @@ main(const int argc, const char * const * const argv)
 			break;
 		}
 
-		if (buf[strlen(buf)-1] == '\n') {
-			buf[strlen(buf)-1] = '\0';
+		if (buf[strlen(buf) - 1] == '\n') {
+			buf[strlen(buf) - 1] = '\0';
 		}
 
 		char * uncompressed = __decompress(buf);
@@ -43,7 +42,7 @@ main(const int argc, const char * const * const argv)
 			return 1;
 		}
 
-		//printf("%s %zu\n", uncompressed, strlen(uncompressed));
+		// printf("%s %zu\n", uncompressed, strlen(uncompressed));
 
 		for (size_t i = 0; i < strlen(uncompressed); i++) {
 			if (isspace(uncompressed[i])) {
@@ -69,18 +68,18 @@ static char *
 __decompress(char * buf)
 {
 	size_t sz = 102400;
-	char * uncompressed = calloc(sz+1, sizeof(char));
+	char * uncompressed = calloc(sz + 1, sizeof(char));
 	if (!uncompressed) {
 		printf("%s\n", strerror(ENOMEM));
 		return NULL;
 	}
 
-	for (size_t i = 0; i < strlen(buf); ) {
+	for (size_t i = 0; i < strlen(buf);) {
 		size_t len = 0;
 		size_t count = 0;
-		int matches = sscanf(buf+i, "(%zux%zu)", &len, &count);
+		int matches = sscanf(buf + i, "(%zux%zu)", &len, &count);
 		if (matches != 2) {
-			strncat(uncompressed, buf+i, 1);
+			strncat(uncompressed, buf + i, 1);
 			i++;
 			continue;
 		}
@@ -92,14 +91,14 @@ __decompress(char * buf)
 		// Move past the )
 		i++;
 
-		char * s = calloc(sz+1, sizeof(char));
+		char * s = calloc(sz + 1, sizeof(char));
 		if (!s) {
 			printf("%s\n", strerror(ENOMEM));
 			free(uncompressed);
 			return NULL;
 		}
 
-		strncat(s, buf+i, len);
+		strncat(s, buf + i, len);
 
 		for (size_t j = 0; j < count; j++) {
 			strcat(uncompressed, s);

@@ -20,17 +20,10 @@ struct component {
 	struct port ports[2];
 };
 
-static void
-destroy_components(
-		struct component * * const,
-		size_t const);
-static struct component *
-parse_line(char const * const, size_t const);
-static void
-print_component(struct component const * const);
-static int
-link_components(
-		struct component * * const,
+static void destroy_components(struct component ** const, size_t const);
+static struct component * parse_line(char const * const, size_t const);
+static void print_component(struct component const * const);
+static int link_components(struct component ** const,
 		size_t const,
 		struct htable * const,
 		struct component * const);
@@ -38,8 +31,8 @@ link_components(
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 	char buf[4096] = {0};
@@ -48,7 +41,7 @@ main(int const argc, char const * const * const argv)
 	size_t num_components = 0;
 
 	while (1) {
-		if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+		if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				destroy_components(components, num_components);
@@ -116,8 +109,8 @@ main(int const argc, char const * const * const argv)
 			}
 
 			if (DEBUG) {
-				printf("starting with component %d yields strength %d\n", c->id,
-						strength);
+				printf(
+						"starting with component %d yields strength %d\n", c->id, strength);
 			}
 
 			if (strength > max) {
@@ -148,8 +141,7 @@ main(int const argc, char const * const * const argv)
 
 static void
 destroy_components(
-		struct component * * const components,
-		size_t const num_components)
+		struct component ** const components, size_t const num_components)
 {
 	if (!components) {
 		return;
@@ -169,7 +161,7 @@ parse_line(char const * const s, size_t const id)
 		return NULL;
 	}
 
-	c->id = (int) id;
+	c->id = (int)id;
 
 	char const * ptr = s;
 
@@ -213,8 +205,7 @@ print_component(struct component const * const c)
 }
 
 static int
-link_components(
-		struct component * * const components,
+link_components(struct component ** const components,
 		size_t const num_components,
 		struct htable * const h,
 		struct component * const cur)
@@ -251,8 +242,10 @@ link_components(
 
 			if (DEBUG) {
 				printf("linking component %d (port %d) with component %d (port %d)\n",
-						cur->id, unused_port->strength,
-						c->id, c->ports[j].strength);
+						cur->id,
+						unused_port->strength,
+						c->id,
+						c->ports[j].strength);
 			}
 
 			int const strength = link_components(components, num_components, h, c);

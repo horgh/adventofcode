@@ -27,8 +27,8 @@ struct Example {
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Example examples[1024] = {0};
 	size_t n_examples = 0;
@@ -53,7 +53,7 @@ main(int const argc, char const * const * const argv)
 
 		if (strncmp(ptr, "Before: [", strlen("Before: [")) == 0) {
 			ptr += strlen("Before: [");
-			examples[n_examples].before[0] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].before[0] = (REG_TYPE)atoi(ptr);
 			while (*ptr != ',') {
 				ptr++;
 			}
@@ -61,7 +61,7 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].before[1] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].before[1] = (REG_TYPE)atoi(ptr);
 			while (*ptr != ',') {
 				ptr++;
 			}
@@ -69,7 +69,7 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].before[2] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].before[2] = (REG_TYPE)atoi(ptr);
 			while (*ptr != ',') {
 				ptr++;
 			}
@@ -77,7 +77,7 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].before[3] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].before[3] = (REG_TYPE)atoi(ptr);
 			continue;
 		}
 		if (isdigit(*ptr)) {
@@ -88,27 +88,27 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].instruction.a = (REG_TYPE) atoi(ptr);
+			examples[n_examples].instruction.a = (REG_TYPE)atoi(ptr);
 			while (isdigit(*ptr)) {
 				ptr++;
 			}
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].instruction.b = (REG_TYPE) atoi(ptr);
+			examples[n_examples].instruction.b = (REG_TYPE)atoi(ptr);
 			while (isdigit(*ptr)) {
 				ptr++;
 			}
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].instruction.c = (REG_TYPE) atoi(ptr);
+			examples[n_examples].instruction.c = (REG_TYPE)atoi(ptr);
 			continue;
 		}
 
 		if (strncmp(ptr, "After:  [", strlen("After:  [")) == 0) {
 			ptr += strlen("After:  [");
-			examples[n_examples].after[0] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].after[0] = (REG_TYPE)atoi(ptr);
 			while (*ptr != ',') {
 				ptr++;
 			}
@@ -116,7 +116,7 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].after[1] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].after[1] = (REG_TYPE)atoi(ptr);
 			while (*ptr != ',') {
 				ptr++;
 			}
@@ -124,7 +124,7 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].after[2] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].after[2] = (REG_TYPE)atoi(ptr);
 			while (*ptr != ',') {
 				ptr++;
 			}
@@ -132,7 +132,7 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].after[3] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].after[3] = (REG_TYPE)atoi(ptr);
 			n_examples++;
 			continue;
 		}
@@ -148,8 +148,10 @@ main(int const argc, char const * const * const argv)
 			}
 			printf("%d", examples[i].before[3]);
 			printf("]\n");
-			printf("%d %d %d %d\n", examples[i].instruction.op,
-					examples[i].instruction.a, examples[i].instruction.b,
+			printf("%d %d %d %d\n",
+					examples[i].instruction.op,
+					examples[i].instruction.a,
+					examples[i].instruction.b,
 					examples[i].instruction.c);
 			printf("After:  [");
 			for (size_t j = 0; j < 3; j++) {
@@ -169,123 +171,123 @@ main(int const argc, char const * const * const argv)
 		int count = 0;
 
 		// addr
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
-		regs[instr->c] = (REG_TYPE) (regs[instr->a]+regs[instr->b]);
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
+		regs[instr->c] = (REG_TYPE)(regs[instr->a] + regs[instr->b]);
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// addi
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
-		regs[instr->c] = (REG_TYPE) (regs[instr->a]+instr->b);
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
+		regs[instr->c] = (REG_TYPE)(regs[instr->a] + instr->b);
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// mulr
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
-		regs[instr->c] = (REG_TYPE) (regs[instr->a]*regs[instr->b]);
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
+		regs[instr->c] = (REG_TYPE)(regs[instr->a] * regs[instr->b]);
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// muli
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
-		regs[instr->c] = (REG_TYPE) (regs[instr->a]*instr->b);
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
+		regs[instr->c] = (REG_TYPE)(regs[instr->a] * instr->b);
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// banr
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
-		regs[instr->c] = regs[instr->a]&regs[instr->b];
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
+		regs[instr->c] = regs[instr->a] & regs[instr->b];
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// bani
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
-		regs[instr->c] = regs[instr->a]&instr->b;
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
+		regs[instr->c] = regs[instr->a] & instr->b;
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// borr
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
-		regs[instr->c] = regs[instr->a]|regs[instr->b];
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
+		regs[instr->c] = regs[instr->a] | regs[instr->b];
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// bori
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
-		regs[instr->c] = regs[instr->a]|instr->b;
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
+		regs[instr->c] = regs[instr->a] | instr->b;
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// setr
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
 		regs[instr->c] = regs[instr->a];
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// seti
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
 		regs[instr->c] = instr->a;
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// gtir
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
 		if (instr->a > regs[instr->b]) {
 			regs[instr->c] = 1;
 		} else {
 			regs[instr->c] = 0;
 		}
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// gtri
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
 		if (regs[instr->a] > instr->b) {
 			regs[instr->c] = 1;
 		} else {
 			regs[instr->c] = 0;
 		}
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// gtrr
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
 		if (regs[instr->a] > regs[instr->b]) {
 			regs[instr->c] = 1;
 		} else {
 			regs[instr->c] = 0;
 		}
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// eqir
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
 		if (instr->a == regs[instr->b]) {
 			regs[instr->c] = 1;
 		} else {
 			regs[instr->c] = 0;
 		}
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// eqri
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
 		if (regs[instr->a] == instr->b) {
 			regs[instr->c] = 1;
 		} else {
 			regs[instr->c] = 0;
 		}
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 		// eqrr
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
 		if (regs[instr->a] == regs[instr->b]) {
 			regs[instr->c] = 1;
 		} else {
 			regs[instr->c] = 0;
 		}
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			count++;
 		}
 

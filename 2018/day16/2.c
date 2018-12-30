@@ -13,13 +13,22 @@
 
 enum Op {
 	UNKNOWN,
-	ADDR, ADDI,
-	MULR, MULI,
-	BANR, BANI,
-	BORR, BORI,
-	SETR, SETI,
-	GTIR, GTRI, GTRR,
-	EQIR, EQRI, EQRR
+	ADDR,
+	ADDI,
+	MULR,
+	MULI,
+	BANR,
+	BANI,
+	BORR,
+	BORI,
+	SETR,
+	SETI,
+	GTIR,
+	GTRI,
+	GTRR,
+	EQIR,
+	EQRI,
+	EQRR
 };
 
 struct Instruction {
@@ -35,65 +44,64 @@ struct Example {
 	REG_TYPE after[REG_SZ];
 };
 
-static bool
-op_satisfies_examples(struct Example const * const examples,
+static bool op_satisfies_examples(struct Example const * const examples,
 		size_t const n_examples,
 		int const opcode,
 		void (*fn)(REG_TYPE * const, struct Instruction const * const));
 
-static void
-op_addr(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_addr(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_addi(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_addi(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_mulr(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_mulr(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_muli(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_muli(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_banr(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_banr(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_bani(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_bani(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_borr(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_borr(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_bori(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_bori(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_setr(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_setr(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_seti(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_seti(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_gtir(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_gtir(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_gtri(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_gtri(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_gtrr(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_gtrr(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_eqir(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_eqir(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_eqri(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_eqri(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
-static void
-op_eqrr(REG_TYPE * const regs, struct Instruction const * const instr);
+static void op_eqrr(
+		REG_TYPE * const regs, struct Instruction const * const instr);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Example examples[1024] = {0};
 	size_t n_examples = 0;
@@ -127,28 +135,28 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			instructions[n_instructions].a = (REG_TYPE) atoi(ptr);
+			instructions[n_instructions].a = (REG_TYPE)atoi(ptr);
 			while (isdigit(*ptr)) {
 				ptr++;
 			}
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			instructions[n_instructions].b = (REG_TYPE) atoi(ptr);
+			instructions[n_instructions].b = (REG_TYPE)atoi(ptr);
 			while (isdigit(*ptr)) {
 				ptr++;
 			}
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			instructions[n_instructions].c = (REG_TYPE) atoi(ptr);
+			instructions[n_instructions].c = (REG_TYPE)atoi(ptr);
 			n_instructions++;
 			continue;
 		}
 
 		if (strncmp(ptr, "Before: [", strlen("Before: [")) == 0) {
 			ptr += strlen("Before: [");
-			examples[n_examples].before[0] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].before[0] = (REG_TYPE)atoi(ptr);
 			while (*ptr != ',') {
 				ptr++;
 			}
@@ -156,7 +164,7 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].before[1] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].before[1] = (REG_TYPE)atoi(ptr);
 			while (*ptr != ',') {
 				ptr++;
 			}
@@ -164,7 +172,7 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].before[2] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].before[2] = (REG_TYPE)atoi(ptr);
 			while (*ptr != ',') {
 				ptr++;
 			}
@@ -172,7 +180,7 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].before[3] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].before[3] = (REG_TYPE)atoi(ptr);
 			continue;
 		}
 		if (isdigit(*ptr)) {
@@ -183,27 +191,27 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].instruction.a = (REG_TYPE) atoi(ptr);
+			examples[n_examples].instruction.a = (REG_TYPE)atoi(ptr);
 			while (isdigit(*ptr)) {
 				ptr++;
 			}
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].instruction.b = (REG_TYPE) atoi(ptr);
+			examples[n_examples].instruction.b = (REG_TYPE)atoi(ptr);
 			while (isdigit(*ptr)) {
 				ptr++;
 			}
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].instruction.c = (REG_TYPE) atoi(ptr);
+			examples[n_examples].instruction.c = (REG_TYPE)atoi(ptr);
 			continue;
 		}
 
 		if (strncmp(ptr, "After:  [", strlen("After:  [")) == 0) {
 			ptr += strlen("After:  [");
-			examples[n_examples].after[0] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].after[0] = (REG_TYPE)atoi(ptr);
 			while (*ptr != ',') {
 				ptr++;
 			}
@@ -211,7 +219,7 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].after[1] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].after[1] = (REG_TYPE)atoi(ptr);
 			while (*ptr != ',') {
 				ptr++;
 			}
@@ -219,7 +227,7 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].after[2] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].after[2] = (REG_TYPE)atoi(ptr);
 			while (*ptr != ',') {
 				ptr++;
 			}
@@ -227,7 +235,7 @@ main(int const argc, char const * const * const argv)
 			while (isspace(*ptr)) {
 				ptr++;
 			}
-			examples[n_examples].after[3] = (REG_TYPE) atoi(ptr);
+			examples[n_examples].after[3] = (REG_TYPE)atoi(ptr);
 			n_examples++;
 			continue;
 		}
@@ -243,8 +251,10 @@ main(int const argc, char const * const * const argv)
 			}
 			printf("%d", examples[i].before[3]);
 			printf("]\n");
-			printf("%d %d %d %d\n", examples[i].instruction.op,
-					examples[i].instruction.a, examples[i].instruction.b,
+			printf("%d %d %d %d\n",
+					examples[i].instruction.op,
+					examples[i].instruction.a,
+					examples[i].instruction.b,
 					examples[i].instruction.c);
 			printf("After:  [");
 			for (size_t j = 0; j < 3; j++) {
@@ -259,8 +269,10 @@ main(int const argc, char const * const * const argv)
 	if (false) {
 		for (size_t i = 0; i < n_instructions; i++) {
 			printf("%d %d %d %d\n",
-					instructions[i].op, instructions[i].a,
-					instructions[i].b, instructions[i].c);
+					instructions[i].op,
+					instructions[i].a,
+					instructions[i].b,
+					instructions[i].c);
 		}
 	}
 
@@ -270,29 +282,30 @@ main(int const argc, char const * const * const argv)
 		enum Op op;
 	};
 	struct Function functions[] = {
-		{ .fn = op_addr, .name = "addr", .op = ADDR },
-		{ .fn = op_addi, .name = "addi", .op = ADDI },
-		{ .fn = op_mulr, .name = "mulr", .op = MULR },
-		{ .fn = op_muli, .name = "muli", .op = MULI },
-		{ .fn = op_banr, .name = "banr", .op = BANR },
-		{ .fn = op_bani, .name = "bani", .op = BANI },
-		{ .fn = op_borr, .name = "borr", .op = BORR },
-		{ .fn = op_bori, .name = "bori", .op = BORI },
-		{ .fn = op_setr, .name = "setr", .op = SETR },
-		{ .fn = op_seti, .name = "seti", .op = SETI },
-		{ .fn = op_gtir, .name = "gtir", .op = GTIR },
-		{ .fn = op_gtri, .name = "gtri", .op = GTRI },
-		{ .fn = op_gtrr, .name = "gtrr", .op = GTRR },
-		{ .fn = op_eqir, .name = "eqir", .op = EQIR },
-		{ .fn = op_eqri, .name = "eqri", .op = EQRI },
-		{ .fn = op_eqrr, .name = "eqrr", .op = EQRR },
+			{.fn = op_addr, .name = "addr", .op = ADDR},
+			{.fn = op_addi, .name = "addi", .op = ADDI},
+			{.fn = op_mulr, .name = "mulr", .op = MULR},
+			{.fn = op_muli, .name = "muli", .op = MULI},
+			{.fn = op_banr, .name = "banr", .op = BANR},
+			{.fn = op_bani, .name = "bani", .op = BANI},
+			{.fn = op_borr, .name = "borr", .op = BORR},
+			{.fn = op_bori, .name = "bori", .op = BORI},
+			{.fn = op_setr, .name = "setr", .op = SETR},
+			{.fn = op_seti, .name = "seti", .op = SETI},
+			{.fn = op_gtir, .name = "gtir", .op = GTIR},
+			{.fn = op_gtri, .name = "gtri", .op = GTRI},
+			{.fn = op_gtrr, .name = "gtrr", .op = GTRR},
+			{.fn = op_eqir, .name = "eqir", .op = EQIR},
+			{.fn = op_eqri, .name = "eqri", .op = EQRI},
+			{.fn = op_eqrr, .name = "eqrr", .op = EQRR},
 	};
 
 	enum Op known_opcodes[16] = {0};
-	void (*opcode_to_function[16])(REG_TYPE * const, struct Instruction const * const) = {0};
+	void (*opcode_to_function[16])(
+			REG_TYPE * const, struct Instruction const * const) = {0};
 	size_t n_known_opcodes = 0;
 	while (n_known_opcodes != 16) {
-		for (size_t i = 0; i < sizeof(functions)/sizeof(functions[0]); i++) {
+		for (size_t i = 0; i < sizeof(functions) / sizeof(functions[0]); i++) {
 			struct Function const function = functions[i];
 
 			int count = 0;
@@ -339,9 +352,9 @@ op_satisfies_examples(struct Example const * const examples,
 			continue;
 		}
 		REG_TYPE regs[REG_SZ] = {0};
-		memcpy(regs, example->before, REG_SZ*sizeof(REG_TYPE));
+		memcpy(regs, example->before, REG_SZ * sizeof(REG_TYPE));
 		fn(regs, instr);
-		if (memcmp(regs, example->after, REG_SZ*sizeof(REG_TYPE)) == 0) {
+		if (memcmp(regs, example->after, REG_SZ * sizeof(REG_TYPE)) == 0) {
 			continue;
 		}
 		return false;
@@ -353,49 +366,49 @@ op_satisfies_examples(struct Example const * const examples,
 static void
 op_addr(REG_TYPE * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = (REG_TYPE) (regs[instr->a]+regs[instr->b]);
+	regs[instr->c] = (REG_TYPE)(regs[instr->a] + regs[instr->b]);
 }
 
 static void
 op_addi(REG_TYPE * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = (REG_TYPE) (regs[instr->a]+instr->b);
+	regs[instr->c] = (REG_TYPE)(regs[instr->a] + instr->b);
 }
 
 static void
 op_mulr(REG_TYPE * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = (REG_TYPE) (regs[instr->a]*regs[instr->b]);
+	regs[instr->c] = (REG_TYPE)(regs[instr->a] * regs[instr->b]);
 }
 
 static void
 op_muli(REG_TYPE * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = (REG_TYPE) (regs[instr->a]*instr->b);
+	regs[instr->c] = (REG_TYPE)(regs[instr->a] * instr->b);
 }
 
 static void
 op_banr(REG_TYPE * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = regs[instr->a]&regs[instr->b];
+	regs[instr->c] = regs[instr->a] & regs[instr->b];
 }
 
 static void
 op_bani(REG_TYPE * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = regs[instr->a]&instr->b;
+	regs[instr->c] = regs[instr->a] & instr->b;
 }
 
 static void
 op_borr(REG_TYPE * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = regs[instr->a]|regs[instr->b];
+	regs[instr->c] = regs[instr->a] | regs[instr->b];
 }
 
 static void
 op_bori(REG_TYPE * const regs, struct Instruction const * const instr)
 {
-	regs[instr->c] = regs[instr->a]|instr->b;
+	regs[instr->c] = regs[instr->a] | instr->b;
 }
 
 static void

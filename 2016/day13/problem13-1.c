@@ -14,24 +14,19 @@ struct Position {
 	int steps;
 };
 
-static bool
-__is_open(const int, const int, const int);
-static int
-__solve_bfs(const int, const int, const int);
-static char *
-__position_to_string(const struct Position * const);
-static bool
-__add_neighbours(const int, struct Queue * const,
-		const struct Position * const);
-static bool
-__enqueue(struct Queue * const, const int, const int, const int);
+static bool __is_open(const int, const int, const int);
+static int __solve_bfs(const int, const int, const int);
+static char * __position_to_string(const struct Position * const);
+static bool __add_neighbours(
+		const int, struct Queue * const, const struct Position * const);
+static bool __enqueue(struct Queue * const, const int, const int, const int);
 
 int
 main(const int argc, const char * const * const argv)
 {
 	if (argc != 4) {
-		printf("Usage: %s <input number> <destination x> <destination y>\n",
-				argv[0]);
+		printf(
+				"Usage: %s <input number> <destination x> <destination y>\n", argv[0]);
 		return 1;
 	}
 	const int fav_number = atoi(argv[1]);
@@ -50,9 +45,9 @@ main(const int argc, const char * const * const argv)
 static bool
 __is_open(const int x, const int y, const int fav_number)
 {
-	const int n = x*x + 3*x + 2*x*y + y + y*y + fav_number;
+	const int n = x * x + 3 * x + 2 * x * y + y + y * y + fav_number;
 
-	return __builtin_popcount((unsigned int) n) % 2 == 0;
+	return __builtin_popcount((unsigned int)n) % 2 == 0;
 }
 
 static int
@@ -155,7 +150,8 @@ __position_to_string(const struct Position * const pos)
 }
 
 static bool
-__add_neighbours(const int fav_number, struct Queue * const queue,
+__add_neighbours(const int fav_number,
+		struct Queue * const queue,
 		const struct Position * const current_pos)
 {
 	if (!queue || !current_pos) {
@@ -164,36 +160,44 @@ __add_neighbours(const int fav_number, struct Queue * const queue,
 	}
 
 	// Up
-	if (__is_open(current_pos->x, current_pos->y+1, fav_number)) {
-		if (!__enqueue(queue, current_pos->x, current_pos->y+1,
-					current_pos->steps+1)) {
+	if (__is_open(current_pos->x, current_pos->y + 1, fav_number)) {
+		if (!__enqueue(queue,
+						current_pos->x,
+						current_pos->y + 1,
+						current_pos->steps + 1)) {
 			printf("__enqueue()\n");
 			return false;
 		}
 	}
 
 	// Down
-	if (__is_open(current_pos->x, current_pos->y-1, fav_number)) {
-		if (!__enqueue(queue, current_pos->x, current_pos->y-1,
-					current_pos->steps+1)) {
+	if (__is_open(current_pos->x, current_pos->y - 1, fav_number)) {
+		if (!__enqueue(queue,
+						current_pos->x,
+						current_pos->y - 1,
+						current_pos->steps + 1)) {
 			printf("__enqueue()\n");
 			return false;
 		}
 	}
 
 	// Right
-	if (__is_open(current_pos->x+1, current_pos->y, fav_number)) {
-		if (!__enqueue(queue, current_pos->x+1, current_pos->y,
-					current_pos->steps+1)) {
+	if (__is_open(current_pos->x + 1, current_pos->y, fav_number)) {
+		if (!__enqueue(queue,
+						current_pos->x + 1,
+						current_pos->y,
+						current_pos->steps + 1)) {
 			printf("__enqueue()\n");
 			return false;
 		}
 	}
 
 	// Left
-	if (__is_open(current_pos->x-1, current_pos->y, fav_number)) {
-		if (!__enqueue(queue, current_pos->x-1, current_pos->y,
-					current_pos->steps+1)) {
+	if (__is_open(current_pos->x - 1, current_pos->y, fav_number)) {
+		if (!__enqueue(queue,
+						current_pos->x - 1,
+						current_pos->y,
+						current_pos->steps + 1)) {
 			printf("__enqueue()\n");
 			return false;
 		}

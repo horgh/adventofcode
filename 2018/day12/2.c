@@ -12,27 +12,22 @@ struct Note {
 	bool plant;
 };
 
-static void
-print_state(char const * const);
+static void print_state(char const * const);
 
-static void
-print_note(struct Note const * const);
+static void print_note(struct Note const * const);
 
-static bool
-grows(char const * const,
-		int const,
-		struct Note const * const,
-		size_t const);
+static bool grows(
+		char const * const, int const, struct Note const * const, size_t const);
 
 #define SZ 2048
-#define SZ2 SZ+1
-#define MIDPOINT SZ/2
+#define SZ2 SZ + 1
+#define MIDPOINT SZ / 2
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 	uint64_t const rounds = 50000000000;
 
 	char state[SZ2] = {0};
@@ -110,10 +105,10 @@ main(int const argc, char const * const * const argv)
 			next_state[j] = '.';
 		}
 		for (int j = 0; j < SZ; j++) {
-			if (j-2 < 0) {
+			if (j - 2 < 0) {
 				continue;
 			}
-			if (j+2 >= SZ) {
+			if (j + 2 >= SZ) {
 				continue;
 			}
 			if (!grows(state, j, notes, n_notes)) {
@@ -126,7 +121,7 @@ main(int const argc, char const * const * const argv)
 		char const * ptr = strchr(next_state, '#');
 		char const * eptr = strrchr(next_state, '#');
 		int j = 0;
-		while (ptr != eptr+1) {
+		while (ptr != eptr + 1) {
 			pattern[j++] = *ptr;
 			ptr++;
 		}
@@ -144,7 +139,7 @@ main(int const argc, char const * const * const argv)
 		if (state[j] == '.') {
 			continue;
 		}
-		sum += j-MIDPOINT+(rounds-interesting_round);
+		sum += j - MIDPOINT + (rounds - interesting_round);
 	}
 	printf("%" PRIu64 "\n", sum);
 	return 0;
@@ -183,11 +178,11 @@ grows(char const * const state,
 		if (!notes[i].plant) {
 			continue;
 		}
-		if (state[pos-2] == notes[i].pattern[0] &&
-				state[pos-1] == notes[i].pattern[1] &&
-				state[pos]   == notes[i].pattern[2] &&
-				state[pos+1] == notes[i].pattern[3] &&
-				state[pos+2] == notes[i].pattern[4]) {
+		if (state[pos - 2] == notes[i].pattern[0] &&
+				state[pos - 1] == notes[i].pattern[1] &&
+				state[pos] == notes[i].pattern[2] &&
+				state[pos + 1] == notes[i].pattern[3] &&
+				state[pos + 2] == notes[i].pattern[4]) {
 			return true;
 		}
 	}

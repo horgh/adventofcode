@@ -20,8 +20,8 @@ struct Instruction {
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Instruction instructions[512] = {0};
 	size_t n = 0;
@@ -86,13 +86,11 @@ main(int const argc, char const * const * const argv)
 		default:
 			assert(1 == 0);
 		}
-		printf(
-				"%d,%d to %d,%d\n",
+		printf("%d,%d to %d,%d\n",
 				instructions[i].start_x,
 				instructions[i].start_y,
 				instructions[i].end_x,
-				instructions[i].end_y
-				);
+				instructions[i].end_y);
 	}
 #endif
 

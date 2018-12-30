@@ -1,5 +1,5 @@
-#include <ctype.h>
 #include "util.h"
+#include <ctype.h>
 
 void
 trim_right(char * const s)
@@ -23,7 +23,8 @@ trim_right(char * const s)
 #include <assert.h>
 #include <string.h>
 
-int main(void)
+int
+main(void)
 {
 	char s[128] = {0};
 

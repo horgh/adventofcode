@@ -5,8 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static unsigned char *
-__md5(const char * const);
+static unsigned char * __md5(const char * const);
 
 int
 main(const int argc, const char * const * const argv)
@@ -16,18 +15,18 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 	const char * const input = argv[1];
-	//printf("Input: %s\n", input);
+	// printf("Input: %s\n", input);
 
-	//unsigned char * const hashtest = __md5(input);
-	//printf("md5 of input: ");
-	//for (int i = 0; i < 16; i++) {
+	// unsigned char * const hashtest = __md5(input);
+	// printf("md5 of input: ");
+	// for (int i = 0; i < 16; i++) {
 	//	printf("%02x", hashtest[i]);
 	//}
-	//printf("\n");
+	// printf("\n");
 
 	size_t pwd_len = 8;
 
-	char * password = calloc(pwd_len+1, sizeof(char));
+	char * password = calloc(pwd_len + 1, sizeof(char));
 	if (!password) {
 		printf("%s\n", strerror(ENOMEM));
 		return 1;
@@ -54,8 +53,7 @@ main(const int argc, const char * const * const argv)
 				return 1;
 			}
 
-			if ((~hash[0] & 0xff) == 0xff &&
-					(~hash[1] & 0xff) == 0xff &&
+			if ((~hash[0] & 0xff) == 0xff && (~hash[1] & 0xff) == 0xff &&
 					(~hash[2] & 0xf0) == 0xf0) {
 
 				unsigned int pos = hash[2] & 0x0f;
@@ -71,16 +69,17 @@ main(const int argc, const char * const * const argv)
 				password[pos] = raw[0];
 				chars_found[pos] = true;
 
-				//printf("Character found. String index: %zu Interesting byte: %s Hash index: %d Password so far: ",
+				// printf("Character found. String index: %zu Interesting byte: %s Hash
+				// index: %d Password so far: ",
 				//		i, raw, hash_index);
-				//for (size_t j = 0; j < pwd_len; j++) {
+				// for (size_t j = 0; j < pwd_len; j++) {
 				//	if (chars_found[j]) {
 				//		printf("%c", password[j]);
 				//	} else {
 				//		printf("_");
 				//	}
 				//}
-				//printf("\n");
+				// printf("\n");
 				free(hash);
 				hash_index++;
 				break;
@@ -89,7 +88,7 @@ main(const int argc, const char * const * const argv)
 			free(hash);
 			hash_index++;
 
-			//if (hash_index % 100000 == 0) {
+			// if (hash_index % 100000 == 0) {
 			//	printf("%d... (%zu)\n", hash_index, i);
 			//}
 		}
@@ -128,7 +127,7 @@ __md5(const char * const s)
 
 	EVP_DigestFinal_ex(evp, buf, NULL);
 
-	//EVP_MD_CTX_cleanup();
+	// EVP_MD_CTX_cleanup();
 	EVP_MD_CTX_destroy(evp);
 
 	return buf;

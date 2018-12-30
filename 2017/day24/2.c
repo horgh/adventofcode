@@ -25,30 +25,20 @@ struct bridge {
 	int strength;
 };
 
-static void
-destroy_components(
-		struct component * * const,
-		size_t const);
-static struct component *
-parse_line(char const * const, size_t const);
-static void
-print_component(struct component const * const);
-static struct bridge *
-link_components(
-		struct component * * const,
+static void destroy_components(struct component ** const, size_t const);
+static struct component * parse_line(char const * const, size_t const);
+static void print_component(struct component const * const);
+static struct bridge * link_components(struct component ** const,
 		size_t const,
 		struct htable * const,
 		struct component * const);
-static struct bridge *
-rate_bridge(
-		struct component * * const,
-		size_t const);
+static struct bridge * rate_bridge(struct component ** const, size_t const);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 	char buf[4096] = {0};
@@ -57,7 +47,7 @@ main(int const argc, char const * const * const argv)
 	size_t num_components = 0;
 
 	while (1) {
-		if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+		if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				destroy_components(components, num_components);
@@ -124,8 +114,8 @@ main(int const argc, char const * const * const argv)
 				return 1;
 			}
 
-			struct bridge * const b2 = link_components(components, num_components, h,
-					c);
+			struct bridge * const b2 =
+					link_components(components, num_components, h, c);
 			if (!b2) {
 				fprintf(stderr, "link_components()\n");
 				destroy_components(components, num_components);
@@ -136,7 +126,9 @@ main(int const argc, char const * const * const argv)
 
 			if (DEBUG) {
 				printf("starting with component %d yields length %d, strength %d\n",
-						c->id, b2->length, b2->strength);
+						c->id,
+						b2->length,
+						b2->strength);
 			}
 
 			if (b2->length >= b->length && b2->strength >= b->strength) {
@@ -172,8 +164,7 @@ main(int const argc, char const * const * const argv)
 
 static void
 destroy_components(
-		struct component * * const components,
-		size_t const num_components)
+		struct component ** const components, size_t const num_components)
 {
 	if (!components) {
 		return;
@@ -193,7 +184,7 @@ parse_line(char const * const s, size_t const id)
 		return NULL;
 	}
 
-	c->id = (int) id;
+	c->id = (int)id;
 
 	char const * ptr = s;
 
@@ -237,8 +228,7 @@ print_component(struct component const * const c)
 }
 
 static struct bridge *
-link_components(
-		struct component * * const components,
+link_components(struct component ** const components,
 		size_t const num_components,
 		struct htable * const h,
 		struct component * const cur)
@@ -280,12 +270,14 @@ link_components(
 
 			if (DEBUG) {
 				printf("linking component %d (port %d) with component %d (port %d)\n",
-						cur->id, unused_port->strength,
-						c->id, c->ports[j].strength);
+						cur->id,
+						unused_port->strength,
+						c->id,
+						c->ports[j].strength);
 			}
 
-			struct bridge * const b2 = link_components(components, num_components, h,
-					c);
+			struct bridge * const b2 =
+					link_components(components, num_components, h, c);
 			if (!b2) {
 				fprintf(stderr, "link_components()\n");
 				free(b);
@@ -326,9 +318,7 @@ link_components(
 }
 
 static struct bridge *
-rate_bridge(
-		struct component * * const components,
-		size_t const num_components)
+rate_bridge(struct component ** const components, size_t const num_components)
 {
 	struct bridge * const b = calloc(1, sizeof(struct bridge));
 	if (!b) {

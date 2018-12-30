@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-int siphash(const uint8_t *, const size_t, const uint8_t *,
-            uint8_t *, const size_t);
+int siphash(
+		const uint8_t *, const size_t, const uint8_t *, uint8_t *, const size_t);
 
 #endif

@@ -6,8 +6,8 @@
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	int feet = 0;
 	while (1) {
@@ -32,11 +32,11 @@ main(int const argc, char const * const * const argv)
 
 		int const h = atoi(ptr);
 
-		int const top_bottom = l*w;
-		int const side_0 = w*h;
-		int const side_1 = h*l;
+		int const top_bottom = l * w;
+		int const side_0 = w * h;
+		int const side_1 = h * l;
 
-		feet += 2*top_bottom+2*side_0+2*side_1;
+		feet += 2 * top_bottom + 2 * side_0 + 2 * side_1;
 
 		if (top_bottom <= side_0 && top_bottom <= side_1) {
 			feet += top_bottom;

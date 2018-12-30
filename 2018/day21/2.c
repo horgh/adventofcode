@@ -9,19 +9,19 @@
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	int32_t const r0 = 7224965;
 	int32_t r5 = 0;
 	struct htable * const h = hash_init(1024);
 	assert(h != NULL);
 	while (1) {
-		int32_t r4 = r5|65536;
+		int32_t r4 = r5 | 65536;
 		r5 = 13284195;
 
 		while (1) {
-			int32_t r3 = r4&255;
+			int32_t r3 = r4 & 255;
 			r5 += r3;
 			r5 &= 16777215;
 			r5 *= 65899;
@@ -32,7 +32,7 @@ main(int const argc, char const * const * const argv)
 
 			r3 = 0;
 			while (1) {
-				int32_t r2 = r3+1;
+				int32_t r2 = r3 + 1;
 				r2 *= 256;
 				if (r2 > r4) {
 					break;

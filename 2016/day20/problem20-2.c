@@ -19,17 +19,11 @@ struct Range {
 	uint64_t end;
 };
 
-static void
-__destroy_ranges(struct Range * *);
-static uint64_t
-__find_allowed(struct Range * *, size_t);
-static int
-__sort_ranges(const void *, const void *);
-static struct Range * *
-__combine_ranges(struct Range * *, size_t *);
-static void
-__remove_range(struct Range * *, const size_t,
-		const size_t);
+static void __destroy_ranges(struct Range **);
+static uint64_t __find_allowed(struct Range **, size_t);
+static int __sort_ranges(const void *, const void *);
+static struct Range ** __combine_ranges(struct Range **, size_t *);
+static void __remove_range(struct Range **, const size_t, const size_t);
 
 int
 main(const int argc, const char * const * const argv)
@@ -46,7 +40,7 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
-	struct Range * * const ranges = calloc(MAX_RANGES, sizeof(struct Range *));
+	struct Range ** const ranges = calloc(MAX_RANGES, sizeof(struct Range *));
 	if (!ranges) {
 		printf("%s\n", strerror(errno));
 		fclose(fh);
@@ -108,7 +102,8 @@ main(const int argc, const char * const * const argv)
 		range->start = start;
 		range->end = end;
 
-		//printf("read range %" PRIu64 " to %" PRIu64 "\n", range->start, range->end);
+		// printf("read range %" PRIu64 " to %" PRIu64 "\n", range->start,
+		// range->end);
 	}
 
 	if (fclose(fh) != 0) {
@@ -125,7 +120,7 @@ main(const int argc, const char * const * const argv)
 }
 
 static void
-__destroy_ranges(struct Range * * ranges)
+__destroy_ranges(struct Range ** ranges)
 {
 	if (!ranges) {
 		return;
@@ -143,35 +138,36 @@ __destroy_ranges(struct Range * * ranges)
 }
 
 static uint64_t
-__find_allowed(struct Range * * ranges, size_t ranges_sz)
+__find_allowed(struct Range ** ranges, size_t ranges_sz)
 {
 	qsort(ranges, ranges_sz, sizeof(struct Range *), __sort_ranges);
-	//printf("%zu ranges\n", ranges_sz);
+	// printf("%zu ranges\n", ranges_sz);
 	ranges = __combine_ranges(ranges, &ranges_sz);
-	//printf("%zu ranges\n", ranges_sz);
+	// printf("%zu ranges\n", ranges_sz);
 
-	//for (size_t i = 0; i < ranges_sz; i++) {
+	// for (size_t i = 0; i < ranges_sz; i++) {
 	//	struct Range * const range = ranges[i];
-	//	printf("have range %" PRIu64 " to %" PRIu64 "\n", range->start, range->end);
+	//	printf("have range %" PRIu64 " to %" PRIu64 "\n", range->start,
+	//range->end);
 	//}
 
 	uint64_t allowed = 0;
-	for (size_t i = 0; i < ranges_sz-1; i++) {
+	for (size_t i = 0; i < ranges_sz - 1; i++) {
 		struct Range * const range0 = ranges[i];
-		struct Range * const range1 = ranges[i+1];
+		struct Range * const range1 = ranges[i + 1];
 
 		if (range1->start > range0->end) {
 			allowed += range1->start - range0->end - 1;
 		}
-		//printf("range0 %" PRIu64 " to %" PRIu64
+		// printf("range0 %" PRIu64 " to %" PRIu64
 		//		" range1 %" PRIu64 " to %" PRIu64 " (%" PRIu64 ")\n",
 		//		range0->start, range0->end,
 		//		range1->start, range1->end,
 		//		allowed);
 	}
 
-	if (ranges[ranges_sz-1]->end < LAST_IP) {
-		allowed += LAST_IP-ranges[ranges_sz-1]->end;
+	if (ranges[ranges_sz - 1]->end < LAST_IP) {
+		allowed += LAST_IP - ranges[ranges_sz - 1]->end;
 	}
 
 	return allowed;
@@ -204,17 +200,17 @@ __sort_ranges(const void * p1, const void * p2)
 	return 0;
 }
 
-static struct Range * *
-__combine_ranges(struct Range * * ranges, size_t * ranges_sz)
+static struct Range **
+__combine_ranges(struct Range ** ranges, size_t * ranges_sz)
 {
-	for (size_t i = 0; i < *ranges_sz-1; i++) {
+	for (size_t i = 0; i < *ranges_sz - 1; i++) {
 		struct Range * const range0 = ranges[i];
 
-		while (i+1 < *ranges_sz) {
-			struct Range * const range1 = ranges[i+1];
+		while (i + 1 < *ranges_sz) {
+			struct Range * const range1 = ranges[i + 1];
 
 			if (range0->start == range1->start) {
-				//printf("combining: %" PRIu64 " to %" PRIu64
+				// printf("combining: %" PRIu64 " to %" PRIu64
 				//		" and %" PRIu64 " to %" PRIu64 "\n", range0->start, range0->end,
 				//		range1->start, range1->end);
 
@@ -222,13 +218,13 @@ __combine_ranges(struct Range * * ranges, size_t * ranges_sz)
 					range0->end = range1->end;
 				}
 
-				__remove_range(ranges, *ranges_sz, i+1);
+				__remove_range(ranges, *ranges_sz, i + 1);
 				*ranges_sz -= 1;
 				continue;
 			}
 
 			if (range0->end > range1->start) {
-				//printf("combining: %" PRIu64 " to %" PRIu64
+				// printf("combining: %" PRIu64 " to %" PRIu64
 				//		" and %" PRIu64 " to %" PRIu64 "\n", range0->start, range0->end,
 				//		range1->start, range1->end);
 
@@ -236,7 +232,7 @@ __combine_ranges(struct Range * * ranges, size_t * ranges_sz)
 					range0->end = range1->end;
 				}
 
-				__remove_range(ranges, *ranges_sz, i+1);
+				__remove_range(ranges, *ranges_sz, i + 1);
 				*ranges_sz -= 1;
 				continue;
 			}
@@ -249,14 +245,14 @@ __combine_ranges(struct Range * * ranges, size_t * ranges_sz)
 }
 
 static void
-__remove_range(struct Range * * ranges, const size_t ranges_sz,
-		const size_t index)
+__remove_range(
+		struct Range ** ranges, const size_t ranges_sz, const size_t index)
 {
 	free(ranges[index]);
 
-	for (size_t i = index; i < ranges_sz-1; i++) {
-		ranges[i] = ranges[i+1];
+	for (size_t i = index; i < ranges_sz - 1; i++) {
+		ranges[i] = ranges[i + 1];
 	}
 
-	ranges[ranges_sz-1] = NULL;
+	ranges[ranges_sz - 1] = NULL;
 }

@@ -14,12 +14,9 @@ struct Range {
 	uint64_t end;
 };
 
-static void
-__destroy_ranges(struct Range * *);
-static uint64_t
-__find_lowest(struct Range * *, const size_t);
-static int
-__sort_ranges(const void *, const void *);
+static void __destroy_ranges(struct Range **);
+static uint64_t __find_lowest(struct Range **, const size_t);
+static int __sort_ranges(const void *, const void *);
 
 int
 main(const int argc, const char * const * const argv)
@@ -36,7 +33,7 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
-	struct Range * * const ranges = calloc(MAX_RANGES, sizeof(struct Range *));
+	struct Range ** const ranges = calloc(MAX_RANGES, sizeof(struct Range *));
 	if (!ranges) {
 		printf("%s\n", strerror(errno));
 		fclose(fh);
@@ -98,7 +95,8 @@ main(const int argc, const char * const * const argv)
 		range->start = start;
 		range->end = end;
 
-		//printf("read range %" PRIu64 " to %" PRIu64 "\n", range->start, range->end);
+		// printf("read range %" PRIu64 " to %" PRIu64 "\n", range->start,
+		// range->end);
 	}
 
 	if (fclose(fh) != 0) {
@@ -115,7 +113,7 @@ main(const int argc, const char * const * const argv)
 }
 
 static void
-__destroy_ranges(struct Range * * ranges)
+__destroy_ranges(struct Range ** ranges)
 {
 	if (!ranges) {
 		return;
@@ -133,7 +131,7 @@ __destroy_ranges(struct Range * * ranges)
 }
 
 static uint64_t
-__find_lowest(struct Range * * ranges, const size_t ranges_sz)
+__find_lowest(struct Range ** ranges, const size_t ranges_sz)
 {
 	qsort(ranges, ranges_sz, sizeof(struct Range *), __sort_ranges);
 
@@ -141,7 +139,7 @@ __find_lowest(struct Range * * ranges, const size_t ranges_sz)
 	for (size_t i = 0; i < ranges_sz; i++) {
 		struct Range * const range = ranges[i];
 		if (lowest >= range->start && lowest <= range->end) {
-			lowest = range->end+1;
+			lowest = range->end + 1;
 		}
 	}
 

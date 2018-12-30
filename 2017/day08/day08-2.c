@@ -8,12 +8,12 @@
 
 #define INC 0
 #define DEC 1
-#define GT  2
-#define LT  3
-#define GE  4
-#define EQ  5
-#define LE  6
-#define NE  7
+#define GT 2
+#define LT 3
+#define GE 4
+#define EQ 5
+#define LE 6
+#define NE 7
 
 struct Instruction {
 	char * reg;
@@ -24,23 +24,18 @@ struct Instruction {
 	int cond_val;
 };
 
-static struct Instruction *
-parse_line(char const * const);
-static void
-instruction_destroy(struct Instruction * const);
-static void
-instruction_print(struct Instruction * const);
-static char const *
-op_to_string(int const);
-static bool
-cond(struct Instruction const * const, int const);
-static int
-get_largest_value_in_registers(struct htable const * const);
+static struct Instruction * parse_line(char const * const);
+static void instruction_destroy(struct Instruction * const);
+static void instruction_print(struct Instruction * const);
+static char const * op_to_string(int const);
+static bool cond(struct Instruction const * const, int const);
+static int get_largest_value_in_registers(struct htable const * const);
 
-int main(int const argc, char const * const * const argv)
+int
+main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 
@@ -55,7 +50,7 @@ int main(int const argc, char const * const * const argv)
 	int largest = 0;
 
 	while (1) {
-		if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+		if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 			if (!feof(fh)) {
 				fprintf(stderr, "fgets(): %s\n", strerror(errno));
 				hash_free(h, free);
@@ -176,14 +171,14 @@ parse_line(char const * const s)
 		return NULL;
 	}
 
-	instr->reg = calloc(strlen(s)+1, sizeof(char));
+	instr->reg = calloc(strlen(s) + 1, sizeof(char));
 	if (!instr->reg) {
 		fprintf(stderr, "calloc(): %s\n", strerror(errno));
 		instruction_destroy(instr);
 		return NULL;
 	}
 
-	instr->cond_reg = calloc(strlen(s)+1, sizeof(char));
+	instr->cond_reg = calloc(strlen(s) + 1, sizeof(char));
 	if (!instr->cond_reg) {
 		fprintf(stderr, "calloc(): %s\n", strerror(errno));
 		instruction_destroy(instr);
@@ -222,7 +217,7 @@ parse_line(char const * const s)
 		ptr++;
 	}
 
-	if (*ptr != 'i' || *(ptr+1) != 'f' || *(ptr+2) != ' ') {
+	if (*ptr != 'i' || *(ptr + 1) != 'f' || *(ptr + 2) != ' ') {
 		fprintf(stderr, "missing 'if ', at [%s]\n", ptr);
 		instruction_destroy(instr);
 		return NULL;
@@ -300,8 +295,12 @@ static void
 instruction_print(struct Instruction * const instr)
 {
 	printf("reg [%s] op [%s] val [%d] cond_reg [%s] cond_op [%s] cond_val [%d]\n",
-			instr->reg, op_to_string(instr->op), instr->val, instr->cond_reg,
-			op_to_string(instr->cond_op), instr->cond_val);
+			instr->reg,
+			op_to_string(instr->op),
+			instr->val,
+			instr->cond_reg,
+			op_to_string(instr->cond_op),
+			instr->cond_val);
 }
 
 static char const *
@@ -356,7 +355,9 @@ cond(struct Instruction const * const instr, int const val)
 		return val != instr->cond_val;
 	}
 
-	fprintf(stderr, "unrecognized op %s, %d\n", op_to_string(instr->cond_op),
+	fprintf(stderr,
+			"unrecognized op %s, %d\n",
+			op_to_string(instr->cond_op),
 			instr->cond_op);
 	return false;
 }
@@ -364,7 +365,7 @@ cond(struct Instruction const * const instr, int const val)
 static int
 get_largest_value_in_registers(struct htable const * const h)
 {
-	void * * const keys = hash_get_keys(h);
+	void ** const keys = hash_get_keys(h);
 	if (!keys) {
 		fprintf(stderr, "hash_get_keys()\n");
 		return -1;
@@ -374,7 +375,7 @@ get_largest_value_in_registers(struct htable const * const h)
 	for (size_t i = 0; keys[i]; i++) {
 		int * const val = hash_get(h, keys[i]);
 		if (!val) {
-			fprintf(stderr, "hash_get(key=%s)\n", (char *) keys[i]);
+			fprintf(stderr, "hash_get(key=%s)\n", (char *)keys[i]);
 			hash_free_keys(keys);
 			return -1;
 		}

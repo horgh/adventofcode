@@ -3,10 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static uint64_t
-calc_next(uint64_t const,
-		uint64_t const,
-		uint64_t const);
+static uint64_t calc_next(uint64_t const, uint64_t const, uint64_t const);
 
 int
 main(int const argc, char const * const * const argv)
@@ -16,8 +13,8 @@ main(int const argc, char const * const * const argv)
 		return 1;
 	}
 
-	uint64_t const a_start = (uint64_t) atoi(argv[1]);
-	uint64_t const b_start = (uint64_t) atoi(argv[2]);
+	uint64_t const a_start = (uint64_t)atoi(argv[1]);
+	uint64_t const b_start = (uint64_t)atoi(argv[2]);
 
 	uint64_t const a_factor = 16807;
 	uint64_t const b_factor = 48271;
@@ -54,5 +51,5 @@ calc_next(uint64_t const previous_value,
 		uint64_t const factor,
 		uint64_t const divisor)
 {
-	return (previous_value*factor)%divisor;
+	return (previous_value * factor) % divisor;
 }

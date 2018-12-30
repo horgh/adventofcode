@@ -1,7 +1,7 @@
 #include "map.h"
 
-#include <errno.h>
 #include "siphash.h"
+#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,31 +11,41 @@
 
 #define SIP_KEY_LEN 16
 
-const uint8_t sip_key[SIP_KEY_LEN] = {
-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-	0x08, 0x09, 0x0A, 0x0B, 0x0C, 0X0D, 0x0E, 0x0F
-};
+const uint8_t sip_key[SIP_KEY_LEN] = {0x00,
+		0x01,
+		0x02,
+		0x03,
+		0x04,
+		0x05,
+		0x06,
+		0x07,
+		0x08,
+		0x09,
+		0x0A,
+		0x0B,
+		0x0C,
+		0X0D,
+		0x0E,
+		0x0F};
 
-static int
-__hasher(char const * const, size_t const, size_t const);
-static bool
-__hash_set(struct htable * const, int const,
-		void const * const, size_t const, void * const);
-static bool
-__hash_delete(
-		struct htable * const,
+static int __hasher(char const * const, size_t const, size_t const);
+static bool __hash_set(struct htable * const,
 		int const,
 		void const * const,
 		size_t const,
-		void (void * const));
-static void
-__hash_counter(struct hnode const * const, void * const);
+		void * const);
+static bool __hash_delete(struct htable * const,
+		int const,
+		void const * const,
+		size_t const,
+		void(void * const));
+static void __hash_counter(struct hnode const * const, void * const);
 
 struct htable *
 hash_init(size_t const n)
 {
 	struct htable * const h = calloc(1, sizeof(struct htable));
-	if (!h)  {
+	if (!h) {
 		return NULL;
 	}
 
@@ -74,7 +84,7 @@ hash_copy(struct htable const * const h)
 	}
 
 	for (size_t i = 0; i < h->size; i++) {
-		struct hnode const * nptr = *(h->nodes+i);
+		struct hnode const * nptr = *(h->nodes + i);
 		struct hnode * nptr2 = NULL;
 
 		while (nptr) {
@@ -114,8 +124,7 @@ hash_copy(struct htable const * const h)
 	return h2;
 }
 
-__attribute__((pure))
-static int
+__attribute__((pure)) static int
 __hasher(char const * const key, size_t const keylen, size_t const n)
 {
 	if (!key || keylen == 0) {
@@ -126,21 +135,24 @@ __hasher(char const * const key, size_t const keylen, size_t const n)
 
 #ifdef USE_SIP_HASH
 	uint64_t hash = 0;
-	siphash((uint8_t const * const) key, (uint64_t) keylen+1, sip_key,
-			(uint8_t *) &hash, 8);
+	siphash((uint8_t const * const)key,
+			(uint64_t)keylen + 1,
+			sip_key,
+			(uint8_t *)&hash,
+			8);
 
-	actual_hash = (int) hash % (int) n;
+	actual_hash = (int)hash % (int)n;
 	actual_hash = abs(actual_hash);
 #else
 	int hash = 0;
 	int const mult = 31;
 
 	for (size_t i = 0; i < keylen; i++) {
-		hash += mult*hash+key[i];
+		hash += mult * hash + key[i];
 	}
 	hash = abs(hash);
 
-	actual_hash = hash%(int)n;
+	actual_hash = hash % (int)n;
 #endif
 
 #ifdef TEST_MAP
@@ -154,8 +166,7 @@ __hasher(char const * const key, size_t const keylen, size_t const n)
 //
 // We make a copy of the key.
 bool
-hash_set(struct htable * const h, char const * const key,
-		void * const value)
+hash_set(struct htable * const h, char const * const key, void * const value)
 {
 	size_t const keylen = strlen(key);
 	if (!h || !key || keylen == 0) {
@@ -174,7 +185,7 @@ hash_set(struct htable * const h, char const * const key,
 
 	int const hash = __hasher(key, keylen, h->size);
 
-	return __hash_set(h, hash, key, keylen+1, value);
+	return __hash_set(h, hash, key, keylen + 1, value);
 }
 
 bool
@@ -184,14 +195,17 @@ hash_set_i(struct htable * const h, int const key, void * const value)
 		return false;
 	}
 
-	int const hash = abs(key) % (int) h->size;
+	int const hash = abs(key) % (int)h->size;
 
 	return __hash_set(h, hash, &key, sizeof(int), value);
 }
 
 static bool
-__hash_set(struct htable * const h, int const hash,
-		void const * const key, size_t const key_size, void * const value)
+__hash_set(struct htable * const h,
+		int const hash,
+		void const * const key,
+		size_t const key_size,
+		void * const value)
 {
 	if (!h || !key) {
 		fprintf(stderr, "__hash_set: %s\n", strerror(EINVAL));
@@ -261,8 +275,7 @@ __hash_set(struct htable * const h, int const hash,
 	return true;
 }
 
-__attribute__((pure))
-void *
+__attribute__((pure)) void *
 hash_get(struct htable const * const h, char const * const key)
 {
 	size_t const keylen = strlen(key);
@@ -285,18 +298,17 @@ hash_get(struct htable const * const h, char const * const key)
 	return NULL;
 }
 
-__attribute__((pure))
-void *
+__attribute__((pure)) void *
 hash_get_i(struct htable const * const h, int const key)
 {
 	if (!h) {
 		return NULL;
 	}
 
-	int const hash = abs(key) % (int) h->size;
+	int const hash = abs(key) % (int)h->size;
 	struct hnode const * nptr = h->nodes[hash];
 	while (nptr) {
-		int const key2 = *((int *) nptr->key);
+		int const key2 = *((int *)nptr->key);
 		if (key2 == key) {
 			return nptr->value;
 		}
@@ -307,8 +319,7 @@ hash_get_i(struct htable const * const h, int const key)
 	return NULL;
 }
 
-__attribute__((pure))
-bool
+__attribute__((pure)) bool
 hash_has_key(struct htable const * const h, char const * const key)
 {
 	size_t const keylen = strlen(key);
@@ -331,18 +342,17 @@ hash_has_key(struct htable const * const h, char const * const key)
 	return false;
 }
 
-__attribute__((pure))
-bool
+__attribute__((pure)) bool
 hash_has_key_i(struct htable const * const h, int const key)
 {
 	if (!h) {
 		return false;
 	}
 
-	int const hash = abs(key) % (int) h->size;
+	int const hash = abs(key) % (int)h->size;
 	struct hnode const * nptr = h->nodes[hash];
 	while (nptr) {
-		int const key2 = *((int *) nptr->key);
+		int const key2 = *((int *)nptr->key);
 		if (key2 == key) {
 			return true;
 		}
@@ -354,8 +364,8 @@ hash_has_key_i(struct htable const * const h, int const key)
 }
 
 bool
-hash_delete(struct htable * const h, char const * const key,
-		void fn(void * const))
+hash_delete(
+		struct htable * const h, char const * const key, void fn(void * const))
 {
 	size_t const keylen = strlen(key);
 	if (!h || !key || keylen == 0) {
@@ -363,25 +373,24 @@ hash_delete(struct htable * const h, char const * const key,
 	}
 
 	int const hash = __hasher(key, keylen, h->size);
-	return __hash_delete(h, hash, key, keylen+1, fn);
+	return __hash_delete(h, hash, key, keylen + 1, fn);
 }
 
 bool
 hash_delete_i(struct htable * const h, int const key, void fn(void * const))
 {
-	int const hash = abs(key) % (int) h->size;
+	int const hash = abs(key) % (int)h->size;
 	return __hash_delete(h, hash, &key, sizeof(int), fn);
 }
 
 static bool
-__hash_delete(
-		struct htable * const h,
+__hash_delete(struct htable * const h,
 		int const hash,
 		void const * const key,
 		size_t const key_size,
 		void fn(void * const))
 {
-	struct hnode * nptr = *(h->nodes+hash);
+	struct hnode * nptr = *(h->nodes + hash);
 
 	if (!nptr) {
 		return false;
@@ -430,7 +439,7 @@ __hash_delete(
 // Retrieve all keys in the hash.
 //
 // Free the returned memory with hash_free_keys().
-void * *
+void **
 hash_get_keys(struct htable const * const h)
 {
 	if (!h) {
@@ -441,7 +450,7 @@ hash_get_keys(struct htable const * const h)
 	// Possibly we could calculate exactly the size we need ahead of time.
 	size_t array_size = h->size;
 
-	void * * keys = calloc(array_size, sizeof(void *));
+	void ** keys = calloc(array_size, sizeof(void *));
 	if (!keys) {
 		return NULL;
 	}
@@ -449,22 +458,22 @@ hash_get_keys(struct htable const * const h)
 	size_t keys_i = 0;
 
 	for (size_t i = 0; i < h->size; i++) {
-		const struct hnode * nptr = *(h->nodes+i);
+		const struct hnode * nptr = *(h->nodes + i);
 
 		while (nptr) {
 			// Terminate with null at end always.
-			if (keys_i == array_size-1) {
+			if (keys_i == array_size - 1) {
 				// TODO: overflow
-				size_t const new_array_size = array_size*2;
+				size_t const new_array_size = array_size * 2;
 
 				// TODO: overflow?
-				void * * const new_keys = realloc(keys, new_array_size*sizeof(void *));
+				void ** const new_keys = realloc(keys, new_array_size * sizeof(void *));
 				if (!new_keys) {
 					free(keys);
 					return NULL;
 				}
 
-				memset(new_keys+array_size, 0, array_size*sizeof(void *));
+				memset(new_keys + array_size, 0, array_size * sizeof(void *));
 
 				array_size = new_array_size;
 				keys = new_keys;
@@ -488,7 +497,7 @@ hash_get_keys(struct htable const * const h)
 }
 
 void
-hash_free_keys(void * * const keys)
+hash_free_keys(void ** const keys)
 {
 	if (!keys) {
 		return;
@@ -504,14 +513,15 @@ hash_free_keys(void * * const keys)
 // p gets passed to each node. You can use it to carry around state.
 bool
 hash_iterate(struct htable const * const h,
-		void fn(struct hnode const * const, void * const), void * const p)
+		void fn(struct hnode const * const, void * const),
+		void * const p)
 {
 	if (!h || !fn) {
 		return false;
 	}
 
 	for (size_t i = 0; i < h->size; i++) {
-		struct hnode const * nptr = *(h->nodes+i);
+		struct hnode const * nptr = *(h->nodes + i);
 
 		while (nptr) {
 			fn(nptr, p);
@@ -522,8 +532,7 @@ hash_iterate(struct htable const * const h,
 	return true;
 }
 
-__attribute__((pure))
-int
+__attribute__((pure)) int
 hash_count_elements(struct htable const * const h)
 {
 	int i = 0;
@@ -536,7 +545,7 @@ hash_count_elements(struct htable const * const h)
 static void
 __hash_counter(struct hnode const * const h, void * const p)
 {
-	(void) h;
+	(void)h;
 
 	int * const i = p;
 
@@ -552,7 +561,7 @@ hash_free(struct htable * const h, void fn(void * const))
 
 	if (h->nodes) {
 		for (size_t i = 0; i < h->size; i++) {
-			struct hnode * nptr = *(h->nodes+i);
+			struct hnode * nptr = *(h->nodes + i);
 
 			while (nptr) {
 				struct hnode * next = nptr->next;
@@ -583,18 +592,15 @@ hash_free(struct htable * const h, void fn(void * const))
 
 #include <assert.h>
 
-static void
-__get_value(const struct hnode * const, void * const);
-static void
-test_hash_get_keys(void);
-static void
-test_int_keys(void);
+static void __get_value(const struct hnode * const, void * const);
+static void test_hash_get_keys(void);
+static void test_int_keys(void);
 
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct htable * h = NULL;
 
@@ -606,7 +612,6 @@ main(int const argc, char const * const * const argv)
 	h = hash_init(size);
 	assert(h != NULL);
 
-
 	// blah => 5
 
 	const char * key1 = "blah";
@@ -616,10 +621,9 @@ main(int const argc, char const * const * const argv)
 	assert(hash_set(h, key1, value1));
 
 	found_value = hash_get(h, key1);
-	found_int = * (int *) found_value;
+	found_int = *(int *)found_value;
 	printf("found %d\n", found_int);
 	assert(found_int == *value1);
-
 
 	// blah2 => 10
 
@@ -630,15 +634,14 @@ main(int const argc, char const * const * const argv)
 	assert(hash_set(h, key2, value2));
 
 	found_value = hash_get(h, key2);
-	found_int = * (int *) found_value;
+	found_int = *(int *)found_value;
 	printf("found %d\n", found_int);
 	assert(found_int == *value2);
 
 	found_value = hash_get(h, key1);
-	found_int = * (int *) found_value;
+	found_int = *(int *)found_value;
 	printf("found %d\n", found_int);
 	assert(found_int == *value1);
-
 
 	// Test hash_iterate
 	int i = -1;
@@ -646,9 +649,8 @@ main(int const argc, char const * const * const argv)
 	// 10 happens to have highest hash.
 	assert(i == 10);
 
-
 	// Test hash_get_keys
-	void * * const keys = hash_get_keys(h);
+	void ** const keys = hash_get_keys(h);
 
 	for (size_t j = 0; keys[j]; j++) {
 		char const * const key = keys[j];
@@ -657,18 +659,15 @@ main(int const argc, char const * const * const argv)
 
 	hash_free_keys(keys);
 
-
 	// Test hash_count_elements
 	assert(hash_count_elements(h) == 2);
 
 	assert(hash_delete(h, "blah2", free));
 	assert(hash_count_elements(h) == 1);
 
-
 	// Test hash_has_key
 	assert(hash_has_key(h, "blah"));
 	assert(!hash_has_key(h, "blah2"));
-
 
 	// Test hash_copy
 	struct htable * h2 = hash_copy(h);
@@ -677,7 +676,6 @@ main(int const argc, char const * const * const argv)
 	assert(hash_has_key(h2, "blah"));
 	assert(!hash_has_key(h2, "blah2"));
 	assert(hash_free(h2, NULL));
-
 
 	assert(hash_free(h, free));
 
@@ -714,7 +712,7 @@ test_hash_get_keys(void)
 		char const * const key1 = "def";
 		assert(hash_set(h, key1, NULL));
 
-		void * * const keys = hash_get_keys(h);
+		void ** const keys = hash_get_keys(h);
 		assert(keys != NULL);
 
 		assert(strcmp(keys[0], "abc") == 0);
@@ -745,7 +743,7 @@ test_int_keys(void)
 		assert(hash_has_key_i(h, i));
 
 		void const * const v = hash_get_i(h, i);
-		int const j2 = *((int const *) v);
+		int const j2 = *((int const *)v);
 		assert(j2 == i);
 
 		assert(hash_delete_i(h, i, free));

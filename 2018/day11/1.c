@@ -18,8 +18,8 @@ main(int const argc, char const * const * const argv)
 
 	for (int y = 0; y < SZ; y++) {
 		for (int x = 0; x < SZ; x++) {
-			int const rack_id = x+1+10;
-			int power_level = rack_id*(y+1);
+			int const rack_id = x + 1 + 10;
+			int power_level = rack_id * (y + 1);
 			power_level += serial;
 			power_level *= rack_id;
 			if (power_level < 100) {
@@ -35,11 +35,11 @@ main(int const argc, char const * const * const argv)
 	int max_power = 0;
 	int max_x = 0;
 	int max_y = 0;
-	for (int y = 0; y < SZ-2; y++) {
-		for (int x = 0; x < SZ-2; x++) {
+	for (int y = 0; y < SZ - 2; y++) {
+		for (int x = 0; x < SZ - 2; x++) {
 			int power = 0;
-			for (int yy = y; yy < y+3; yy++) {
-				for (int xx = x; xx < x+3; xx++) {
+			for (int yy = y; yy < y + 3; yy++) {
+				for (int xx = x; xx < x + 3; xx++) {
 					power += grid[xx][yy];
 				}
 			}
@@ -52,6 +52,6 @@ main(int const argc, char const * const * const argv)
 		}
 	}
 
-	printf("%d,%d\n", max_x+1, max_y+1);
+	printf("%d,%d\n", max_x + 1, max_y + 1);
 	return 0;
 }

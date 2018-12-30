@@ -9,13 +9,9 @@ struct Letter {
 	int count;
 };
 
-static void
-__destroy_index_to_letters(struct Letter * * const,
-		const size_t);
-static int
-__cmp_letters(const void *, const void *);
-static void
-__print_letters(const struct Letter * const, const size_t);
+static void __destroy_index_to_letters(struct Letter ** const, const size_t);
+static int __cmp_letters(const void *, const void *);
+static void __print_letters(const struct Letter * const, const size_t);
 
 int
 main(const int argc, const char * const * const argv)
@@ -32,14 +28,15 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
-	// Data structure: At each index we store a block of memory - 26 Letters. Ahead
+	// Data structure: At each index we store a block of memory - 26 Letters.
+	// Ahead
 	// of time I support at most max_password_len indices. If the password is
 	// longer than that we do not decode it.
 
 	size_t max_password_len = 100;
 
-	struct Letter * * index_to_letters = calloc(max_password_len,
-			sizeof(struct Letter *));
+	struct Letter ** index_to_letters =
+			calloc(max_password_len, sizeof(struct Letter *));
 	if (!index_to_letters) {
 		printf("%s\n", strerror(ENOMEM));
 		fclose(fh);
@@ -62,7 +59,7 @@ main(const int argc, const char * const * const argv)
 		struct Letter * letters = index_to_letters[i];
 
 		for (size_t j = 0; j < alphabet_len; j++) {
-			letters[j].c = (int) j+97;
+			letters[j].c = (int)j + 97;
 			letters[j].count = 0;
 		}
 	}
@@ -76,8 +73,8 @@ main(const int argc, const char * const * const argv)
 			break;
 		}
 
-		if (buf[strlen(buf)-1] == '\n') {
-			buf[strlen(buf)-1] = '\0';
+		if (buf[strlen(buf) - 1] == '\n') {
+			buf[strlen(buf) - 1] = '\0';
 		}
 
 		actual_password_len = strlen(buf);
@@ -92,12 +89,12 @@ main(const int argc, const char * const * const argv)
 		const char * ptr = buf;
 		while (*ptr != '\0') {
 			// Index in the password.
-			long int i = ptr-buf;
+			long int i = ptr - buf;
 
 			struct Letter * letters = index_to_letters[i];
 
 			// Letter index.
-			int j = *ptr-97;
+			int j = *ptr - 97;
 			if (j < 0 || j > 25) {
 				printf("character out of bounds [%c]\n", *ptr);
 				break;
@@ -114,7 +111,7 @@ main(const int argc, const char * const * const argv)
 		return 1;
 	}
 
-	int * password = calloc(actual_password_len+1, sizeof(int));
+	int * password = calloc(actual_password_len + 1, sizeof(int));
 	if (!password) {
 		__destroy_index_to_letters(index_to_letters, max_password_len);
 		return 1;
@@ -144,8 +141,8 @@ main(const int argc, const char * const * const argv)
 }
 
 static void
-__destroy_index_to_letters(struct Letter * * const index_to_letters,
-		const size_t sz)
+__destroy_index_to_letters(
+		struct Letter ** const index_to_letters, const size_t sz)
 {
 	if (!index_to_letters) {
 		return;

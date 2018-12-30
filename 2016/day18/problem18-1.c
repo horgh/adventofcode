@@ -7,8 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int
-__count_safe_tiles(const char const *, const int);
+static int __count_safe_tiles(const char const *, const int);
 
 int
 main(const int argc, const char * const * const argv)
@@ -35,7 +34,7 @@ main(const int argc, const char * const * const argv)
 			break;
 		}
 
-		row = calloc(strlen(buf)+1, sizeof(char));
+		row = calloc(strlen(buf) + 1, sizeof(char));
 		if (!row) {
 			printf("%s\n", strerror(errno));
 			fclose(fh);
@@ -69,12 +68,12 @@ __count_safe_tiles(const char const * row, const int num_rows)
 {
 	int num_safe = 0;
 
-	char * current_row = calloc(strlen(row)+1, sizeof(char));
+	char * current_row = calloc(strlen(row) + 1, sizeof(char));
 	if (!current_row) {
 		printf("%s\n", strerror(errno));
 		return -1;
 	}
-	memcpy(current_row, row, strlen(row)+1);
+	memcpy(current_row, row, strlen(row) + 1);
 
 	for (size_t i = 0; i < strlen(current_row); i++) {
 		if (current_row[i] == '.') {
@@ -82,11 +81,11 @@ __count_safe_tiles(const char const * row, const int num_rows)
 		}
 	}
 
-	//printf("%s\n", current_row);
+	// printf("%s\n", current_row);
 
 	// num_rows-1 because we count our first row.
-	for (int i = 0; i < num_rows-1; i++) {
-		char * const new_row = calloc(strlen(current_row)+1, sizeof(char));
+	for (int i = 0; i < num_rows - 1; i++) {
+		char * const new_row = calloc(strlen(current_row) + 1, sizeof(char));
 		if (!new_row) {
 			printf("%s\n", strerror(errno));
 			free(current_row);
@@ -99,10 +98,10 @@ __count_safe_tiles(const char const * row, const int num_rows)
 			char right = '.';
 
 			if (j > 0) {
-				left = current_row[j-1];
+				left = current_row[j - 1];
 			}
-			if (j < strlen(current_row)-1) {
-				right = current_row[j+1];
+			if (j < strlen(current_row) - 1) {
+				right = current_row[j + 1];
 			}
 
 			char next = '.';
@@ -127,10 +126,10 @@ __count_safe_tiles(const char const * row, const int num_rows)
 			}
 		}
 
-		memcpy(current_row, new_row, strlen(new_row)+1);
+		memcpy(current_row, new_row, strlen(new_row) + 1);
 		free(new_row);
 
-		//printf("%s\n", current_row);
+		// printf("%s\n", current_row);
 	}
 
 	free(current_row);

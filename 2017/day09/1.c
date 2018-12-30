@@ -9,19 +9,19 @@ struct Score {
 	int score;
 };
 
-static struct Score *
-get_score(char const * const, int const);
+static struct Score * get_score(char const * const, int const);
 
-int main(int const argc, char const * const * const argv)
+int
+main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 
 	char buf[20480] = {0};
 
-	if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+	if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 		fprintf(stderr, "fgets(): %s\n", strerror(errno));
 		return 1;
 	}
@@ -50,7 +50,7 @@ get_score(char const * const s, int const cur)
 
 		if (*score->s == '{') {
 			score->s++;
-			struct Score * const score2 = get_score(score->s, cur+1);
+			struct Score * const score2 = get_score(score->s, cur + 1);
 			score->score += score2->score;
 			score->s = score2->s;
 			free(score2);

@@ -9,18 +9,13 @@ struct Letter {
 	int count;
 };
 
-static int
-__get_valid_sector_id(const char * const);
-static bool
-__valid_checksum(struct Letter *, const char * const);
+static int __get_valid_sector_id(const char * const);
+static bool __valid_checksum(struct Letter *, const char * const);
 #ifdef DEBUG
-static void
-__print_letters(const struct Letter * const);
+static void __print_letters(const struct Letter * const);
 #endif
-static int
-__letter_cmp(const void *, const void *);
-static bool
-__decrypt_room(const char * const, const int);
+static int __letter_cmp(const void *, const void *);
+static bool __decrypt_room(const char * const, const int);
 
 int
 main(void)
@@ -67,7 +62,7 @@ __get_valid_sector_id(const char * const buf)
 		return -1;
 	}
 	for (int i = 0; i < 26; i++) {
-		map[i].c = i+97;
+		map[i].c = i + 97;
 	}
 
 	char sector_str[1024];
@@ -82,7 +77,7 @@ __get_valid_sector_id(const char * const buf)
 		}
 
 		if (*ptr >= 97 && *ptr <= 122) {
-			map[*ptr-97].count++;
+			map[*ptr - 97].count++;
 			ptr++;
 			continue;
 		}
@@ -100,7 +95,7 @@ __get_valid_sector_id(const char * const buf)
 		}
 
 		if (*ptr == '[') {
-			if (__valid_checksum(map, ptr+1)) {
+			if (__valid_checksum(map, ptr + 1)) {
 				free(map);
 				return atoi(sector_str);
 			}
@@ -188,7 +183,7 @@ __letter_cmp(const void * p1, const void * p2)
 static bool
 __decrypt_room(const char * const buf, const int sector_id)
 {
-	char * decrypted = calloc(strlen(buf)+1, sizeof(char));
+	char * decrypted = calloc(strlen(buf) + 1, sizeof(char));
 	if (!decrypted) {
 		printf("%s\n", strerror(ENOMEM));
 		return false;

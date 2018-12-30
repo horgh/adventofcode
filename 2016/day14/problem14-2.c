@@ -8,18 +8,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-static unsigned char *
-__generate_key(const char * const, const size_t, size_t * const);
-static bool
-__hash_repeats(const unsigned char * const, size_t, uint8_t * const);
-static bool
-__hash_repeats_in_1000(const char * const, const size_t,
-		const uint8_t);
-static bool
-__repeats_5_times(const uint8_t * const, const size_t,
-		const uint8_t);
-static unsigned char *
-__stretched_md5(const char * const);
+static unsigned char * __generate_key(
+		const char * const, const size_t, size_t * const);
+static bool __hash_repeats(
+		const unsigned char * const, size_t, uint8_t * const);
+static bool __hash_repeats_in_1000(
+		const char * const, const size_t, const uint8_t);
+static bool __repeats_5_times(
+		const uint8_t * const, const size_t, const uint8_t);
+static unsigned char * __stretched_md5(const char * const);
 
 int
 main(const int argc, const char * const * const argv)
@@ -31,7 +28,7 @@ main(const int argc, const char * const * const argv)
 	const char * const input = argv[1];
 
 	uint8_t a[4];
-	memset(a, 0, 4*sizeof(uint8_t));
+	memset(a, 0, 4 * sizeof(uint8_t));
 	uint8_t t = 0;
 	a[0] = 0xff;
 	a[1] = 0xf0;
@@ -48,22 +45,22 @@ main(const int argc, const char * const * const argv)
 	a[2] = 0xf0;
 	assert(__repeats_5_times(a, 3, 0x0f));
 
-	//const size_t hash_sz = 16;
+	// const size_t hash_sz = 16;
 	size_t current_index = 0;
 
 	for (size_t i = 0; i < 64; i++) {
-		//printf("generating key %zu...\n", i+1);
-		unsigned char * const key = __generate_key(input, current_index,
-				&current_index);
+		// printf("generating key %zu...\n", i+1);
+		unsigned char * const key =
+				__generate_key(input, current_index, &current_index);
 		if (i == 63) {
 			printf("%zu\n", current_index);
 		}
-		//printf("key %zu (index %zu): ", i, current_index);
+		// printf("key %zu (index %zu): ", i, current_index);
 		current_index++;
-		//for (size_t j = 0; j < hash_sz; j++) {
+		// for (size_t j = 0; j < hash_sz; j++) {
 		//	printf("%02x", key[j]);
 		//}
-		//printf("\n");
+		// printf("\n");
 		free(key);
 	}
 
@@ -71,8 +68,8 @@ main(const int argc, const char * const * const argv)
 }
 
 static unsigned char *
-__generate_key(const char * const input, const size_t index,
-		size_t * const current_index)
+__generate_key(
+		const char * const input, const size_t index, size_t * const current_index)
 {
 	const size_t plain_sz = 1024;
 	char * const plain = calloc(plain_sz, sizeof(char));
@@ -122,11 +119,11 @@ __generate_key(const char * const input, const size_t index,
 static bool
 __hash_repeats(const uint8_t * const hash, size_t hash_len, uint8_t * const r)
 {
-	for (size_t i = 0; i < hash_len-1; i++) {
+	for (size_t i = 0; i < hash_len - 1; i++) {
 		const uint8_t x0 = hash[i] >> 4;
-		const uint8_t x1 = (uint8_t) (hash[i] << 4) >> 4;
-		const uint8_t x2 = hash[i+1] >> 4;
-		const uint8_t x3 = (uint8_t) (hash[i+1] << 4) >> 4;
+		const uint8_t x1 = (uint8_t)(hash[i] << 4) >> 4;
+		const uint8_t x2 = hash[i + 1] >> 4;
+		const uint8_t x3 = (uint8_t)(hash[i + 1] << 4) >> 4;
 
 		if (x0 == x1 && x0 == x2) {
 			*r = x0;
@@ -143,8 +140,8 @@ __hash_repeats(const uint8_t * const hash, size_t hash_len, uint8_t * const r)
 }
 
 static bool
-__hash_repeats_in_1000(const char * const input, const size_t index,
-		const uint8_t repeater)
+__hash_repeats_in_1000(
+		const char * const input, const size_t index, const uint8_t repeater)
 {
 	const size_t plain_sz = 1024;
 	char * const plain = calloc(plain_sz, sizeof(char));
@@ -155,7 +152,7 @@ __hash_repeats_in_1000(const char * const input, const size_t index,
 
 	const size_t hash_sz = 16;
 
-	for (size_t i = index+1; i < index+1+1000; i++) {
+	for (size_t i = index + 1; i < index + 1 + 1000; i++) {
 		memset(plain, 0, plain_sz);
 		snprintf(plain, plain_sz, "%s%zu", input, i);
 
@@ -180,18 +177,18 @@ __hash_repeats_in_1000(const char * const input, const size_t index,
 }
 
 static bool
-__repeats_5_times(const uint8_t * const hash, const size_t hash_sz,
-		const uint8_t t)
+__repeats_5_times(
+		const uint8_t * const hash, const size_t hash_sz, const uint8_t t)
 {
-	for (size_t i = 0; i < hash_sz-2; i++) {
+	for (size_t i = 0; i < hash_sz - 2; i++) {
 		const uint8_t x0 = hash[i] >> 4;
-		const uint8_t x1 = (uint8_t) (hash[i] << 4) >> 4;
+		const uint8_t x1 = (uint8_t)(hash[i] << 4) >> 4;
 
-		const uint8_t x2 = hash[i+1] >> 4;
-		const uint8_t x3 = (uint8_t) (hash[i+1] << 4) >> 4;
+		const uint8_t x2 = hash[i + 1] >> 4;
+		const uint8_t x3 = (uint8_t)(hash[i + 1] << 4) >> 4;
 
-		const uint8_t x4 = hash[i+2] >> 4;
-		const uint8_t x5 = (uint8_t) (hash[i+2] << 4) >> 4;
+		const uint8_t x4 = hash[i + 2] >> 4;
+		const uint8_t x5 = (uint8_t)(hash[i + 2] << 4) >> 4;
 
 		if (x0 == t && x1 == t && x2 == t && x3 == t && x4 == t) {
 			return true;
@@ -253,7 +250,7 @@ __stretched_md5(const char * const s)
 	for (size_t i = 0; i < 2016; i++) {
 		memset(plain, 0, plain_sz);
 		for (size_t j = 0; j < hash_sz; j++) {
-			sprintf(plain+j*2, "%02x", hash[j]);
+			sprintf(plain + j * 2, "%02x", hash[j]);
 		}
 
 		unsigned char * const new_hash = md5(plain);

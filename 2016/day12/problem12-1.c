@@ -9,7 +9,7 @@
 #define MAX_ARG_LENGTH 32
 #define REGISTER_COUNT 4
 
-enum InstructionType {CPY, INC, DEC, JNZ};
+enum InstructionType { CPY, INC, DEC, JNZ };
 
 struct Instruction {
 	enum InstructionType type;
@@ -18,16 +18,13 @@ struct Instruction {
 	int number;
 };
 
-static void
-__destroy_instructions(struct Instruction * *);
-static void
-__destroy_instruction(struct Instruction *);
-static void
-__print_instruction(const struct Instruction * const);
-static int
-__register_to_index(const char * const);
+static void __destroy_instructions(struct Instruction **);
+static void __destroy_instruction(struct Instruction *);
+static void __print_instruction(const struct Instruction * const);
+static int __register_to_index(const char * const);
 
-int main(const int argc, const char * const * const argv)
+int
+main(const int argc, const char * const * const argv)
 {
 	if (argc != 3) {
 		printf("Usage: %s <input file> <part #>\n", argv[0]);
@@ -44,8 +41,8 @@ int main(const int argc, const char * const * const argv)
 
 	// Read in the program's instructions.
 
-	struct Instruction * * instructions = calloc(MAX_INSTRUCTIONS,
-			sizeof(struct Instruction *));
+	struct Instruction ** instructions =
+			calloc(MAX_INSTRUCTIONS, sizeof(struct Instruction *));
 	if (!instructions) {
 		printf("%s\n", strerror(errno));
 		fclose(fh);
@@ -116,7 +113,7 @@ int main(const int argc, const char * const * const argv)
 		}
 
 		while (*ptr != ' ' && *ptr != '\n' && *ptr != 0) {
-			if (strlen(instruction->arg0) == MAX_ARG_LENGTH-1) {
+			if (strlen(instruction->arg0) == MAX_ARG_LENGTH - 1) {
 				printf("argument 0 is too long\n");
 				fclose(fh);
 				__destroy_instructions(instructions);
@@ -143,7 +140,7 @@ int main(const int argc, const char * const * const argv)
 		}
 
 		while (*ptr != '\n' && *ptr != 0) {
-			if (strlen(instruction->arg1) == MAX_ARG_LENGTH-1) {
+			if (strlen(instruction->arg1) == MAX_ARG_LENGTH - 1) {
 				printf("argument 1 is too long\n");
 				fclose(fh);
 				__destroy_instructions(instructions);
@@ -174,7 +171,7 @@ int main(const int argc, const char * const * const argv)
 	// Run the program.
 
 	int64_t registers[REGISTER_COUNT];
-	memset(registers, 0, sizeof(int64_t)*REGISTER_COUNT);
+	memset(registers, 0, sizeof(int64_t) * REGISTER_COUNT);
 
 	// For part 2, initialize register c to 1.
 	// For part 1, leave this 0.
@@ -186,13 +183,13 @@ int main(const int argc, const char * const * const argv)
 
 	while (1) {
 		const struct Instruction * const instruction =
-			instructions[instructions_index];
+				instructions[instructions_index];
 		if (!instruction) {
-			//printf("reached invalid instruction\n");
+			// printf("reached invalid instruction\n");
 			break;
 		}
 
-		//printf("Executing ");
+		// printf("Executing ");
 		//__print_instruction(instruction);
 
 		if (instruction->type == CPY) {
@@ -236,7 +233,7 @@ int main(const int argc, const char * const * const argv)
 			}
 
 			const int distance = atoi(instruction->arg1);
-			//printf("jumping %d\n", distance);
+			// printf("jumping %d\n", distance);
 			instructions_index += distance;
 			continue;
 		}
@@ -253,7 +250,7 @@ int main(const int argc, const char * const * const argv)
 }
 
 static void
-__destroy_instructions(struct Instruction * * instructions)
+__destroy_instructions(struct Instruction ** instructions)
 {
 	if (!instructions) {
 		return;
@@ -289,11 +286,21 @@ static void
 __print_instruction(const struct Instruction * const instruction)
 {
 	switch (instruction->type) {
-		case CPY: printf("CPY"); break;
-		case INC: printf("INC"); break;
-		case DEC: printf("DEC"); break;
-		case JNZ: printf("JNZ"); break;
-		default: printf("UNKNOWN"); break;
+	case CPY:
+		printf("CPY");
+		break;
+	case INC:
+		printf("INC");
+		break;
+	case DEC:
+		printf("DEC");
+		break;
+	case JNZ:
+		printf("JNZ");
+		break;
+	default:
+		printf("UNKNOWN");
+		break;
 	}
 
 	printf(" %s", instruction->arg0);

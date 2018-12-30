@@ -17,8 +17,8 @@ struct Claim {
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Claim claims[2048] = {0};
 	size_t n = 0;
@@ -40,7 +40,7 @@ main(int const argc, char const * const * const argv)
 		ptr += 3;
 
 		claims[n].left = atoi(ptr);
-		while(isdigit(*ptr)) {
+		while (isdigit(*ptr)) {
 			ptr++;
 		}
 		ptr++;

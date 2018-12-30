@@ -25,30 +25,20 @@ struct Step {
 	int steps;
 };
 
-static void
-__print_nodes(struct Node * const, const size_t);
-static void
-__print_node(struct Node * const);
-static int
-__count_pairs(struct Node * const, const size_t);
-static struct Node *
-__find_top_right_node(struct Node * const, const size_t);
-static int
-__solve(struct Node * const, const size_t);
-static bool
-__enqueue(struct Queue * const, struct Node * const, const size_t,
-		const int);
-static void
-__destroy_step(void * const);
-static bool
-__goal_is_here(struct Node * const, const size_t);
-static bool
-__queue_moves(struct Queue * const, struct Node * const,
-		const size_t, const int);
-static bool
-__is_neighbour(const struct Node * const, const struct Node * const);
-static char *
-__nodes_to_string(struct Node * const, const size_t);
+static void __print_nodes(struct Node * const, const size_t);
+static void __print_node(struct Node * const);
+static int __count_pairs(struct Node * const, const size_t);
+static struct Node * __find_top_right_node(struct Node * const, const size_t);
+static int __solve(struct Node * const, const size_t);
+static bool __enqueue(
+		struct Queue * const, struct Node * const, const size_t, const int);
+static void __destroy_step(void * const);
+static bool __goal_is_here(struct Node * const, const size_t);
+static bool __queue_moves(
+		struct Queue * const, struct Node * const, const size_t, const int);
+static bool __is_neighbour(
+		const struct Node * const, const struct Node * const);
+static char * __nodes_to_string(struct Node * const, const size_t);
 
 int
 main(const int argc, const char * const * const argv)
@@ -112,7 +102,7 @@ main(const int argc, const char * const * const argv)
 			ptr++;
 		}
 
-		if (*ptr != '-' || *(ptr+1) != 'y') {
+		if (*ptr != '-' || *(ptr + 1) != 'y') {
 			printf("unexpected input, after x: %s (line %zu)\n", ptr, i);
 			fclose(fh);
 			free(nodes);
@@ -169,7 +159,7 @@ main(const int argc, const char * const * const argv)
 			return 1;
 		}
 
-		struct Node * const node = nodes+i;
+		struct Node * const node = nodes + i;
 		i++;
 
 		node->x = x;
@@ -215,7 +205,7 @@ static void
 __print_nodes(struct Node * const nodes, const size_t n)
 {
 	for (size_t i = 0; i < n; i++) {
-		struct Node * const node = nodes+i;
+		struct Node * const node = nodes + i;
 		__print_node(node);
 	}
 }
@@ -223,8 +213,12 @@ __print_nodes(struct Node * const nodes, const size_t n)
 static void
 __print_node(struct Node * const node)
 {
-	printf("Node (x=%d, y=%d) Size: %dT Used: %dT Avail: %dT\n", node->x, node->y,
-			node->size, node->used, node->size-node->used);
+	printf("Node (x=%d, y=%d) Size: %dT Used: %dT Avail: %dT\n",
+			node->x,
+			node->y,
+			node->size,
+			node->used,
+			node->size - node->used);
 }
 
 static int
@@ -233,7 +227,7 @@ __count_pairs(struct Node * const nodes, const size_t n)
 	int pairs = 0;
 
 	for (size_t i = 0; i < n; i++) {
-		struct Node * const node0 = nodes+i;
+		struct Node * const node0 = nodes + i;
 		if (node0->used == 0) {
 			continue;
 		}
@@ -243,9 +237,9 @@ __count_pairs(struct Node * const nodes, const size_t n)
 				continue;
 			}
 
-			struct Node * const node1 = nodes+j;
+			struct Node * const node1 = nodes + j;
 
-			const int avail = node1->size-node1->used;
+			const int avail = node1->size - node1->used;
 
 			if (avail >= node0->used) {
 				pairs++;
@@ -262,7 +256,7 @@ __find_top_right_node(struct Node * const nodes, const size_t n)
 	struct Node * top_right = NULL;
 
 	for (size_t i = 0; i < n; i++) {
-		struct Node * const node = nodes+i;
+		struct Node * const node = nodes + i;
 
 		if (node->y != 0) {
 			continue;
@@ -313,7 +307,7 @@ __solve(struct Node * const nodes, const size_t sz)
 		}
 
 		if (__goal_is_here(step->nodes, sz)) {
-			//printf("goal at 0,0\n");
+			// printf("goal at 0,0\n");
 			const int steps = step->steps;
 			destroy_queue(q, __destroy_step);
 			hash_free(visited, NULL);
@@ -330,7 +324,7 @@ __solve(struct Node * const nodes, const size_t sz)
 			return -1;
 		}
 
-		//printf("%s\n", nodes_str);
+		// printf("%s\n", nodes_str);
 
 		if (hash_has_key(visited, nodes_str)) {
 			__destroy_step(step);
@@ -366,7 +360,9 @@ __solve(struct Node * const nodes, const size_t sz)
 }
 
 static bool
-__enqueue(struct Queue * const q, struct Node * const nodes, const size_t sz,
+__enqueue(struct Queue * const q,
+		struct Node * const nodes,
+		const size_t sz,
 		const int steps)
 {
 	// Copy the nodes
@@ -378,10 +374,10 @@ __enqueue(struct Queue * const q, struct Node * const nodes, const size_t sz,
 	}
 
 	for (size_t i = 0; i < sz; i++) {
-		struct Node * const node1 = nodes+i;
-		struct Node * const node2 = nodes2+i;
-		node2->x    = node1->x;
-		node2->y    = node1->y;
+		struct Node * const node1 = nodes + i;
+		struct Node * const node2 = nodes2 + i;
+		node2->x = node1->x;
+		node2->y = node1->y;
 		node2->size = node1->size;
 		node2->used = node1->used;
 		node2->goal = node1->goal;
@@ -427,7 +423,7 @@ static bool
 __goal_is_here(struct Node * const nodes, const size_t sz)
 {
 	for (size_t i = 0; i < sz; i++) {
-		struct Node * const node = nodes+i;
+		struct Node * const node = nodes + i;
 
 		if (!node->goal) {
 			continue;
@@ -440,13 +436,15 @@ __goal_is_here(struct Node * const nodes, const size_t sz)
 }
 
 static bool
-__queue_moves(struct Queue * const q, struct Node * const nodes,
-		const size_t sz, const int steps)
+__queue_moves(struct Queue * const q,
+		struct Node * const nodes,
+		const size_t sz,
+		const int steps)
 {
 	// Queue all viable pairs.
 
 	for (size_t i = 0; i < sz; i++) {
-		struct Node * const node0 = nodes+i;
+		struct Node * const node0 = nodes + i;
 		if (node0->used == 0) {
 			continue;
 		}
@@ -456,9 +454,9 @@ __queue_moves(struct Queue * const q, struct Node * const nodes,
 				continue;
 			}
 
-			struct Node * const node1 = nodes+j;
+			struct Node * const node1 = nodes + j;
 
-			const int avail = node1->size-node1->used;
+			const int avail = node1->size - node1->used;
 
 			// Try only moving to the empty node. We will find a solution either way
 			// though.
@@ -487,7 +485,7 @@ __queue_moves(struct Queue * const q, struct Node * const nodes,
 			}
 			node0->goal = false;
 
-			if (!__enqueue(q, nodes, sz, steps+1)) {
+			if (!__enqueue(q, nodes, sz, steps + 1)) {
 				printf("__enqueue\n");
 				return false;
 			}
@@ -507,22 +505,22 @@ static bool
 __is_neighbour(const struct Node * const node0, const struct Node * const node1)
 {
 	// Node1 is to right?
-	if (node0->x+1 == node1->x && node0->y == node1->y) {
+	if (node0->x + 1 == node1->x && node0->y == node1->y) {
 		return true;
 	}
 
 	// Node1 is to left?
-	if (node0->x-1 == node1->x && node0->y == node1->y) {
+	if (node0->x - 1 == node1->x && node0->y == node1->y) {
 		return true;
 	}
 
 	// Node1 is above?
-	if (node0->x == node1->x && node0->y-1 == node1->y) {
+	if (node0->x == node1->x && node0->y - 1 == node1->y) {
 		return true;
 	}
 
 	// Node1 is below?
-	if (node0->x == node1->x && node0->y+1 == node1->y) {
+	if (node0->x == node1->x && node0->y + 1 == node1->y) {
 		return true;
 	}
 
@@ -545,7 +543,7 @@ __nodes_to_string(struct Node * const nodes, const size_t sz)
 	memset(buf, 0, 256);
 
 	for (size_t i = 0; i < sz; i++) {
-		const struct Node * const node = nodes+i;
+		const struct Node * const node = nodes + i;
 
 		if (node->goal) {
 			goal_x = node->x;

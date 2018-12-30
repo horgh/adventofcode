@@ -3,29 +3,25 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int *
-knot_hash(char const * const, int const);
-static void
-reverse(int * const, int const, int const, int const);
-static void
-map_destroy(int * * const, int const);
-static void
-map_set(int * * const, int const, int * const);
-static void
-consume(int * * const, int const, int const);
+static int * knot_hash(char const * const, int const);
+static void reverse(int * const, int const, int const, int const);
+static void map_destroy(int ** const, int const);
+static void map_set(int ** const, int const, int * const);
+static void consume(int ** const, int const, int const);
 
-int main(int const argc, char const * const * const argv)
+int
+main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 
 	char buf[41960] = {0};
 
-	if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
-			fprintf(stderr, "fgets(): %s\n", strerror(errno));
-			return 1;
+	if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
+		fprintf(stderr, "fgets(): %s\n", strerror(errno));
+		return 1;
 	}
 
 	char * ptr = buf;
@@ -37,7 +33,7 @@ int main(int const argc, char const * const * const argv)
 		ptr++;
 	}
 
-	int * * const map = calloc(128, sizeof(int *));
+	int ** const map = calloc(128, sizeof(int *));
 	if (!map) {
 		fprintf(stderr, "calloc(): %s\n", strerror(errno));
 		return 1;
@@ -67,7 +63,7 @@ int main(int const argc, char const * const * const argv)
 
 		if (0) {
 			for (int j = 0; j < 16; j++) {
-				printf("%02x", (unsigned int) hash[j]);
+				printf("%02x", (unsigned int)hash[j]);
 			}
 			printf("\n");
 		}
@@ -75,7 +71,7 @@ int main(int const argc, char const * const * const argv)
 		map_set(map, i, hash);
 
 		if (0) {
-			for (int j = 0; j < 128; j++ ){
+			for (int j = 0; j < 128; j++) {
 				if (map[i][j]) {
 					printf("#");
 				} else {
@@ -109,7 +105,7 @@ int main(int const argc, char const * const * const argv)
 static int *
 knot_hash(char const * const input, int const size)
 {
-	int * const hash_inputs = calloc(strlen(input)+5, sizeof(int));
+	int * const hash_inputs = calloc(strlen(input) + 5, sizeof(int));
 	if (!hash_inputs) {
 		fprintf(stderr, "calloc(): %s\n", strerror(errno));
 		return NULL;
@@ -118,7 +114,7 @@ knot_hash(char const * const input, int const size)
 	char const * ptr = input;
 	int hash_input_size = 0;
 	while (*ptr != '\0' && *ptr != '\n') {
-		hash_inputs[hash_input_size] = (int) *ptr;
+		hash_inputs[hash_input_size] = (int)*ptr;
 		hash_input_size++;
 		ptr++;
 	}
@@ -129,7 +125,7 @@ knot_hash(char const * const input, int const size)
 	hash_inputs[hash_input_size++] = 47;
 	hash_inputs[hash_input_size++] = 23;
 
-	int * const list = calloc((size_t) size, sizeof(int));
+	int * const list = calloc((size_t)size, sizeof(int));
 	if (!list) {
 		fprintf(stderr, "calloc(): %s\n", strerror(errno));
 		free(hash_inputs);
@@ -176,7 +172,7 @@ knot_hash(char const * const input, int const size)
 
 	for (int i = 0; i < 16; i++) {
 		for (int j = 0; j < 16; j++) {
-			int const pos = i*16+j;
+			int const pos = i * 16 + j;
 			dense[i] ^= list[pos];
 		}
 	}
@@ -189,14 +185,14 @@ knot_hash(char const * const input, int const size)
 static void
 reverse(int * const list, int const list_size, int const idx, int const length)
 {
-	for (int i = 0; i < length/2; i++) {
-		int idx0 = idx+i;
+	for (int i = 0; i < length / 2; i++) {
+		int idx0 = idx + i;
 		if (idx0 >= list_size) {
-			idx0 = idx0-list_size;
+			idx0 = idx0 - list_size;
 		}
-		int idx1 = idx+length-1-i;
+		int idx1 = idx + length - 1 - i;
 		if (idx1 >= list_size) {
-			idx1 = idx1-list_size;
+			idx1 = idx1 - list_size;
 		}
 
 		int const tmp = list[idx0];
@@ -206,7 +202,7 @@ reverse(int * const list, int const list_size, int const idx, int const length)
 }
 
 static void
-map_destroy(int * * const map, int const size)
+map_destroy(int ** const map, int const size)
 {
 	if (!map) {
 		return;
@@ -223,13 +219,13 @@ map_destroy(int * * const map, int const size)
 }
 
 static void
-map_set(int * * const map, int const row, int * const hash)
+map_set(int ** const map, int const row, int * const hash)
 {
 	for (int i = 0; i < 16; i++) {
 		int x = hash[i];
 
 		for (int j = 7; j >= 0; j--) {
-			int const idx = i*8+j;
+			int const idx = i * 8 + j;
 
 			if (x & 0x01) {
 				map[row][idx] = 1;
@@ -241,11 +237,11 @@ map_set(int * * const map, int const row, int * const hash)
 }
 
 static void
-consume(int * * const map, int const x, int const y)
+consume(int ** const map, int const x, int const y)
 {
 	map[x][y] = 0;
 
-	for (int i = x+1; i < 128; i++) {
+	for (int i = x + 1; i < 128; i++) {
 		if (map[i][y] != 1) {
 			break;
 		}
@@ -253,7 +249,7 @@ consume(int * * const map, int const x, int const y)
 		consume(map, i, y);
 	}
 
-	for (int i = x-1; i >= 0; i--) {
+	for (int i = x - 1; i >= 0; i--) {
 		if (map[i][y] != 1) {
 			break;
 		}
@@ -261,7 +257,7 @@ consume(int * * const map, int const x, int const y)
 		consume(map, i, y);
 	}
 
-	for (int i = y+1; i < 128; i++) {
+	for (int i = y + 1; i < 128; i++) {
 		if (map[x][i] != 1) {
 			break;
 		}
@@ -269,7 +265,7 @@ consume(int * * const map, int const x, int const y)
 		consume(map, x, i);
 	}
 
-	for (int i = y-1; i >= 0; i--) {
+	for (int i = y - 1; i >= 0; i--) {
 		if (map[x][i] != 1) {
 			break;
 		}

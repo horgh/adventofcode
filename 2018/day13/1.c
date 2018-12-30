@@ -27,15 +27,11 @@ struct Position {
 	struct Rail * rail;
 };
 
-static void
-print_cart(struct Cart const * const);
+static void print_cart(struct Cart const * const);
 
-static void
-print_rail(struct Rail const * const);
+static void print_rail(struct Rail const * const);
 
-static void
-face_cart(struct Cart * const,
-		struct Rail const * const);
+static void face_cart(struct Cart * const, struct Rail const * const);
 
 #define SZ 150
 #define SZ_RAILS 40960
@@ -43,8 +39,8 @@ face_cart(struct Cart * const,
 int
 main(int const argc, char const * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	struct Cart carts[128] = {0};
 	size_t n_carts = 0;
@@ -90,8 +86,7 @@ main(int const argc, char const * const * const argv)
 				rail = &rails[n_rails];
 				n_rails++;
 				assert(n_rails != SZ_RAILS);
-			} else if (*ptr == '^' || *ptr == 'v' || *ptr == '<' ||
-					*ptr == '>') {
+			} else if (*ptr == '^' || *ptr == 'v' || *ptr == '<' || *ptr == '>') {
 				switch (*ptr) {
 				case '^':
 					carts[n_carts].facing = Up;
@@ -248,8 +243,7 @@ print_rail(struct Rail const * const rail)
 }
 
 static void
-face_cart(struct Cart * const cart,
-		struct Rail const * const rail)
+face_cart(struct Cart * const cart, struct Rail const * const rail)
 {
 	if (rail->type == UpDown) {
 		assert(cart->facing == Up || cart->facing == Down);

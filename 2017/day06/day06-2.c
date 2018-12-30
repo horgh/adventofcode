@@ -6,23 +6,21 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int
-get_bank(char const * const, int * const);
-static char *
-banks_to_string(int const * const, int const);
-static bool
-banks_redistribute(int * const, int const);
+static int get_bank(char const * const, int * const);
+static char * banks_to_string(int const * const, int const);
+static bool banks_redistribute(int * const, int const);
 
-int main(const int argc, const char * const * const argv)
+int
+main(const int argc, const char * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	FILE * const fh = stdin;
 
 	char buf[10240] = {0};
 
-	if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+	if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 		fprintf(stderr, "fgets(): %s\n", strerror(errno));
 		return 1;
 	}
@@ -37,7 +35,7 @@ int main(const int argc, const char * const * const argv)
 	}
 
 	int banks[bank_count];
-	memset(banks, 0, (size_t) bank_count);
+	memset(banks, 0, (size_t)bank_count);
 
 	idx = 0;
 	for (int i = 0; i < bank_count; i++) {
@@ -134,7 +132,7 @@ int main(const int argc, const char * const * const argv)
 static int
 get_bank(char const * const s, int * const idx)
 {
-	char const * ptr = s+*idx;
+	char const * ptr = s + *idx;
 
 	while (isspace(*ptr)) {
 		ptr++;
@@ -189,7 +187,7 @@ banks_redistribute(int * const banks, int const count)
 	int to_distribute = largest;
 	banks[largest_idx] = 0;
 
-	int idx = largest_idx+1;
+	int idx = largest_idx + 1;
 	while (to_distribute > 0) {
 		if (idx >= count) {
 			idx = 0;

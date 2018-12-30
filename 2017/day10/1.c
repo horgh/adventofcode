@@ -4,12 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void
-reverse(int * const, int const, int const, int const);
-static void
-print_list(int const * const, int const);
+static void reverse(int * const, int const, int const, int const);
+static void print_list(int const * const, int const);
 
-int main(int const argc, char const * const * const argv)
+int
+main(int const argc, char const * const * const argv)
 {
 	if (argc != 2) {
 		fprintf(stderr, "Usage: %s <list size>\n", argv[0]);
@@ -21,14 +20,14 @@ int main(int const argc, char const * const * const argv)
 
 	char buf[20480] = {0};
 
-	if (fgets(buf, (int) sizeof(buf), fh) == NULL) {
+	if (fgets(buf, (int)sizeof(buf), fh) == NULL) {
 		fprintf(stderr, "fgets(): %s\n", strerror(errno));
 		return 1;
 	}
 
 	int instructions[256] = {0};
 	int instruction_count = 0;
-	char const *ptr = buf;
+	char const * ptr = buf;
 	while (*ptr != '\0' && *ptr != '\n') {
 		instructions[instruction_count] = atoi(ptr);
 		instruction_count++;
@@ -42,7 +41,7 @@ int main(int const argc, char const * const * const argv)
 		}
 	}
 
-	int * const list = calloc((size_t) list_size, sizeof(int));
+	int * const list = calloc((size_t)list_size, sizeof(int));
 	if (!list) {
 		fprintf(stderr, "calloc(): %s\n", strerror(errno));
 		return 1;
@@ -66,14 +65,14 @@ int main(int const argc, char const * const * const argv)
 			print_list(list, list_size);
 		}
 
-		idx += length+skip_size;
+		idx += length + skip_size;
 		if (idx >= list_size) {
-			idx = idx-list_size;
+			idx = idx - list_size;
 		}
 		skip_size++;
 	}
 
-	printf("%d\n", list[0]*list[1]);
+	printf("%d\n", list[0] * list[1]);
 	free(list);
 	return 0;
 }
@@ -81,14 +80,14 @@ int main(int const argc, char const * const * const argv)
 static void
 reverse(int * const list, int const list_size, int const idx, int const length)
 {
-	for (int i = 0; i < length/2; i++) {
-		int idx0 = idx+i;
+	for (int i = 0; i < length / 2; i++) {
+		int idx0 = idx + i;
 		if (idx0 >= list_size) {
-			idx0 = idx0-list_size;
+			idx0 = idx0 - list_size;
 		}
-		int idx1 = idx+length-1-i;
+		int idx1 = idx + length - 1 - i;
 		if (idx1 >= list_size) {
-			idx1 = idx1-list_size;
+			idx1 = idx1 - list_size;
 		}
 
 		int const tmp = list[idx0];

@@ -1,24 +1,21 @@
 #include <errno.h>
+#include <map.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <map.h>
 #include <unistd.h>
 
 enum Direction { North, East, South, West, Unknown };
 
-enum Direction
-__decide_new_direction(const enum Direction, const char);
-bool
-__visit(struct htable * const, const int, const int);
-bool
-__have_visited(const struct htable * const, const int, const int);
+enum Direction __decide_new_direction(const enum Direction, const char);
+bool __visit(struct htable * const, const int, const int);
+bool __have_visited(const struct htable * const, const int, const int);
 
 int
 main(const int argc, const char * const * const argv)
 {
-	(void) argc;
-	(void) argv;
+	(void)argc;
+	(void)argv;
 
 	const char * const input_file = "input1.txt";
 
@@ -60,7 +57,7 @@ main(const int argc, const char * const * const argv)
 		int steps = 0;
 
 		int matched = fscanf(fh, "%c%d, ", &dir, &steps);
-		//printf("matched %d (%c %d)\n", matched, dir, steps);
+		// printf("matched %d (%c %d)\n", matched, dir, steps);
 		if (matched != 2) {
 			break;
 		}
@@ -68,48 +65,48 @@ main(const int argc, const char * const * const argv)
 		current_direction = __decide_new_direction(current_direction, dir);
 
 		switch (current_direction) {
-			case North:
-				for (int i = 0; i < steps; i++) {
-					x++;
-					if (__have_visited(locations, x, y)) {
-						goto DONE;
-					}
-					__visit(locations, x, y);
+		case North:
+			for (int i = 0; i < steps; i++) {
+				x++;
+				if (__have_visited(locations, x, y)) {
+					goto DONE;
 				}
-				break;
-			case East:
-				for (int i = 0; i < steps; i++) {
-					y++;
-					if (__have_visited(locations, x, y)) {
-						goto DONE;
-					}
-					__visit(locations, x, y);
+				__visit(locations, x, y);
+			}
+			break;
+		case East:
+			for (int i = 0; i < steps; i++) {
+				y++;
+				if (__have_visited(locations, x, y)) {
+					goto DONE;
 				}
-				break;
-			case South:
-				for (int i = 0; i < steps; i++) {
-					x--;
-					if (__have_visited(locations, x, y)) {
-						goto DONE;
-					}
-					__visit(locations, x, y);
+				__visit(locations, x, y);
+			}
+			break;
+		case South:
+			for (int i = 0; i < steps; i++) {
+				x--;
+				if (__have_visited(locations, x, y)) {
+					goto DONE;
 				}
-				break;
-			case West:
-				for (int i = 0; i < steps; i++) {
-					y--;
-					if (__have_visited(locations, x, y)) {
-						goto DONE;
-					}
-					__visit(locations, x, y);
+				__visit(locations, x, y);
+			}
+			break;
+		case West:
+			for (int i = 0; i < steps; i++) {
+				y--;
+				if (__have_visited(locations, x, y)) {
+					goto DONE;
 				}
-				break;
-			case Unknown:
-			default:
-				printf("Unknown direction\n");
-				fclose(fh);
-				hash_free(locations, free);
-				return 1;
+				__visit(locations, x, y);
+			}
+			break;
+		case Unknown:
+		default:
+			printf("Unknown direction\n");
+			fclose(fh);
+			hash_free(locations, free);
+			return 1;
 		}
 	}
 
@@ -128,40 +125,39 @@ DONE:
 	return 0;
 }
 
-__attribute__((const))
-enum Direction
+__attribute__((const)) enum Direction
 __decide_new_direction(const enum Direction current_direction, const char dir)
 {
 	if (dir == 'R') {
 		switch (current_direction) {
-			case North:
-				return East;
-			case East:
-				return South;
-			case South:
-				return West;
-			case West:
-				return North;
-			case Unknown:
-			default:
-				return Unknown;
+		case North:
+			return East;
+		case East:
+			return South;
+		case South:
+			return West;
+		case West:
+			return North;
+		case Unknown:
+		default:
+			return Unknown;
 		}
 
 		return Unknown;
 	}
 
 	switch (current_direction) {
-		case North:
-			return West;
-		case East:
-			return North;
-		case South:
-			return East;
-		case West:
-			return South;
-		case Unknown:
-		default:
-			return Unknown;
+	case North:
+		return West;
+	case East:
+		return North;
+	case South:
+		return East;
+	case West:
+		return South;
+	case Unknown:
+	default:
+		return Unknown;
 	}
 
 	return Unknown;

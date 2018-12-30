@@ -3,11 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static uint64_t
-calc_next(uint64_t const,
-		uint64_t const,
-		uint64_t const,
-		uint64_t const);
+static uint64_t calc_next(
+		uint64_t const, uint64_t const, uint64_t const, uint64_t const);
 
 int
 main(int const argc, char const * const * const argv)
@@ -17,8 +14,8 @@ main(int const argc, char const * const * const argv)
 		return 1;
 	}
 
-	uint64_t const a_start = (uint64_t) atoi(argv[1]);
-	uint64_t const b_start = (uint64_t) atoi(argv[2]);
+	uint64_t const a_start = (uint64_t)atoi(argv[1]);
+	uint64_t const b_start = (uint64_t)atoi(argv[2]);
 
 	uint64_t const a_factor = 16807;
 	uint64_t const b_factor = 48271;
@@ -34,10 +31,10 @@ main(int const argc, char const * const * const argv)
 	int const n = 5000000;
 	int count = 0;
 	for (int i = 0; i < n; i++) {
-		uint64_t const a_next = calc_next(a_previous, a_factor, divisor,
-				a_multiple);
-		uint64_t const b_next = calc_next(b_previous, b_factor, divisor,
-				b_multiple);
+		uint64_t const a_next =
+				calc_next(a_previous, a_factor, divisor, a_multiple);
+		uint64_t const b_next =
+				calc_next(b_previous, b_factor, divisor, b_multiple);
 
 		if (0) {
 			printf("a: %" PRIu64 " b: %" PRIu64 "\n", a_next, b_next);
@@ -63,7 +60,7 @@ calc_next(uint64_t const previous_value,
 {
 	uint64_t x = previous_value;
 	while (1) {
-		x = (x*factor)%divisor;
+		x = (x * factor) % divisor;
 		if (x % multiple == 0) {
 			break;
 		}

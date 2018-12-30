@@ -10,9 +10,9 @@ clean:
 hash: hash.c hash.c
 	$(CC) $(CFLAGS) -DTEST_HASH -o $@ $< -lssl -lcrypto
 
-libadvent.a: hash.o map.o queue.o siphash.o util.o
+libadvent.a: a_star.o hash.o map.o queue.o siphash.o util.o
 	rm -f $@
-	ar r $@ hash.o map.o queue.o siphash.o util.o
+	ar r $@ a_star.o hash.o map.o queue.o siphash.o util.o
 	ranlib $@
 
 map: map.c map.h siphash.o

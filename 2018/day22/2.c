@@ -1,10 +1,11 @@
 #define _POSIX_C_SOURCE 200809L
 
+#include <a_star.h>
 #include <assert.h>
 #include <ctype.h>
 #include <inttypes.h>
-#include <math.h>
-#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,17 +18,7 @@ enum Tool { None, Torch, Climbing };
 struct Position {
 	enum Type type;
 	uint64_t erosion_level;
-
-	bool visited[3];
-	int distance[3];
-	int distance_heuristic[3];
-};
-
-struct Candidate {
-	int x;
-	int y;
-	enum Tool tool;
-	int distance;
+	struct AStarNode * nodes[3];
 };
 
 static void
@@ -56,51 +47,36 @@ print_map(struct Position * * const,
 		int const,
 		int const);
 
-static int
-dijkstra(struct Position * * const,
-		int const,
-		int const);
-
-static int
-heuristic(int const,
-		int const,
-		int const,
-		int const);
-
-static void
-update_distances(struct Position * * const,
-		int const,
-		int const,
-		enum Tool const,
-		int const,
-		int const);
-
-static void
-update_distance_to(struct Position * * const,
-		int const,
-		int const,
-		enum Tool const,
-		int const,
-		int const,
-		int const,
-		int const);
-
-static void
-set_distance(struct Position * * const,
-		int const,
-		int const,
-		enum Tool const,
-		int const,
-		int const,
-		int const,
-		int const,
+static uint64_t
+search(struct Position * * const,
+		int64_t const,
+		int64_t const,
 		enum Tool const);
 
-static struct Candidate
-choose_next(struct Position * * const);
+static uint64_t
+cost(struct AStarNode const * const,
+		struct AStarNode const * const);
+
+static uint64_t
+heuristic(struct AStarNode const * const,
+		struct AStarNode const * const);
+
+static struct AStarNode * *
+get_neighbours(struct AStarGraph const * const,
+		struct AStarNode const * const,
+		size_t * const);
+
+static void
+get_neighbours_at(struct Position * * const,
+		struct AStarNode const * const,
+		struct AStarNode * * const,
+		size_t * const,
+		int64_t const,
+		int64_t const);
 
 #define MAP_SZ_X 250
 #define MAP_SZ_Y 800
+#define NEIGHBOURS_SZ 24
 
 int
 main(int const argc, char const * const * const argv)
@@ -146,8 +122,14 @@ main(int const argc, char const * const * const argv)
 		print_map(map, target_x, target_y);
 	}
 
-	int const steps = dijkstra(map, target_x, target_y);
-	printf("%d\n", steps);
+	uint64_t const steps = search(map, (int64_t) target_x,
+			(int64_t) target_y, Torch);
+	printf("%" PRIu64 "\n", steps);
+
+	for (size_t i = 0; i < MAP_SZ_X; i++) {
+		free(map[i]);
+	}
+	free(map);
 	return 0;
 }
 
@@ -246,72 +228,88 @@ print_map(struct Position * * const map,
 	}
 }
 
-static int
-dijkstra(struct Position * * const map,
-		int const target_x,
-		int const target_y)
+static uint64_t
+search(struct Position * * const map,
+		int64_t const target_x,
+		int64_t const target_y,
+		enum Tool const target_tool)
 {
-#define MYINFINITY 99999
-	for (int y = 0; y < MAP_SZ_Y; y++) {
-		for (int x = 0; x < MAP_SZ_X; x++) {
-			for (size_t i = 0; i < 3; i++) {
-				map[x][y].distance[i] = MYINFINITY;
+	struct AStarGraph * const graph = a_star_graph_create(
+			MAP_SZ_X*MAP_SZ_Y*3);
+	graph->data = map;
+
+	struct AStarNode * start = NULL;
+	struct AStarNode * target = NULL;
+	for (int64_t x = 0; x < MAP_SZ_X; x++) {
+		for (int64_t y = 0; y < MAP_SZ_Y; y++) {
+			for (int64_t t = 0; t < 3; t++) {
+				struct AStarNode * const n = a_star_add_node_3(graph, x, y, t);
+
+				map[x][y].nodes[t] = n;
+
+				if (x == 0 && y == 0 && t == Torch) {
+					start = n;
+					continue;
+				}
+				if (x == target_x && y == target_y && t == target_tool) {
+					target = n;
+					continue;
+				}
 			}
 		}
 	}
 
-	map[0][0].distance[Torch] = 0;
-	map[0][0].distance_heuristic[Torch] = heuristic(0, 0, target_x, target_y);
+	uint64_t const distance = a_star_search(graph, start, target, cost,
+			heuristic, get_neighbours);
+	a_star_graph_free(graph);
+	return distance;
+}
 
-	while (1) {
-		struct Candidate const c = choose_next(map);
-		if (c.distance == MYINFINITY) {
-			return -1;
-		}
-		if (c.x == target_x && c.y == target_y && c.tool == Torch) {
-			return c.distance;
-		}
-
-		update_distances(map, c.x, c.y, c.tool, target_x, target_y);
-		map[c.x][c.y].visited[c.tool] = true;
+static uint64_t
+cost(struct AStarNode const * const from,
+		struct AStarNode const * const to)
+{
+	if (from->coords[2] != to->coords[2]) {
+		return from->g + 7;
 	}
+	return from->g + 1;
 }
 
-static int
-heuristic(int const x0,
-		int const y0,
-		int const x1,
-		int const y1)
+static uint64_t
+heuristic(struct AStarNode const * const from,
+		struct AStarNode const * const to)
 {
-	int const diff_x = x0-x1;
-	int const diff_y = y0-y1;
-	double const r = sqrt(diff_x*diff_x+diff_y*diff_y);
-	return (int) r;
+	uint64_t cost = (uint64_t) llabs(from->coords[0] - to->coords[0]) +
+		(uint64_t) llabs(from->coords[1] - to->coords[1]);
+	return cost;
+}
+
+static struct AStarNode * *
+get_neighbours(struct AStarGraph const * const graph,
+		struct AStarNode const * const current,
+		size_t * const n_neighbours)
+{
+	struct AStarNode * * neighbours = calloc(NEIGHBOURS_SZ,
+			sizeof(struct AStarNode *));
+	assert(neighbours != NULL);
+	*n_neighbours = 0;
+	int64_t const x = current->coords[0];
+	int64_t const y = current->coords[1];
+	struct Position * * const map = graph->data;
+	get_neighbours_at(map, current, neighbours, n_neighbours, x,   y-1);
+	get_neighbours_at(map, current, neighbours, n_neighbours, x+1, y);
+	get_neighbours_at(map, current, neighbours, n_neighbours, x,   y+1);
+	get_neighbours_at(map, current, neighbours, n_neighbours, x-1, y);
+	return neighbours;
 }
 
 static void
-update_distances(struct Position * * const map,
-		int const x,
-		int const y,
-		enum Tool const tool,
-		int const target_x,
-		int const target_y)
-{
-	update_distance_to(map, x, y, tool, target_x, target_y, x, y-1);
-	update_distance_to(map, x, y, tool, target_x, target_y, x+1, y);
-	update_distance_to(map, x, y, tool, target_x, target_y, x, y+1);
-	update_distance_to(map, x, y, tool, target_x, target_y, x-1, y);
-}
-
-static void
-update_distance_to(struct Position * * const map,
-		int const x,
-		int const y,
-		enum Tool const tool,
-		int const target_x,
-		int const target_y,
-		int const new_x,
-		int const new_y)
+get_neighbours_at(struct Position * * const map,
+		struct AStarNode const * const current,
+		struct AStarNode * * const neighbours,
+		size_t * const n_neighbours,
+		int64_t const new_x,
+		int64_t const new_y)
 {
 	if (new_x < 0 || new_y < 0) {
 		return;
@@ -321,95 +319,71 @@ update_distance_to(struct Position * * const map,
 		exit(1);
 	}
 
+	int64_t const x = current->coords[0];
+	int64_t const y = current->coords[1];
+	enum Tool const tool = current->coords[2];
+
 	enum Type const type = map[x][y].type;
 	enum Type const new_type = map[new_x][new_y].type;
 
+	size_t new_n_neighbours = *n_neighbours;
+
 	if (new_type == Rocky) {
 		if (type == Rocky || type == Wet) {
-			set_distance(map, x, y, tool, target_x, target_y, new_x, new_y, Climbing);
+			if (tool == Climbing) {
+				neighbours[new_n_neighbours++] = map[new_x][new_y].nodes[Climbing];
+			} else {
+				neighbours[new_n_neighbours++] = map[x][y].nodes[Climbing];
+			}
+			assert(new_n_neighbours != NEIGHBOURS_SZ);
 		}
 		if (type == Rocky || type == Narrow) {
-			set_distance(map, x, y, tool, target_x, target_y, new_x, new_y, Torch);
+			if (tool == Torch) {
+				neighbours[new_n_neighbours++] = map[new_x][new_y].nodes[Torch];
+			} else {
+				neighbours[new_n_neighbours++] = map[x][y].nodes[Torch];
+			}
+			assert(new_n_neighbours != NEIGHBOURS_SZ);
 		}
 	}
 
 	if (new_type == Wet) {
 		if (type == Rocky || type == Wet) {
-			set_distance(map, x, y, tool, target_x, target_y, new_x, new_y, Climbing);
+			if (tool == Climbing) {
+				neighbours[new_n_neighbours++] = map[new_x][new_y].nodes[Climbing];
+			} else {
+				neighbours[new_n_neighbours++] = map[x][y].nodes[Climbing];
+			}
+			assert(new_n_neighbours != NEIGHBOURS_SZ);
 		}
 		if (type == Wet || type == Narrow) {
-			set_distance(map, x, y, tool, target_x, target_y, new_x, new_y, None);
+			if (tool == None) {
+				neighbours[new_n_neighbours++] = map[new_x][new_y].nodes[None];
+			} else {
+				neighbours[new_n_neighbours++] = map[x][y].nodes[None];
+			}
+			assert(new_n_neighbours != NEIGHBOURS_SZ);
 		}
 	}
 
 	if (new_type == Narrow) {
 		if (type == Rocky || type == Narrow) {
-			set_distance(map, x, y, tool, target_x, target_y, new_x, new_y, Torch);
+			if (tool == Torch) {
+				neighbours[new_n_neighbours++] = map[new_x][new_y].nodes[Torch];
+			} else {
+				neighbours[new_n_neighbours++] = map[x][y].nodes[Torch];
+			}
+			assert(new_n_neighbours != NEIGHBOURS_SZ);
 		}
 		if (type == Wet || type == Narrow) {
-			set_distance(map, x, y, tool, target_x, target_y, new_x, new_y, None);
-		}
-	}
-}
-
-static void
-set_distance(struct Position * * const map,
-		int const x,
-		int const y,
-		enum Tool const tool,
-		int const target_x,
-		int const target_y,
-		int const new_x,
-		int const new_y,
-		enum Tool const new_tool)
-{
-	if (tool != new_tool) {
-		int const cost = map[x][y].distance[tool]+7;
-		if (cost < map[x][y].distance[new_tool]) {
-			map[x][y].distance[new_tool] = cost;
-			map[x][y].distance_heuristic[new_tool] = cost+heuristic(x, y,
-					target_x, target_y);
-		}
-		return;
-	}
-
-	int const cost = map[x][y].distance[tool]+1;
-	if (cost < map[new_x][new_y].distance[new_tool]) {
-		map[new_x][new_y].distance[new_tool] = cost;
-		map[new_x][new_y].distance_heuristic[new_tool] = cost+heuristic(new_x, new_y,
-				target_x, target_y);
-	}
-}
-
-static struct Candidate
-choose_next(struct Position * * const map)
-{
-	struct Candidate c = {
-		.distance = MYINFINITY,
-	};
-
-	int best_heuristic = MYINFINITY;
-
-	for (int y = 0; y < MAP_SZ_Y; y++) {
-		for (int x = 0; x < MAP_SZ_X; x++) {
-			for (size_t i = 0; i < 3; i++) {
-				if (map[x][y].visited[i]) {
-					continue;
-				}
-				if (map[x][y].distance[i] == MYINFINITY) {
-					continue;
-				}
-				if (map[x][y].distance_heuristic[i] >= best_heuristic) {
-					continue;
-				}
-				best_heuristic = map[x][y].distance_heuristic[i];
-				c.x = x;
-				c.y = y;
-				c.tool = i;
-				c.distance = map[x][y].distance[i];
+			if (tool == None) {
+				neighbours[new_n_neighbours++] = map[new_x][new_y].nodes[None];
+			} else {
+				neighbours[new_n_neighbours++] = map[x][y].nodes[None];
 			}
+			assert(new_n_neighbours != NEIGHBOURS_SZ);
 		}
 	}
 
-	return c;
+	*n_neighbours = new_n_neighbours;
 }

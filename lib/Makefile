@@ -2,7 +2,7 @@ include ../Makefile.mk
 
 .PHONY: test
 
-all: hash libadvent.a map queue util
+all: hash heap libadvent.a map queue util
 
 clean:
 	rm -f hash libadvent.a map queue *.o util
@@ -10,9 +10,12 @@ clean:
 hash: hash.c hash.c
 	$(CC) $(CFLAGS) -DTEST_HASH -o $@ $< -lssl -lcrypto
 
-libadvent.a: a_star.o hash.o map.o queue.o siphash.o util.o
+heap: heap.c heap.c
+	$(CC) $(CFLAGS) -DTEST_HEAP -o $@ $<
+
+libadvent.a: a_star.o hash.o heap.o map.o queue.o siphash.o util.o
 	rm -f $@
-	ar r $@ a_star.o hash.o map.o queue.o siphash.o util.o
+	ar r $@ a_star.o hash.o heap.o map.o queue.o siphash.o util.o
 	ranlib $@
 
 map: map.c map.h siphash.o
@@ -27,8 +30,9 @@ util: util.c util.h
 siphash.o: siphash.c siphash.h
 	$(CC) -c -o $@ $<
 
-test: hash map queue util
+test: hash heap map queue util
 	./hash
+	./heap
 	./map
 	./queue
 	./util

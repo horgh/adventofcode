@@ -4,6 +4,7 @@
 1
 2
 /lib/hash
+/lib/heap
 /lib/map
 /lib/queue
 /lib/util

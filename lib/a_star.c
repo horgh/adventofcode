@@ -66,7 +66,7 @@ a_star_search(struct AStarGraph * const graph,
 				struct AStarNode const * const,
 				size_t * const))
 {
-	struct Heap * const heap = heap_create(graph->n_nodes);
+	struct Heap * const heap = heap_create();
 	assert(heap != NULL);
 
 	for (size_t i = 0; i < graph->n_nodes; i++) {

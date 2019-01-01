@@ -10,12 +10,12 @@ static void sift_up(struct Heap * const h, size_t const end);
 static void sift_down(struct Heap * const h);
 
 struct Heap *
-heap_create(size_t const initial_size)
+heap_create(void)
 {
 	struct Heap * const h = calloc(1, sizeof(struct Heap));
 	assert(h != NULL);
 
-	h->sz = initial_size;
+	h->sz = 1024;
 
 	h->elements = calloc(h->sz, sizeof(struct HeapElement *));
 	assert(h->elements != NULL);
@@ -37,9 +37,8 @@ struct HeapElement *
 heap_insert(struct Heap * const h, int64_t const priority, void * const data)
 {
 	if (h->n_elements == h->sz) {
-		// TODO(horgh): Increase size. Note realloc() will move memory so all
-		// pointers held by callers will be invalid.
-		return NULL;
+		h->sz *= 2;
+		h->elements = realloc(h->elements, h->sz * sizeof(struct HeapElement *));
 	}
 
 	struct HeapElement * const he = calloc(1, sizeof(struct HeapElement));
@@ -158,7 +157,7 @@ main(void)
 {
 	// Test empty heap.
 
-	struct Heap * h = heap_create(10);
+	struct Heap * h = heap_create();
 	assert(h != NULL);
 	void * data = heap_extract(h);
 	assert(data == NULL);
@@ -166,7 +165,7 @@ main(void)
 
 	// Test inserting one element and not extracting it.
 
-	h = heap_create(10);
+	h = heap_create();
 	assert(h != NULL);
 	int mydata1 = 10;
 	heap_insert(h, 1, &mydata1);
@@ -174,7 +173,7 @@ main(void)
 
 	// Test inserting one element and extracting it.
 
-	h = heap_create(10);
+	h = heap_create();
 	assert(h != NULL);
 	heap_insert(h, 1, &mydata1);
 
@@ -189,7 +188,7 @@ main(void)
 	// Test inserting two elements with different priorities and
 	// extracting them.
 
-	h = heap_create(10);
+	h = heap_create();
 	assert(h != NULL);
 	int mydata2 = 20;
 	heap_insert(h, 1, &mydata1);
@@ -208,7 +207,7 @@ main(void)
 
 	// Test inserting two elements with the same priority.
 
-	h = heap_create(10);
+	h = heap_create();
 	assert(h != NULL);
 	heap_insert(h, 1, &mydata1);
 	heap_insert(h, 1, &mydata2);
@@ -226,7 +225,7 @@ main(void)
 
 	// Test inserting in different orders of priority.
 
-	h = heap_create(10);
+	h = heap_create();
 	assert(h != NULL);
 	int mydata3 = 30;
 	heap_insert(h, 3, &mydata3);
@@ -249,7 +248,7 @@ main(void)
 
 	// Test decreasing priority.
 
-	h = heap_create(10);
+	h = heap_create();
 	assert(h != NULL);
 
 	struct HeapElement * he0 = heap_insert(h, 3, &mydata3);

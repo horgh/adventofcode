@@ -18,7 +18,7 @@ struct Heap {
 	size_t sz;
 };
 
-struct Heap * heap_create(size_t const initial_size);
+struct Heap * heap_create(void);
 
 void heap_free(struct Heap * const h);
 

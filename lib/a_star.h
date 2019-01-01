@@ -1,6 +1,7 @@
 #ifndef ADVENT_A_STAR_H
 #define ADVENT_A_STAR_H
 
+#include "heap.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -10,6 +11,7 @@ struct AStarNode {
 	int64_t g;				 // g(n).
 	int64_t h;				 // h(n).
 	bool visited;
+	struct HeapElement * he;
 };
 
 struct AStarGraph {

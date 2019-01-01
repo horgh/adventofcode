@@ -5,9 +5,10 @@
 
 #define A_STAR_INFINITY INT64_MAX
 
-static struct AStarNode * choose_next_node(struct AStarGraph * const graph);
+static struct AStarNode * choose_next_node(struct Heap * const heap);
 
 static void update_costs(struct AStarGraph const * const graph,
+		struct Heap * const heap,
 		struct AStarNode const * const current,
 		struct AStarNode const * const target,
 		int64_t (*const cost)(
@@ -65,59 +66,52 @@ a_star_search(struct AStarGraph * const graph,
 				struct AStarNode const * const,
 				size_t * const))
 {
+	struct Heap * const heap = heap_create(graph->n_nodes);
+	assert(heap != NULL);
+
 	for (size_t i = 0; i < graph->n_nodes; i++) {
-		graph->nodes[i]->visited = false;
-		graph->nodes[i]->g = A_STAR_INFINITY;
+		struct AStarNode * const n = graph->nodes[i];
+
+		n->visited = false;
+		if (n == start) {
+			n->g = 0;
+			n->h = heuristic(start, target);
+		} else {
+			n->g = A_STAR_INFINITY;
+		}
+
+		struct HeapElement * const he = heap_insert(heap, n->g, n);
+		assert(he != NULL);
+		n->he = he;
 	}
 
-	start->g = 0;
-	start->h = heuristic(start, target);
-
 	while (1) {
-		struct AStarNode * const current = choose_next_node(graph);
+		struct AStarNode * const current = choose_next_node(heap);
 		if (!current) {
+			heap_free(heap);
 			return 0; // No path.
 		}
 
 		if (current == target) {
+			heap_free(heap);
 			return current->g;
 		}
 
-		update_costs(graph, current, target, cost, heuristic, get_neighbours);
+		update_costs(graph, heap, current, target, cost, heuristic, get_neighbours);
 		current->visited = true;
 	}
 }
 
 static struct AStarNode *
-choose_next_node(struct AStarGraph * const graph)
+choose_next_node(struct Heap * const heap)
 {
-	struct AStarNode * cheapest = NULL;
-	int64_t best_f = A_STAR_INFINITY;
-
-	for (size_t i = 0; i < graph->n_nodes; i++) {
-		struct AStarNode * const n = graph->nodes[i];
-		if (n->visited) {
-			continue;
-		}
-
-		if (n->g == A_STAR_INFINITY) {
-			continue;
-		}
-
-		int64_t const f = n->g + n->h;
-		if (f >= best_f) {
-			continue;
-		}
-
-		best_f = f;
-		cheapest = n;
-	}
-
+	struct AStarNode * const cheapest = heap_extract(heap);
 	return cheapest;
 }
 
 static void
 update_costs(struct AStarGraph const * const graph,
+		struct Heap * const heap,
 		struct AStarNode const * const current,
 		struct AStarNode const * const target,
 		int64_t (*const cost)(
@@ -139,6 +133,7 @@ update_costs(struct AStarGraph const * const graph,
 		}
 		neighbour->g = g;
 		neighbour->h = heuristic(neighbour, target);
+		heap_decrease_priority(heap, neighbour->he, neighbour->g+neighbour->h);
 	}
 	free(neighbours);
 }

@@ -7,8 +7,8 @@
 
 struct AStarNode {
 	int64_t coords[3]; // 3 is arbitrary, 3 dimensions.
-	uint64_t g;				 // g(n).
-	uint64_t h;				 // h(n).
+	int64_t g;				 // g(n).
+	int64_t h;				 // h(n).
 	bool visited;
 };
 
@@ -32,12 +32,12 @@ void a_star_graph_free(struct AStarGraph * const graph);
 // If the heuristic function returns 0 then this is Dijkstra's algorithm.
 //
 // If the heuristic function returns something non-zero then it is A*.
-uint64_t a_star_search(struct AStarGraph * const graph,
+int64_t a_star_search(struct AStarGraph * const graph,
 		struct AStarNode * const start,
 		struct AStarNode const * const target,
-		uint64_t (*const cost)(
+		int64_t (*const cost)(
 				struct AStarNode const * const, struct AStarNode const * const),
-		uint64_t (*const heuristic)(
+		int64_t (*const heuristic)(
 				struct AStarNode const * const, struct AStarNode const * const),
 		struct AStarNode ** (*const get_neighbours)(struct AStarGraph const * const,
 				struct AStarNode const * const,

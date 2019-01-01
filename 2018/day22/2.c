@@ -35,13 +35,13 @@ static uint64_t get_geologic_index(
 
 static void print_map(struct Position ** const, int const, int const);
 
-static uint64_t search(
+static int64_t search(
 		struct Position ** const, int64_t const, int64_t const, enum Tool const);
 
-static uint64_t cost(
+static int64_t cost(
 		struct AStarNode const * const, struct AStarNode const * const);
 
-static uint64_t heuristic(
+static int64_t heuristic(
 		struct AStarNode const * const, struct AStarNode const * const);
 
 static struct AStarNode ** get_neighbours(struct AStarGraph const * const,
@@ -102,9 +102,9 @@ main(int const argc, char const * const * const argv)
 		print_map(map, target_x, target_y);
 	}
 
-	uint64_t const steps =
+	int64_t const steps =
 			search(map, (int64_t)target_x, (int64_t)target_y, Torch);
-	printf("%" PRIu64 "\n", steps);
+	printf("%" PRId64 "\n", steps);
 
 	for (size_t i = 0; i < MAP_SZ_X; i++) {
 		free(map[i]);
@@ -205,7 +205,7 @@ print_map(struct Position ** const map, int const target_x, int const target_y)
 	}
 }
 
-static uint64_t
+static int64_t
 search(struct Position ** const map,
 		int64_t const target_x,
 		int64_t const target_y,
@@ -236,13 +236,13 @@ search(struct Position ** const map,
 		}
 	}
 
-	uint64_t const distance =
+	int64_t const distance =
 			a_star_search(graph, start, target, cost, heuristic, get_neighbours);
 	a_star_graph_free(graph);
 	return distance;
 }
 
-static uint64_t
+static int64_t
 cost(struct AStarNode const * const from, struct AStarNode const * const to)
 {
 	if (from->coords[2] != to->coords[2]) {
@@ -251,12 +251,12 @@ cost(struct AStarNode const * const from, struct AStarNode const * const to)
 	return from->g + 1;
 }
 
-static uint64_t
+static int64_t
 heuristic(
 		struct AStarNode const * const from, struct AStarNode const * const to)
 {
-	uint64_t cost = (uint64_t)llabs(from->coords[0] - to->coords[0]) +
-									(uint64_t)llabs(from->coords[1] - to->coords[1]);
+	int64_t cost = llabs(from->coords[0] - to->coords[0]) +
+									llabs(from->coords[1] - to->coords[1]);
 	return cost;
 }
 

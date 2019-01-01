@@ -1,17 +1,18 @@
 #include "a_star.h"
 #include <assert.h>
+#include "heap.h"
 #include <stdlib.h>
 
-#define A_STAR_INFINITY UINT64_MAX
+#define A_STAR_INFINITY INT64_MAX
 
 static struct AStarNode * choose_next_node(struct AStarGraph * const graph);
 
 static void update_costs(struct AStarGraph const * const graph,
 		struct AStarNode const * const current,
 		struct AStarNode const * const target,
-		uint64_t (*const cost)(
+		int64_t (*const cost)(
 				struct AStarNode const * const, struct AStarNode const * const),
-		uint64_t (*const heuristic)(
+		int64_t (*const heuristic)(
 				struct AStarNode const * const, struct AStarNode const * const),
 		struct AStarNode ** (*const get_neighbours)(struct AStarGraph const * const,
 				struct AStarNode const * const,
@@ -52,13 +53,13 @@ a_star_graph_free(struct AStarGraph * const graph)
 	free(graph);
 }
 
-uint64_t
+int64_t
 a_star_search(struct AStarGraph * const graph,
 		struct AStarNode * const start,
 		struct AStarNode const * const target,
-		uint64_t (*const cost)(
+		int64_t (*const cost)(
 				struct AStarNode const * const, struct AStarNode const * const),
-		uint64_t (*const heuristic)(
+		int64_t (*const heuristic)(
 				struct AStarNode const * const, struct AStarNode const * const),
 		struct AStarNode ** (*const get_neighbours)(struct AStarGraph const * const,
 				struct AStarNode const * const,
@@ -91,7 +92,7 @@ static struct AStarNode *
 choose_next_node(struct AStarGraph * const graph)
 {
 	struct AStarNode * cheapest = NULL;
-	uint64_t best_f = A_STAR_INFINITY;
+	int64_t best_f = A_STAR_INFINITY;
 
 	for (size_t i = 0; i < graph->n_nodes; i++) {
 		struct AStarNode * const n = graph->nodes[i];
@@ -103,7 +104,7 @@ choose_next_node(struct AStarGraph * const graph)
 			continue;
 		}
 
-		uint64_t const f = n->g + n->h;
+		int64_t const f = n->g + n->h;
 		if (f >= best_f) {
 			continue;
 		}
@@ -119,9 +120,9 @@ static void
 update_costs(struct AStarGraph const * const graph,
 		struct AStarNode const * const current,
 		struct AStarNode const * const target,
-		uint64_t (*const cost)(
+		int64_t (*const cost)(
 				struct AStarNode const * const, struct AStarNode const * const),
-		uint64_t (*const heuristic)(
+		int64_t (*const heuristic)(
 				struct AStarNode const * const, struct AStarNode const * const),
 		struct AStarNode ** (*const get_neighbours)(struct AStarGraph const * const,
 				struct AStarNode const * const,
@@ -132,7 +133,7 @@ update_costs(struct AStarGraph const * const graph,
 			get_neighbours(graph, current, &n_neighbours);
 	for (size_t i = 0; i < n_neighbours; i++) {
 		struct AStarNode * const neighbour = neighbours[i];
-		uint64_t const g = cost(current, neighbour);
+		int64_t const g = cost(current, neighbour);
 		if (g >= neighbour->g) {
 			continue;
 		}

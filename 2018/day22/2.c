@@ -256,7 +256,7 @@ heuristic(
 		struct AStarNode const * const from, struct AStarNode const * const to)
 {
 	int64_t cost = llabs(from->coords[0] - to->coords[0]) +
-									llabs(from->coords[1] - to->coords[1]);
+								 llabs(from->coords[1] - to->coords[1]);
 	return cost;
 }
 

@@ -1,15 +1,13 @@
-#include <assert.h>
 #include "heap.h"
+#include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-static void
-sift_up(struct Heap * const h, size_t const end);
+static void sift_up(struct Heap * const h, size_t const end);
 
-static void
-sift_down(struct Heap * const h);
+static void sift_down(struct Heap * const h);
 
 struct Heap *
 heap_create(size_t const initial_size)
@@ -36,9 +34,7 @@ heap_free(struct Heap * const h)
 }
 
 struct HeapElement *
-heap_insert(struct Heap * const h,
-		int64_t const priority,
-		void * const data)
+heap_insert(struct Heap * const h, int64_t const priority, void * const data)
 {
 	if (h->n_elements == h->sz) {
 		// TODO(horgh): Increase size. Note realloc() will move memory so all
@@ -69,7 +65,7 @@ sift_up(struct Heap * const h, size_t const end)
 	size_t const start = 0;
 	size_t child = end;
 	while (child > start) {
-		size_t const parent = (child-1)/2;
+		size_t const parent = (child - 1) / 2;
 		if (h->elements[parent]->priority < h->elements[child]->priority) {
 			return;
 		}
@@ -113,7 +109,7 @@ sift_down(struct Heap * const h)
 	}
 	size_t const end = h->n_elements - 1;
 	while (1) {
-		size_t const left = 2*root + 1;
+		size_t const left = 2 * root + 1;
 		if (left > end) {
 			return;
 		}
@@ -124,7 +120,7 @@ sift_down(struct Heap * const h)
 			swap = left;
 		}
 
-		size_t const right = left+1;
+		size_t const right = left + 1;
 		if (right <= end &&
 				h->elements[swap]->priority > h->elements[right]->priority) {
 			swap = right;

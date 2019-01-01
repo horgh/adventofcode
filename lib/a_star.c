@@ -1,6 +1,6 @@
 #include "a_star.h"
-#include <assert.h>
 #include "heap.h"
+#include <assert.h>
 #include <stdlib.h>
 
 #define A_STAR_INFINITY INT64_MAX
@@ -133,7 +133,7 @@ update_costs(struct AStarGraph const * const graph,
 		}
 		neighbour->g = g;
 		neighbour->h = heuristic(neighbour, target);
-		heap_decrease_priority(heap, neighbour->he, neighbour->g+neighbour->h);
+		heap_decrease_priority(heap, neighbour->he, neighbour->g + neighbour->h);
 	}
 	free(neighbours);
 }

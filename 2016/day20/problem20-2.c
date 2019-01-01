@@ -148,7 +148,7 @@ __find_allowed(struct Range ** ranges, size_t ranges_sz)
 	// for (size_t i = 0; i < ranges_sz; i++) {
 	//	struct Range * const range = ranges[i];
 	//	printf("have range %" PRIu64 " to %" PRIu64 "\n", range->start,
-	//range->end);
+	// range->end);
 	//}
 
 	uint64_t allowed = 0;

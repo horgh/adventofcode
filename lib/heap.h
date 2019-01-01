@@ -13,27 +13,21 @@ struct HeapElement {
 };
 
 struct Heap {
-	struct HeapElement * * elements;
+	struct HeapElement ** elements;
 	size_t n_elements;
 	size_t sz;
 };
 
-struct Heap *
-heap_create(size_t const initial_size);
+struct Heap * heap_create(size_t const initial_size);
 
-void
-heap_free(struct Heap * const h);
+void heap_free(struct Heap * const h);
 
-struct HeapElement *
-heap_insert(struct Heap * const h,
-		int64_t const priority,
-		void * const data);
+struct HeapElement * heap_insert(
+		struct Heap * const h, int64_t const priority, void * const data);
 
-void *
-heap_extract(struct Heap * const h);
+void * heap_extract(struct Heap * const h);
 
-void
-heap_decrease_priority(struct Heap * const h,
+void heap_decrease_priority(struct Heap * const h,
 		struct HeapElement * const he,
 		int64_t const priority);
 
